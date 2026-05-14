@@ -1,7 +1,5 @@
-import { Star } from "lucide-react";
-
 import { PageHeader } from "../../components/layout/PageHeader";
-import { StatusPill } from "../../components/ui/StatusPill";
+import { Card, EmojiBadge, StatusPill } from "../../components/ui";
 
 export function WeekPage() {
   return (
@@ -13,27 +11,27 @@ export function WeekPage() {
       />
 
       <div className="grid gap-4 sm:grid-cols-3">
-        <div className="rounded-[1.75rem] bg-white/75 p-5 shadow-lg shadow-slate-900/10">
+        <Card tone="solid">
           <StatusPill tone="blue">À venir</StatusPill>
           <p className="mt-4 text-2xl font-black text-slate-950">0 entrée</p>
           <p className="mt-2 text-sm leading-6 text-slate-500">
             Les apprentissages de la semaine seront listés ici.
           </p>
-        </div>
-        <div className="rounded-[1.75rem] bg-white/75 p-5 shadow-lg shadow-slate-900/10">
-          <Star aria-hidden="true" className="size-6 fill-amber-300 text-amber-400" />
+        </Card>
+        <Card tone="solid">
+          <EmojiBadge emoji="⭐" />
           <p className="mt-4 text-2xl font-black text-slate-950">Notation</p>
           <p className="mt-2 text-sm leading-6 text-slate-500">
             Les étoiles alimenteront la courbe d'apprentissage.
           </p>
-        </div>
-        <div className="rounded-[1.75rem] bg-white/75 p-5 shadow-lg shadow-slate-900/10">
+        </Card>
+        <Card tone="solid">
           <StatusPill tone="mint">Curation</StatusPill>
           <p className="mt-4 text-2xl font-black text-slate-950">Garder / jeter</p>
           <p className="mt-2 text-sm leading-6 text-slate-500">
             Le bruit sera exclu des insights principaux.
           </p>
-        </div>
+        </Card>
       </div>
     </section>
   );

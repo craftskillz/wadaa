@@ -22,7 +22,7 @@ Ne pas documenter ici les détails volatils, les TODO temporaires ou les informa
 
 Le produit doit permettre à l'utilisateur de capturer très rapidement ses apprentissages du jour, de curer sa semaine, de garder ou jeter les entrées, de noter les apprentissages importants, puis de visualiser une courbe simple.
 
-Le projet contient maintenant une base frontend MVP initialisée par le Ticket 01 : React + TypeScript + Vite + Tailwind CSS, avec routes principales, layout global et navigation mobile-first. Le coeur métier local-first reste à implémenter à partir du Ticket 03.
+Le projet contient maintenant une base frontend MVP initialisée par le Ticket 01 et un design system minimal formalisé par le Ticket 02 : React + TypeScript + Vite + Tailwind CSS, routes principales, layout global, navigation mobile-first et composants UI réutilisables. Le coeur métier local-first reste à implémenter à partir du Ticket 03.
 
 ## Stack cible MVP
 
@@ -74,13 +74,14 @@ vite.config.ts                    <- configuration Vite + React + Tailwind
 eslint.config.js                  <- configuration ESLint flat config
 tsconfig*.json                    <- configuration TypeScript
 src/app/                          <- App, router et navigation
-src/components/layout/            <- shell global, bottom nav, header de page
-src/components/ui/                <- composants UI transverses initiaux
+src/components/layout/            <- AppShell, BottomNav, PageHeader
+src/components/ui/                <- design system minimal : Button, Card, Input, Textarea, EmojiBadge, EmptyState, StatusPill
 src/features/entries/             <- écran Aujourd'hui et calendrier
 src/features/reviews/             <- revue hebdomadaire
 src/features/insights/            <- courbes et stats
 src/features/settings/            <- réglages
 src/features/onboarding/          <- première expérience
+src/lib/styles/                   <- helpers de classes CSS
 src/styles/                       <- CSS global Tailwind
 memory/MEMORY.md                  <- index de mémoire projet
 living-documentation/AI/          <- instructions IA, stack, commandes et règles
@@ -115,6 +116,7 @@ src/
     db/
     dates/
     ids/
+    styles/
   styles/
 ```
 
@@ -127,6 +129,7 @@ Les dossiers `presets`, `lib/db`, `lib/dates` et `lib/ids` sont présents mais n
 - **LearningPreset** : choix rapide réutilisable, y compris depuis une réponse libre transformée en preset.
 - **WeeklyReview** : moment de curation hebdomadaire où l'utilisateur garde, jette et note ses apprentissages.
 - **Insights** : courbes et métriques locales calculées depuis les entrées gardées.
+- **Design system minimal** : composants UI maison Tailwind dans `src/components/ui/`, partagés par les pages pour garder une identité cohérente.
 - **Backup R2** : snapshot JSON manuel prévu après le coeur local-first, sans logique métier dans le Worker.
 - **Recherche sémantique** : option post-MVP explicitement exclue du MVP. Voir l'ADR `Reporter embeddings et LLM après validation produit`.
 
@@ -138,5 +141,6 @@ Les dossiers `presets`, `lib/db`, `lib/dates` et `lib/ids` sont présents mais n
 - **Données locales** : les modèles doivent rester compatibles avec export/import JSON complet.
 - **Routing** : les routes MVP sont centralisées dans `src/app/router.tsx` et la navigation principale dans `src/app/navigation.ts`.
 - **Layout** : `AppShell` porte le fond, la zone scrollable et la navigation basse ; les pages ne doivent pas recréer le shell.
+- **UI partagée** : privilégier les composants de `src/components/ui/` avant d'ajouter des classes Tailwind longues directement dans une page.
 - **Documentation** : mettre à jour les documents Living Documentation et les ADR lorsque le code rend une décision durable fausse, incomplète ou obsolète.
 - **Magic numbers** : nommer les valeurs numériques porteuses de sens dans le code applicatif, conformément à `AI/rules/no-magic-numbers.md`.

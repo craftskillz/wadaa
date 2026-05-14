@@ -1,6 +1,7 @@
 import { CalendarDays } from "lucide-react";
 
 import { PageHeader } from "../../components/layout/PageHeader";
+import { Card } from "../../components/ui";
 
 const previewDays = ["L", "M", "M", "J", "V", "S", "D"];
 
@@ -13,7 +14,7 @@ export function CalendarPage() {
         description="Une vue mensuelle simple montrera les jours avec apprentissages et leur intensité."
       />
 
-      <div className="rounded-[2rem] border border-white/70 bg-white/75 p-5 shadow-xl shadow-slate-900/10 backdrop-blur-xl">
+      <Card>
         <div className="mb-5 flex items-center gap-3 text-slate-700">
           <CalendarDays aria-hidden="true" className="size-6 text-violet-600" />
           <span className="font-bold">Aperçu du calendrier</span>
@@ -28,7 +29,7 @@ export function CalendarPage() {
             </div>
           ))}
         </div>
-      </div>
+      </Card>
     </section>
   );
 }

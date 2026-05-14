@@ -1,7 +1,7 @@
-import { Plus } from "lucide-react";
+import { BookOpen, Plus } from "lucide-react";
 
 import { PageHeader } from "../../components/layout/PageHeader";
-import { StatusPill } from "../../components/ui/StatusPill";
+import { Button, Card, EmptyState, StatusPill, Textarea } from "../../components/ui";
 
 const quickReplies = [
   "Concept technique",
@@ -25,44 +25,37 @@ export function TodayPage() {
         description="Capture une idée en quelques secondes. Le tri viendra plus tard, pendant la revue hebdomadaire."
       />
 
-      <div className="rounded-[2rem] border border-white/70 bg-white/75 p-4 shadow-2xl shadow-slate-900/10 backdrop-blur-xl sm:p-6">
+      <Card className="p-4 shadow-2xl sm:p-6">
         <div className="mb-4 flex flex-wrap gap-2">
           {quickReplies.map((reply) => (
-            <button
+            <Button
               key={reply}
-              type="button"
-              className="rounded-full border border-slate-200 bg-white px-4 py-3 text-sm font-bold text-slate-700 shadow-sm transition hover:-translate-y-0.5 hover:border-violet-200 hover:text-violet-700 hover:shadow-md"
+              variant="pill"
             >
               {reply}
-            </button>
+            </Button>
           ))}
         </div>
 
-        <label className="block">
-          <span className="mb-2 block text-sm font-bold text-slate-700">
-            Réponse libre
-          </span>
-          <textarea
-            className="min-h-24 w-full resize-none rounded-3xl border border-slate-200 bg-white/90 px-4 py-4 text-base leading-7 text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-violet-300 focus:ring-4 focus:ring-violet-100"
-            placeholder="Écris ton apprentissage..."
-          />
-        </label>
+        <Textarea label="Réponse libre" placeholder="Écris ton apprentissage..." />
 
         <div className="mt-4">
-          <button
-            type="button"
+          <Button
             className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-2xl bg-slate-950 px-5 py-3 text-base font-black text-white shadow-xl shadow-slate-950/15 transition hover:-translate-y-0.5"
+            icon={<Plus aria-hidden="true" className="size-5" />}
+            size="lg"
           >
-            <Plus aria-hidden="true" className="size-5" />
             Ajouter à ma journée
-          </button>
+          </Button>
         </div>
-      </div>
+      </Card>
 
-      <div className="mt-6 rounded-[1.75rem] border border-dashed border-slate-300 bg-white/50 p-6 text-center text-slate-500">
-        Les entrées du jour apparaîtront ici dès que le stockage local sera en
-        place.
-      </div>
+      <EmptyState
+        className="mt-6"
+        description="Elles s'afficheront dès que le stockage local sera en place."
+        icon={<BookOpen aria-hidden="true" className="size-6 text-violet-500" />}
+        title="Aucune entrée pour le moment"
+      />
     </section>
   );
 }

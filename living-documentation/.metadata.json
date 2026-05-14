@@ -105,6 +105,42 @@
     {
       "path": "README.md",
       "hash": "d195e1eae180630eae6e7175a556b90120f8a86af57287ee108f48dbc8e2d0b1"
+    },
+    {
+      "path": "src/components/ui/Button.tsx",
+      "hash": "4d2d5a337a4aff9741dbac23b0dcfe68bf3f750c06c8ff8769051ff6a9ee6bc6"
+    },
+    {
+      "path": "src/components/ui/Card.tsx",
+      "hash": "3e8e38ef8427f1d3f1e1048752f2479096b463c87cb1dc3cd0ae823e97053478"
+    },
+    {
+      "path": "src/components/ui/EmptyState.tsx",
+      "hash": "b8a4b1df40fbf810e83c42170d381f7771377fb48ca9c7b26b9bbbe031daa90b"
+    },
+    {
+      "path": "src/components/ui/index.ts",
+      "hash": "07d84fbc5c30261cd394eae1082ba2472cadc75888ff1359132fce31158f5191"
+    },
+    {
+      "path": "src/lib/styles/classNames.ts",
+      "hash": "bc7b50ab6d9ff27088fac7ab1a97493b28b36e236456ffc2c34dcb3d8aa4a9fc"
+    },
+    {
+      "path": "src/components/ui/Input.tsx",
+      "hash": "b2f82b810d4274308a47969268b62255dcb4b036f98ffbdf22838c3842cf4ec9"
+    },
+    {
+      "path": "src/components/ui/Textarea.tsx",
+      "hash": "00d66a833cd7e10ad1adc410928ecf6d91a967c4ce8eab985fc7b1f8235d4ad8"
+    },
+    {
+      "path": "src/components/ui/EmojiBadge.tsx",
+      "hash": "3643143446e087770aaa9cf2b9e0f5888ab77bcbbdad31de4128890e9e87bec9"
+    },
+    {
+      "path": "src/components/ui/StatusPill.tsx",
+      "hash": "b419fb527982d7a55a01770ff1120c4643863282faa94cf22ce11d10d9a8a7b4"
     }
   ],
   "AI/PROJECT-INSTRUCTIONS": [
@@ -138,7 +174,7 @@
   "WORKLOG/current-task": [
     {
       "path": "living-documentation/AI/PROJECT-STACK.md",
-      "hash": "cdb4f20298828aae99c4e4cf0a24a542b1ea58a5839166862cb9624802d7106f"
+      "hash": "be3405f5282af7325b95e1ba241f172409314e89c7327e1b844efe565f0fb8ac"
     },
     {
       "path": "living-documentation/AI/PROJECT-USEFUL-COMMANDS.md",
@@ -163,6 +199,42 @@
     {
       "path": "README.md",
       "hash": "d195e1eae180630eae6e7175a556b90120f8a86af57287ee108f48dbc8e2d0b1"
+    },
+    {
+      "path": "src/components/ui/Button.tsx",
+      "hash": "4d2d5a337a4aff9741dbac23b0dcfe68bf3f750c06c8ff8769051ff6a9ee6bc6"
+    },
+    {
+      "path": "src/components/ui/Card.tsx",
+      "hash": "3e8e38ef8427f1d3f1e1048752f2479096b463c87cb1dc3cd0ae823e97053478"
+    },
+    {
+      "path": "src/components/ui/EmptyState.tsx",
+      "hash": "b8a4b1df40fbf810e83c42170d381f7771377fb48ca9c7b26b9bbbe031daa90b"
+    },
+    {
+      "path": "src/lib/styles/classNames.ts",
+      "hash": "bc7b50ab6d9ff27088fac7ab1a97493b28b36e236456ffc2c34dcb3d8aa4a9fc"
+    },
+    {
+      "path": "src/features/entries/TodayPage.tsx",
+      "hash": "74816a738c97ee338ba5905bf25d2c1dbb19d480d1fc8049b46561238c21422c"
+    },
+    {
+      "path": "src/components/ui/Input.tsx",
+      "hash": "b2f82b810d4274308a47969268b62255dcb4b036f98ffbdf22838c3842cf4ec9"
+    },
+    {
+      "path": "src/components/ui/Textarea.tsx",
+      "hash": "00d66a833cd7e10ad1adc410928ecf6d91a967c4ce8eab985fc7b1f8235d4ad8"
+    },
+    {
+      "path": "src/components/ui/EmojiBadge.tsx",
+      "hash": "3643143446e087770aaa9cf2b9e0f5888ab77bcbbdad31de4128890e9e87bec9"
+    },
+    {
+      "path": "src/components/ui/StatusPill.tsx",
+      "hash": "b419fb527982d7a55a01770ff1120c4643863282faa94cf22ce11d10d9a8a7b4"
     }
   ],
   "AI/PROJECT-USEFUL-COMMANDS": [
@@ -203,6 +275,68 @@
     {
       "path": "src/styles/index.css",
       "hash": "eb3fe967212fdec89e5fee787ea31baae4a8dc0f63ccef6568b803d21b8bbe58"
+    }
+  ],
+  "WORKLOG/2026_05_14_14_42_[WORKLOG]_ticket_02_creer_le_design_system_minimal": [
+    {
+      "path": "src/components/ui/Button.tsx",
+      "hash": "4d2d5a337a4aff9741dbac23b0dcfe68bf3f750c06c8ff8769051ff6a9ee6bc6"
+    },
+    {
+      "path": "src/components/ui/Card.tsx",
+      "hash": "3e8e38ef8427f1d3f1e1048752f2479096b463c87cb1dc3cd0ae823e97053478"
+    },
+    {
+      "path": "src/components/ui/EmptyState.tsx",
+      "hash": "b8a4b1df40fbf810e83c42170d381f7771377fb48ca9c7b26b9bbbe031daa90b"
+    },
+    {
+      "path": "src/components/ui/index.ts",
+      "hash": "07d84fbc5c30261cd394eae1082ba2472cadc75888ff1359132fce31158f5191"
+    },
+    {
+      "path": "src/lib/styles/classNames.ts",
+      "hash": "bc7b50ab6d9ff27088fac7ab1a97493b28b36e236456ffc2c34dcb3d8aa4a9fc"
+    },
+    {
+      "path": "src/features/entries/TodayPage.tsx",
+      "hash": "74816a738c97ee338ba5905bf25d2c1dbb19d480d1fc8049b46561238c21422c"
+    },
+    {
+      "path": "src/components/ui/Input.tsx",
+      "hash": "b2f82b810d4274308a47969268b62255dcb4b036f98ffbdf22838c3842cf4ec9"
+    },
+    {
+      "path": "src/components/ui/Textarea.tsx",
+      "hash": "00d66a833cd7e10ad1adc410928ecf6d91a967c4ce8eab985fc7b1f8235d4ad8"
+    },
+    {
+      "path": "src/components/ui/EmojiBadge.tsx",
+      "hash": "3643143446e087770aaa9cf2b9e0f5888ab77bcbbdad31de4128890e9e87bec9"
+    },
+    {
+      "path": "src/components/ui/StatusPill.tsx",
+      "hash": "b419fb527982d7a55a01770ff1120c4643863282faa94cf22ce11d10d9a8a7b4"
+    },
+    {
+      "path": "src/features/entries/CalendarPage.tsx",
+      "hash": "ddc1c1f1a393b830da63f7658b54b7f1bba3833cb724f9343f209d6f4712028f"
+    },
+    {
+      "path": "src/features/reviews/WeekPage.tsx",
+      "hash": "dbeb218fd32a62e2d07a441d94d097ed2b96d94b1953e701f362376e9058b483"
+    },
+    {
+      "path": "src/features/insights/InsightsPage.tsx",
+      "hash": "fb6f2adff411bcd159da105104ed9f75cebd0799a0b84b1d0dc7b3477e894582"
+    },
+    {
+      "path": "src/features/settings/SettingsPage.tsx",
+      "hash": "6ce065fb468a11b073a2fe7efddbab1ff8d238590ff4c381aa1a99d018f468f7"
+    },
+    {
+      "path": "src/features/onboarding/OnboardingPage.tsx",
+      "hash": "90ba38f1f5518ab9c9df1fd0015a7ccd3ad7b5b15de6594305013173eed39884"
     }
   ]
 }

@@ -1,6 +1,9 @@
+import { classNames } from "../../lib/styles/classNames";
+
 type StatusPillProps = {
   children: string;
   tone?: "mint" | "violet" | "blue" | "slate";
+  className?: string;
 };
 
 const toneClasses: Record<NonNullable<StatusPillProps["tone"]>, string> = {
@@ -10,10 +13,18 @@ const toneClasses: Record<NonNullable<StatusPillProps["tone"]>, string> = {
   slate: "bg-slate-100 text-slate-700 ring-slate-200",
 };
 
-export function StatusPill({ children, tone = "slate" }: StatusPillProps) {
+export function StatusPill({
+  children,
+  className,
+  tone = "slate",
+}: StatusPillProps) {
   return (
     <span
-      className={`inline-flex items-center rounded-full px-3 py-1 text-sm font-semibold ring-1 ${toneClasses[tone]}`}
+      className={classNames(
+        "inline-flex items-center rounded-full px-3 py-1 text-sm font-semibold ring-1",
+        toneClasses[tone],
+        className,
+      )}
     >
       {children}
     </span>

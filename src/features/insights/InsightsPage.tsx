@@ -1,6 +1,7 @@
 import { ChartNoAxesColumnIncreasing } from "lucide-react";
 
 import { PageHeader } from "../../components/layout/PageHeader";
+import { Card } from "../../components/ui";
 
 const metrics = [
   "Jours actifs",
@@ -18,7 +19,7 @@ export function InsightsPage() {
         description="Les premières statistiques seront calculées localement depuis les apprentissages gardés."
       />
 
-      <div className="rounded-[2rem] border border-white/70 bg-white/75 p-5 shadow-xl shadow-slate-900/10 backdrop-blur-xl">
+      <Card>
         <div className="mb-6 flex items-center gap-3">
           <ChartNoAxesColumnIncreasing
             aria-hidden="true"
@@ -28,13 +29,13 @@ export function InsightsPage() {
         </div>
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
           {metrics.map((metric) => (
-            <div key={metric} className="rounded-3xl bg-slate-950/5 p-4">
+            <Card key={metric} tone="muted" className="p-4">
               <p className="text-sm font-bold text-slate-500">{metric}</p>
               <p className="mt-3 text-3xl font-black text-slate-950">--</p>
-            </div>
+            </Card>
           ))}
         </div>
-      </div>
+      </Card>
     </section>
   );
 }

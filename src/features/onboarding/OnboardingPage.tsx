@@ -1,7 +1,8 @@
-import { ArrowRight, Bell, Sparkles } from "lucide-react";
+import { ArrowRight, Bell } from "lucide-react";
 import { Link } from "react-router-dom";
 
 import { PageHeader } from "../../components/layout/PageHeader";
+import { Card, EmojiBadge } from "../../components/ui";
 
 const onboardingSteps = [
   "Choisir ses heures de rappel",
@@ -18,7 +19,7 @@ export function OnboardingPage() {
         description="Note tes apprentissages au fil de la journée, garde les meilleurs en fin de semaine, et visualise ta progression."
       />
 
-      <div className="rounded-[2rem] border border-white/70 bg-white/75 p-5 shadow-xl shadow-slate-900/10 backdrop-blur-xl">
+      <Card>
         <div className="mb-5 flex items-center gap-3">
           <Bell aria-hidden="true" className="size-6 text-violet-600" />
           <p className="font-black text-slate-900">Configuration rapide</p>
@@ -29,7 +30,7 @@ export function OnboardingPage() {
               key={step}
               className="flex items-center gap-3 rounded-3xl bg-slate-950/5 p-4 font-bold text-slate-700"
             >
-              <Sparkles aria-hidden="true" className="size-5 text-emerald-600" />
+              <EmojiBadge emoji="✨" className="size-8 text-base" />
               {step}
             </li>
           ))}
@@ -41,7 +42,7 @@ export function OnboardingPage() {
           Commencer
           <ArrowRight aria-hidden="true" className="size-5" />
         </Link>
-      </div>
+      </Card>
     </section>
   );
 }
