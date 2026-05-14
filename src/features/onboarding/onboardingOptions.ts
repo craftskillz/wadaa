@@ -17,6 +17,11 @@ export const INITIAL_PRESET_OPTIONS = [
     label: "J'ai découvert un outil",
   },
   {
+    id: "discovered-music",
+    emoji: "🎶",
+    label: "J'ai découvert de la bonne musique",
+  },
+  {
     id: "self-learning",
     emoji: "🌱",
     label: "J'ai appris quelque chose sur moi",

@@ -1,5 +1,5 @@
 import { type FormEvent, useState } from "react";
-import { BookOpen, Clock3, Plus, Trash2 } from "lucide-react";
+import { BookOpen, BookmarkPlus, Clock3, Plus, Trash2 } from "lucide-react";
 
 import { PageHeader } from "../../components/layout/PageHeader";
 import {
@@ -15,9 +15,23 @@ import {
   createCustomEntry,
   createEmptyEntry,
   createEntryFromPreset,
+  createPresetFromCustomEntry,
   deleteEntry,
+  normalizePresetLabel,
 } from "./entryStorage";
 import { useTodayData } from "./useTodayData";
+import type { LearningPreset } from "../../lib/db";
+
+function hasVisiblePresetForEntry(
+  entryContent: string,
+  presets: LearningPreset[],
+) {
+  const normalizedEntryContent = normalizePresetLabel(entryContent);
+
+  return presets.some(
+    (preset) => normalizePresetLabel(preset.label) === normalizedEntryContent,
+  );
+}
 
 export function TodayPage() {
   const { entries, presets } = useTodayData();
@@ -92,6 +106,39 @@ export function TodayPage() {
       setStatusMessage(
         error instanceof Error ? error.message : "Suppression impossible.",
       );
+    }
+  }
+
+  async function handleCreatePreset(entryId: string) {
+    const entry = entries.find((item) => item.id === entryId);
+
+    if (!entry) {
+      return;
+    }
+
+    setIsSubmitting(true);
+    try {
+      const result = await createPresetFromCustomEntry(entry);
+
+      if (result.status === "created") {
+        setStatusMessage("Ajouté aux choix rapides.");
+        return;
+      }
+
+      if (result.status === "restored") {
+        setStatusMessage("Choix rapide réactivé.");
+        return;
+      }
+
+      setStatusMessage("Ce choix rapide existe déjà.");
+    } catch (error) {
+      setStatusMessage(
+        error instanceof Error
+          ? error.message
+          : "Création du choix rapide impossible.",
+      );
+    } finally {
+      setIsSubmitting(false);
     }
   }
 
@@ -173,7 +220,9 @@ export function TodayPage() {
                   />
                   <div className="min-w-0 flex-1">
                     <div className="mb-2 flex flex-wrap items-center gap-2">
-                      <StatusPill tone={entry.source === "empty" ? "slate" : "blue"}>
+                      <StatusPill
+                        tone={entry.source === "empty" ? "slate" : "blue"}
+                      >
                         {entry.source === "preset"
                           ? "Choix rapide"
                           : entry.source === "custom"
@@ -188,6 +237,27 @@ export function TodayPage() {
                     <p className="break-words text-base font-bold leading-7 text-slate-800">
                       {entry.content}
                     </p>
+                    {entry.source === "custom" ? (
+                      <div className="mt-3">
+                        {hasVisiblePresetForEntry(entry.content, presets) ? (
+                          <StatusPill tone="mint">Déjà en choix rapide</StatusPill>
+                        ) : (
+                          <Button
+                            disabled={isSubmitting}
+                            icon={
+                              <BookmarkPlus
+                                aria-hidden="true"
+                                className="size-4"
+                              />
+                            }
+                            onClick={() => handleCreatePreset(entry.id)}
+                            variant="secondary"
+                          >
+                            Ajouter aux choix rapides
+                          </Button>
+                        )}
+                      </div>
+                    ) : null}
                   </div>
                   <Button
                     aria-label="Supprimer cette entrée"

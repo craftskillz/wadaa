@@ -14,7 +14,7 @@
 3. [x] ~~Ticket 03 - Installer IndexedDB avec Dexie~~
 4. [x] ~~Ticket 04 - Créer l'onboarding~~
 5. [x] ~~Ticket 05 - Écran Aujourd'hui~~
-6. [ ] Ticket 06 - Transformer une réponse libre en preset
+6. [x] ~~Ticket 06 - Transformer une réponse libre en preset~~
 7. [ ] Ticket 08 - Revue hebdomadaire
 8. [ ] Ticket 09 - Courbe d'apprentissage
 9. [ ] Ticket 10 - Réglages

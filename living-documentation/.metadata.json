@@ -6,11 +6,11 @@
     },
     {
       "path": "living-documentation/TECHNICAL/2026_05_14_09_47_[TECHNICAL]_modele_de_donnees_mvp.md",
-      "hash": "addff4e42ef734e20b1b6f1527a9f533682f84ad4884837c8b07fe9dc2a3079f"
+      "hash": "a46280ac3822cdb2780429fcc4105c4af076cb98084b6e6646ef54a0ea83f7a6"
     },
     {
       "path": "living-documentation/ROADMAP/2026_05_14_09_48_[ROADMAP]_tickets_mvp.md",
-      "hash": "cfe4d9c4b0fd0c3f9386595a15f33cb97da8e14e86f8ff82733e6c5e28b57771"
+      "hash": "518adfe071bc0d81ca7d653788e5e97100d3ce4e00679f60e39baf16689333e5"
     },
     {
       "path": "src/lib/db/database.ts",
@@ -32,11 +32,11 @@
     },
     {
       "path": "living-documentation/ROADMAP/2026_05_14_09_48_[ROADMAP]_tickets_mvp.md",
-      "hash": "cfe4d9c4b0fd0c3f9386595a15f33cb97da8e14e86f8ff82733e6c5e28b57771"
+      "hash": "518adfe071bc0d81ca7d653788e5e97100d3ce4e00679f60e39baf16689333e5"
     },
     {
       "path": "living-documentation/AI/PROJECT-STACK.md",
-      "hash": "c1af374596fa2e98d121a2cdb27c1e153718658952e418e09f0d9dbb2e2099c4"
+      "hash": "ca48107af6cb308338abb94718d4df7a0b69a0ca0c4712b33286ad599ba4181a"
     },
     {
       "path": "package.json",
@@ -70,7 +70,7 @@
     },
     {
       "path": "living-documentation/ROADMAP/2026_05_14_09_48_[ROADMAP]_tickets_mvp.md",
-      "hash": "cfe4d9c4b0fd0c3f9386595a15f33cb97da8e14e86f8ff82733e6c5e28b57771"
+      "hash": "518adfe071bc0d81ca7d653788e5e97100d3ce4e00679f60e39baf16689333e5"
     }
   ],
   "AI/PROJECT-STACK": [
@@ -80,11 +80,11 @@
     },
     {
       "path": "living-documentation/TECHNICAL/2026_05_14_09_47_[TECHNICAL]_modele_de_donnees_mvp.md",
-      "hash": "addff4e42ef734e20b1b6f1527a9f533682f84ad4884837c8b07fe9dc2a3079f"
+      "hash": "a46280ac3822cdb2780429fcc4105c4af076cb98084b6e6646ef54a0ea83f7a6"
     },
     {
       "path": "living-documentation/ROADMAP/2026_05_14_09_48_[ROADMAP]_tickets_mvp.md",
-      "hash": "cfe4d9c4b0fd0c3f9386595a15f33cb97da8e14e86f8ff82733e6c5e28b57771"
+      "hash": "518adfe071bc0d81ca7d653788e5e97100d3ce4e00679f60e39baf16689333e5"
     },
     {
       "path": "living-documentation/TECHNICAL/2026_05_14_09_49_[TECHNICAL]_recherche_semantique_post_mvp.md",
@@ -192,7 +192,7 @@
     },
     {
       "path": "src/features/entries/entryStorage.ts",
-      "hash": "4aa8d5ed4b7bc6e955ee0dd0e52c9c489d7af6beaf892954134d2ef2931e4771"
+      "hash": "99f687b1243b2499289e9234f19e27f443509cc8e5cd91d18e687d2a86435941"
     },
     {
       "path": "src/features/entries/useTodayData.ts",
@@ -201,6 +201,10 @@
     {
       "path": "src/lib/dates/today.ts",
       "hash": "806e90c45de28b3fc922245c4213de4483bb0d3d3cf39c88f3c72970cca355ba"
+    },
+    {
+      "path": "src/features/entries/TodayPage.tsx",
+      "hash": "149055caf6abdfef71920852b141f1ebf4a67f1ec49fea7f2027581429183b08"
     }
   ],
   "AI/PROJECT-INSTRUCTIONS": [
@@ -234,7 +238,7 @@
   "WORKLOG/current-task": [
     {
       "path": "living-documentation/AI/PROJECT-STACK.md",
-      "hash": "c1af374596fa2e98d121a2cdb27c1e153718658952e418e09f0d9dbb2e2099c4"
+      "hash": "ca48107af6cb308338abb94718d4df7a0b69a0ca0c4712b33286ad599ba4181a"
     },
     {
       "path": "living-documentation/AI/PROJECT-USEFUL-COMMANDS.md",
@@ -242,7 +246,7 @@
     },
     {
       "path": "living-documentation/ROADMAP/2026_05_14_09_48_[ROADMAP]_tickets_mvp.md",
-      "hash": "cfe4d9c4b0fd0c3f9386595a15f33cb97da8e14e86f8ff82733e6c5e28b57771"
+      "hash": "518adfe071bc0d81ca7d653788e5e97100d3ce4e00679f60e39baf16689333e5"
     },
     {
       "path": "package.json",
@@ -278,7 +282,7 @@
     },
     {
       "path": "src/features/entries/TodayPage.tsx",
-      "hash": "2c14dbc9bb769d77cfcabd54c2436c7c02f7cf4effd076b12171f461022a6830"
+      "hash": "149055caf6abdfef71920852b141f1ebf4a67f1ec49fea7f2027581429183b08"
     },
     {
       "path": "src/components/ui/Input.tsx",
@@ -338,7 +342,7 @@
     },
     {
       "path": "src/features/entries/entryStorage.ts",
-      "hash": "4aa8d5ed4b7bc6e955ee0dd0e52c9c489d7af6beaf892954134d2ef2931e4771"
+      "hash": "99f687b1243b2499289e9234f19e27f443509cc8e5cd91d18e687d2a86435941"
     },
     {
       "path": "src/features/entries/useTodayData.ts",
@@ -478,7 +482,7 @@
     },
     {
       "path": "src/features/entries/entryStorage.ts",
-      "hash": "4aa8d5ed4b7bc6e955ee0dd0e52c9c489d7af6beaf892954134d2ef2931e4771"
+      "hash": "99f687b1243b2499289e9234f19e27f443509cc8e5cd91d18e687d2a86435941"
     },
     {
       "path": "src/features/entries/useTodayData.ts",
@@ -486,7 +490,7 @@
     },
     {
       "path": "src/features/entries/TodayPage.tsx",
-      "hash": "2c14dbc9bb769d77cfcabd54c2436c7c02f7cf4effd076b12171f461022a6830"
+      "hash": "149055caf6abdfef71920852b141f1ebf4a67f1ec49fea7f2027581429183b08"
     },
     {
       "path": "src/lib/dates/today.ts",
@@ -604,11 +608,11 @@
   "ADRS/2026_05_14_17_06_[ADR]_creation_des_entrees_du_jour_local_first": [
     {
       "path": "src/features/entries/TodayPage.tsx",
-      "hash": "2c14dbc9bb769d77cfcabd54c2436c7c02f7cf4effd076b12171f461022a6830"
+      "hash": "149055caf6abdfef71920852b141f1ebf4a67f1ec49fea7f2027581429183b08"
     },
     {
       "path": "src/features/entries/entryStorage.ts",
-      "hash": "4aa8d5ed4b7bc6e955ee0dd0e52c9c489d7af6beaf892954134d2ef2931e4771"
+      "hash": "99f687b1243b2499289e9234f19e27f443509cc8e5cd91d18e687d2a86435941"
     },
     {
       "path": "src/features/entries/useTodayData.ts",
@@ -639,6 +643,34 @@
     {
       "path": "src/components/ui/StatusPill.tsx",
       "hash": "84debe612c999cdbafa6bbc8c8c80199e9c52da3067d54f785c4ae8bc13794af"
+    }
+  ],
+  "ADRS/2026_05_14_18_44_[ADR]_transformation_des_reponses_libres_en_presets_reutilisables": [
+    {
+      "path": "src/features/entries/entryStorage.ts",
+      "hash": "99f687b1243b2499289e9234f19e27f443509cc8e5cd91d18e687d2a86435941"
+    },
+    {
+      "path": "src/features/entries/TodayPage.tsx",
+      "hash": "149055caf6abdfef71920852b141f1ebf4a67f1ec49fea7f2027581429183b08"
+    },
+    {
+      "path": "src/lib/db/types.ts",
+      "hash": "800c48bbfddb0a04859c4def7583ff49dcc16d8b963b64cb7bbc0c4c84fc086c"
+    }
+  ],
+  "WORKLOG/2026_05_14_18_44_[WORKLOG]_ticket_06_transformer_une_reponse_libre_en_preset": [
+    {
+      "path": "src/features/entries/entryStorage.ts",
+      "hash": "99f687b1243b2499289e9234f19e27f443509cc8e5cd91d18e687d2a86435941"
+    },
+    {
+      "path": "src/features/entries/TodayPage.tsx",
+      "hash": "149055caf6abdfef71920852b141f1ebf4a67f1ec49fea7f2027581429183b08"
+    },
+    {
+      "path": "src/lib/db/types.ts",
+      "hash": "800c48bbfddb0a04859c4def7583ff49dcc16d8b963b64cb7bbc0c4c84fc086c"
     }
   ]
 }

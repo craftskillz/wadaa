@@ -44,6 +44,13 @@ Le Ticket 05 ajoute la création des entrées du jour dans `src/features/entries
 - `useTodayData.ts` lit en live les presets actifs et les entrées de la date locale du jour ;
 - `TodayPage.tsx` affiche les choix rapides, le champ libre, les entrées du jour et la suppression.
 
+Le Ticket 06 ajoute la transformation des réponses libres en presets réutilisables :
+
+- `entryStorage.ts` expose `createPresetFromCustomEntry` et `normalizePresetLabel` ;
+- `TodayPage.tsx` affiche l'action `Ajouter aux choix rapides` sur les entrées `custom` ;
+- les doublons simples sont évités par comparaison normalisée ;
+- un preset archivé équivalent est réactivé plutôt que dupliqué.
+
 Le schéma Dexie indexe uniquement des clés IndexedDB sûres : chaînes et nombres. Les booléens comme `kept`, `discarded` et `archived` restent stockés dans les objets, mais ne sont pas indexés.
 
 ## UserSettings
@@ -86,6 +93,7 @@ Règles actuelles :
 
 - une entrée `preset` référence un `presetId` et son `content` reprend le label du preset au moment de la saisie ;
 - une entrée `custom` reprend le texte libre trimé ;
+- une entrée `custom` peut inspirer un preset via `LearningPreset.createdFromEntryId`, sans changer sa source ;
 - une entrée `empty` représente `Rien pour le moment` ;
 - les nouvelles entrées commencent avec `kept: false` et `discarded: false` ;
 - les insights principaux ignorent les entrées `discarded` ;
@@ -113,8 +121,9 @@ Règles actuelles :
 - les presets archivés ne sont plus proposés dans les choix rapides ;
 - le preset `Je n'ai rien appris pour le moment` est masqué sur Aujourd'hui au profit d'une action dédiée `Rien pour le moment` ;
 - cliquer sur un preset incrémente `usageCount` dans la même transaction que la création d'entrée ;
-- une réponse libre peut créer un preset avec `createdFromEntryId` au Ticket 06 ;
-- les doublons simples doivent être évités avant création.
+- une réponse libre peut créer un preset avec `createdFromEntryId` ;
+- les doublons simples sont évités en comparant les labels trimés, avec espaces multiples repliés et minuscule locale française ;
+- un preset archivé équivalent est réactivé plutôt que dupliqué.
 
 ## WeeklyReview
 
