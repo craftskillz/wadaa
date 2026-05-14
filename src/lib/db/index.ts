@@ -23,3 +23,4 @@ export type {
   WeekStartDay,
   WeeklyReview,
 } from "./types";
+export { LOCAL_SETTINGS_ID } from "./types";

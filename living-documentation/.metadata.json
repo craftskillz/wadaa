@@ -10,7 +10,7 @@
     },
     {
       "path": "living-documentation/ROADMAP/2026_05_14_09_48_[ROADMAP]_tickets_mvp.md",
-      "hash": "647c5145041d8bc1f391b8cdfddf70ea80bbe7b6fcc9ee82a390a2dbab6a612d"
+      "hash": "3c8060db239d6a8fb240c001be3701963f8e9dcd1dcb082dbc714f390b2578e3"
     },
     {
       "path": "src/lib/db/database.ts",
@@ -32,11 +32,11 @@
     },
     {
       "path": "living-documentation/ROADMAP/2026_05_14_09_48_[ROADMAP]_tickets_mvp.md",
-      "hash": "647c5145041d8bc1f391b8cdfddf70ea80bbe7b6fcc9ee82a390a2dbab6a612d"
+      "hash": "3c8060db239d6a8fb240c001be3701963f8e9dcd1dcb082dbc714f390b2578e3"
     },
     {
       "path": "living-documentation/AI/PROJECT-STACK.md",
-      "hash": "f01835aa894173c50a492f18792fbb3c184e282b548405a10955f91e483f4d88"
+      "hash": "8910cdc5dc122f320598eca582a008694c7d5e993027a58adcb4759537467495"
     },
     {
       "path": "package.json",
@@ -52,7 +52,7 @@
     },
     {
       "path": "src/components/layout/AppShell.tsx",
-      "hash": "30ca5f2e21e68dacb2ab400f68cf62b74f8ac5d2632a3f4f2e4fcfcddbfa0061"
+      "hash": "ff10335c621a10fddab1b7b2cfbc9833ad41c721d22568dfe7bf685d89c6e577"
     },
     {
       "path": "src/lib/db/database.ts",
@@ -84,7 +84,7 @@
     },
     {
       "path": "living-documentation/ROADMAP/2026_05_14_09_48_[ROADMAP]_tickets_mvp.md",
-      "hash": "647c5145041d8bc1f391b8cdfddf70ea80bbe7b6fcc9ee82a390a2dbab6a612d"
+      "hash": "3c8060db239d6a8fb240c001be3701963f8e9dcd1dcb082dbc714f390b2578e3"
     },
     {
       "path": "living-documentation/TECHNICAL/2026_05_14_09_49_[TECHNICAL]_recherche_semantique_post_mvp.md",
@@ -108,7 +108,7 @@
     },
     {
       "path": "src/components/layout/AppShell.tsx",
-      "hash": "30ca5f2e21e68dacb2ab400f68cf62b74f8ac5d2632a3f4f2e4fcfcddbfa0061"
+      "hash": "ff10335c621a10fddab1b7b2cfbc9833ad41c721d22568dfe7bf685d89c6e577"
     },
     {
       "path": "src/styles/index.css",
@@ -173,6 +173,22 @@
     {
       "path": "src/features/settings/SettingsPage.tsx",
       "hash": "2bf2749a59f0ab79328bf1691f69310d828e8b1d2bc3172906d2aff0a0cbb69c"
+    },
+    {
+      "path": "src/features/onboarding/OnboardingPage.tsx",
+      "hash": "4f0737f1c06cb14d5a0d5f5b8e0c6c6e2a99bfa955c9a9b425e6642daed935d1"
+    },
+    {
+      "path": "src/features/onboarding/onboardingStorage.ts",
+      "hash": "d475a607f8d1a378d4fb318b8e550544a02fb83059f632a933de104fa5e28a2b"
+    },
+    {
+      "path": "src/features/onboarding/useOnboardingStatus.ts",
+      "hash": "5b2ddad4aaf3eb75b90717bcc255db3ec64842b4f2f1faa57a1476c38b4a0606"
+    },
+    {
+      "path": "src/lib/ids/createId.ts",
+      "hash": "c0e1a9e602dfb4f980b5f0005b7aa00b015f6097bdc8635f3ec4ea864797a083"
     }
   ],
   "AI/PROJECT-INSTRUCTIONS": [
@@ -206,7 +222,7 @@
   "WORKLOG/current-task": [
     {
       "path": "living-documentation/AI/PROJECT-STACK.md",
-      "hash": "f01835aa894173c50a492f18792fbb3c184e282b548405a10955f91e483f4d88"
+      "hash": "8910cdc5dc122f320598eca582a008694c7d5e993027a58adcb4759537467495"
     },
     {
       "path": "living-documentation/AI/PROJECT-USEFUL-COMMANDS.md",
@@ -214,7 +230,7 @@
     },
     {
       "path": "living-documentation/ROADMAP/2026_05_14_09_48_[ROADMAP]_tickets_mvp.md",
-      "hash": "647c5145041d8bc1f391b8cdfddf70ea80bbe7b6fcc9ee82a390a2dbab6a612d"
+      "hash": "3c8060db239d6a8fb240c001be3701963f8e9dcd1dcb082dbc714f390b2578e3"
     },
     {
       "path": "package.json",
@@ -226,7 +242,7 @@
     },
     {
       "path": "src/components/layout/AppShell.tsx",
-      "hash": "30ca5f2e21e68dacb2ab400f68cf62b74f8ac5d2632a3f4f2e4fcfcddbfa0061"
+      "hash": "ff10335c621a10fddab1b7b2cfbc9833ad41c721d22568dfe7bf685d89c6e577"
     },
     {
       "path": "README.md",
@@ -287,6 +303,26 @@
     {
       "path": "src/features/settings/SettingsPage.tsx",
       "hash": "2bf2749a59f0ab79328bf1691f69310d828e8b1d2bc3172906d2aff0a0cbb69c"
+    },
+    {
+      "path": "src/features/onboarding/OnboardingPage.tsx",
+      "hash": "4f0737f1c06cb14d5a0d5f5b8e0c6c6e2a99bfa955c9a9b425e6642daed935d1"
+    },
+    {
+      "path": "src/features/onboarding/onboardingStorage.ts",
+      "hash": "d475a607f8d1a378d4fb318b8e550544a02fb83059f632a933de104fa5e28a2b"
+    },
+    {
+      "path": "src/features/onboarding/useOnboardingStatus.ts",
+      "hash": "5b2ddad4aaf3eb75b90717bcc255db3ec64842b4f2f1faa57a1476c38b4a0606"
+    },
+    {
+      "path": "src/features/onboarding/onboardingOptions.ts",
+      "hash": "9e5da631d212ee0c1cf35b70320550ac4716f290d30766e6eecb2bdec7557315"
+    },
+    {
+      "path": "src/lib/ids/createId.ts",
+      "hash": "c0e1a9e602dfb4f980b5f0005b7aa00b015f6097bdc8635f3ec4ea864797a083"
     }
   ],
   "AI/PROJECT-USEFUL-COMMANDS": [
@@ -471,6 +507,58 @@
     {
       "path": "src/lib/db/index.ts",
       "hash": "75b516305ca6c0da15fa602eac71ad0f1dcccaf1ea5435a9f7df0ab22ee4362a"
+    }
+  ],
+  "ADRS/2026_05_14_16_44_[ADR]_onboarding_determine_par_settings_local": [
+    {
+      "path": "src/components/layout/AppShell.tsx",
+      "hash": "ff10335c621a10fddab1b7b2cfbc9833ad41c721d22568dfe7bf685d89c6e577"
+    },
+    {
+      "path": "src/features/onboarding/OnboardingPage.tsx",
+      "hash": "4f0737f1c06cb14d5a0d5f5b8e0c6c6e2a99bfa955c9a9b425e6642daed935d1"
+    },
+    {
+      "path": "src/features/onboarding/onboardingStorage.ts",
+      "hash": "d475a607f8d1a378d4fb318b8e550544a02fb83059f632a933de104fa5e28a2b"
+    },
+    {
+      "path": "src/features/onboarding/useOnboardingStatus.ts",
+      "hash": "5b2ddad4aaf3eb75b90717bcc255db3ec64842b4f2f1faa57a1476c38b4a0606"
+    },
+    {
+      "path": "src/features/onboarding/onboardingOptions.ts",
+      "hash": "9e5da631d212ee0c1cf35b70320550ac4716f290d30766e6eecb2bdec7557315"
+    },
+    {
+      "path": "src/lib/ids/createId.ts",
+      "hash": "c0e1a9e602dfb4f980b5f0005b7aa00b015f6097bdc8635f3ec4ea864797a083"
+    }
+  ],
+  "WORKLOG/2026_05_14_16_41_[WORKLOG]_ticket_04_creer_onboarding": [
+    {
+      "path": "src/components/layout/AppShell.tsx",
+      "hash": "ff10335c621a10fddab1b7b2cfbc9833ad41c721d22568dfe7bf685d89c6e577"
+    },
+    {
+      "path": "src/features/onboarding/OnboardingPage.tsx",
+      "hash": "4f0737f1c06cb14d5a0d5f5b8e0c6c6e2a99bfa955c9a9b425e6642daed935d1"
+    },
+    {
+      "path": "src/features/onboarding/onboardingStorage.ts",
+      "hash": "d475a607f8d1a378d4fb318b8e550544a02fb83059f632a933de104fa5e28a2b"
+    },
+    {
+      "path": "src/features/onboarding/useOnboardingStatus.ts",
+      "hash": "5b2ddad4aaf3eb75b90717bcc255db3ec64842b4f2f1faa57a1476c38b4a0606"
+    },
+    {
+      "path": "src/features/onboarding/onboardingOptions.ts",
+      "hash": "9e5da631d212ee0c1cf35b70320550ac4716f290d30766e6eecb2bdec7557315"
+    },
+    {
+      "path": "src/lib/ids/createId.ts",
+      "hash": "c0e1a9e602dfb4f980b5f0005b7aa00b015f6097bdc8635f3ec4ea864797a083"
     }
   ]
 }

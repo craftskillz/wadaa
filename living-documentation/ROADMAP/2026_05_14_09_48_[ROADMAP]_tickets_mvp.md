@@ -9,22 +9,22 @@
 
 ## Ordre recommandé
 
-1. Ticket 01 - Initialiser le projet frontend
-2. Ticket 02 - Créer le design system minimal
-3. Ticket 03 - Installer IndexedDB avec Dexie
-4. Ticket 04 - Créer l'onboarding
-5. Ticket 05 - Écran Aujourd'hui
-6. Ticket 06 - Transformer une réponse libre en preset
-7. Ticket 08 - Revue hebdomadaire
-8. Ticket 09 - Courbe d'apprentissage
-9. Ticket 10 - Réglages
-10. Ticket 07 - Calendrier d'apprentissage
-11. Ticket 11 - Worker R2
-12. Ticket 12 - Backup/restore
-13. Ticket 13 - Auth Google
-14. Ticket 14 - Reminders UI
-15. Ticket 15 - Web Push notifications
-16. Ticket 16 - Polish UI moderne
+1. [x] ~~Ticket 01 - Initialiser le projet frontend~~
+2. [x] ~~Ticket 02 - Créer le design system minimal~~
+3. [x] ~~Ticket 03 - Installer IndexedDB avec Dexie~~
+4. [x] ~~Ticket 04 - Créer l'onboarding~~
+5. [ ] Ticket 05 - Écran Aujourd'hui
+6. [ ] Ticket 06 - Transformer une réponse libre en preset
+7. [ ] Ticket 08 - Revue hebdomadaire
+8. [ ] Ticket 09 - Courbe d'apprentissage
+9. [ ] Ticket 10 - Réglages
+10. [ ] Ticket 07 - Calendrier d'apprentissage
+11. [ ] Ticket 11 - Worker R2
+12. [ ] Ticket 12 - Backup/restore
+13. [ ] Ticket 13 - Auth Google
+14. [ ] Ticket 14 - Reminders UI
+15. [ ] Ticket 15 - Web Push notifications
+16. [ ] Ticket 16 - Polish UI moderne
 
 ## Ticket 01 - Initialiser le projet frontend
 

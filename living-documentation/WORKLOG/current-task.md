@@ -2,7 +2,7 @@
 **date:** 2026-05-14
 **status:** Idle
 **description:** Point de reprise partagé entre assistants IA pour suivre la tâche courante, son statut, les fichiers touchés, les vérifications et la prochaine action.
-**tags:** worklog, handoff, progression, reprise, agents-ia, ticket-03, indexeddb, dexie
+**tags:** worklog, handoff, progression, reprise, agents-ia, ticket-04, onboarding
 ---
 
 # Current task
@@ -19,37 +19,34 @@ Aucune tâche d'implémentation n'est en cours.
 
 ## Dernière action réalisée
 
-Ticket 03 terminé : Dexie installé, base IndexedDB locale créée, types MVP ajoutés, repositories CRUD créés, export/import JSON complet ajoutés, et panneau Settings `Données locales` branché pour vérifier les compteurs, l'export et l'import.
+Ticket 04 terminé : onboarding interactif créé, garde de premier lancement ajouté, settings et presets initiaux sauvegardés localement dans Dexie, puis redirection vers Aujourd'hui après finalisation.
 
 ## Prochaine action recommandée
 
-Démarrer le Ticket 04 : créer l'onboarding.
+Démarrer le Ticket 05 : Écran Aujourd'hui.
 
-Priorité recommandée pour Ticket 04 : utiliser `settingsRepository` pour sauvegarder les heures de rappel, le premier jour de semaine et les premiers presets locaux, puis rediriger vers l'écran Aujourd'hui.
+Priorité recommandée pour Ticket 05 : charger les presets non archivés depuis IndexedDB, créer les `LearningEntry` du jour depuis un preset, une réponse libre ou `Rien pour le moment`, afficher les entrées du jour et permettre leur suppression.
 
 ## Fichiers ou zones concernés
 
-- `package.json`
-- `package-lock.json`
+- `src/components/layout/AppShell.tsx`
+- `src/features/onboarding/`
 - `src/lib/db/`
-- `src/features/settings/SettingsPage.tsx`
-- `living-documentation/TECHNICAL/2026_05_14_09_47_[TECHNICAL]_modele_de_donnees_mvp.md`
-- `living-documentation/WORKLOG/2026_05_14_16_17_[WORKLOG]_ticket_03_installer_indexeddb_avec_dexie.md`
+- `src/lib/ids/`
+- `living-documentation/ADRS/2026_05_14_16_44_[ADR]_onboarding_determine_par_settings_local.md`
+- `living-documentation/WORKLOG/2026_05_14_16_41_[WORKLOG]_ticket_04_creer_onboarding.md`
 - `living-documentation/AI/PROJECT-STACK.md`
 
 ## Vérifications récentes
 
-- `npm install dexie` : OK après autorisation réseau.
 - `npm run lint` : OK.
 - `npm run build` : OK.
-- `curl -I http://localhost:5173/settings` : OK 200.
-- `curl -I http://[::1]:5173/settings` : OK 200.
-- MCP Living Documentation disponible, documents et métadonnées mis à jour.
+- `curl -I http://localhost:5173/onboarding` : OK 200.
+- `curl -I http://[::1]:5173/onboarding` : OK 200.
+- MCP Living Documentation disponible, ADR créé et métadonnées rafraîchies.
 
 ## Notes de reprise
 
-Le schéma Dexie n'indexe pas les booléens (`kept`, `discarded`, `archived`) car ce ne sont pas des clés IndexedDB sûres. Filtrer ces champs côté requête si nécessaire.
+Le Ticket 04 reste sans notifications Web Push, sans auth et sans backend. Les reminders sauvegardés sont des préférences passives jusqu'au Ticket Reminders UI.
 
-Le Ticket 03 reste volontairement sans backend. Le backup R2, l'auth Google, l'onboarding complet et la saisie réelle des entrées restent pour les tickets suivants.
-
-Pour les prochaines vérifications navigateur Codex, utiliser `http://[::1]:5173/` si `http://127.0.0.1:5173/` échoue.
+Le premier lancement est déterminé par l'absence de `UserSettings("local")`. Pour rejouer l'onboarding, prévoir une action explicite de reset ou suppression des données locales.
