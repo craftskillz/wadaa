@@ -1,0 +1,66 @@
+{
+  "ADRS/2026_05_14_09_49_[ADR]_mvp_local_first_avec_indexeddb_comme_source_principale": [
+    {
+      "path": "living-documentation/PRODUCT/2026_05_14_09_47_[PRODUCT]_vision_produit_et_mvp.md",
+      "hash": "8b77530e08e1709574d54058ce83df7c60757a6ca691c6994d59fc626ad15420"
+    },
+    {
+      "path": "living-documentation/TECHNICAL/2026_05_14_09_47_[TECHNICAL]_modele_de_donnees_mvp.md",
+      "hash": "3e1e23177669c21b4d82ccfe9b5cdf81c2d170c07f28746b00814aa7eb2e707a"
+    },
+    {
+      "path": "living-documentation/ROADMAP/2026_05_14_09_48_[ROADMAP]_tickets_mvp.md",
+      "hash": "647c5145041d8bc1f391b8cdfddf70ea80bbe7b6fcc9ee82a390a2dbab6a612d"
+    }
+  ],
+  "ADRS/2026_05_14_09_49_[ADR]_stack_frontend_cible_react_typescript_vite_tailwind_dexie": [
+    {
+      "path": "living-documentation/PRODUCT/2026_05_14_09_47_[PRODUCT]_vision_produit_et_mvp.md",
+      "hash": "8b77530e08e1709574d54058ce83df7c60757a6ca691c6994d59fc626ad15420"
+    },
+    {
+      "path": "living-documentation/PRODUCT/2026_05_14_09_47_[PRODUCT]_parcours_et_ecrans_mvp.md",
+      "hash": "d5802699503bfb06aac5cdd76a921d13b6c38762a747e8177eb29d18d82b15a7"
+    },
+    {
+      "path": "living-documentation/ROADMAP/2026_05_14_09_48_[ROADMAP]_tickets_mvp.md",
+      "hash": "647c5145041d8bc1f391b8cdfddf70ea80bbe7b6fcc9ee82a390a2dbab6a612d"
+    },
+    {
+      "path": "living-documentation/AI/PROJECT-STACK.md",
+      "hash": "0fd00fb28026121c05df504cb6f13daba885f6fc0e2c853ac6c356be643730bb"
+    }
+  ],
+  "ADRS/2026_05_14_09_49_[ADR]_reporter_embeddings_et_llm_apres_validation_produit": [
+    {
+      "path": "living-documentation/TECHNICAL/2026_05_14_09_49_[TECHNICAL]_recherche_semantique_post_mvp.md",
+      "hash": "7f667bca7c7a08779b69d3dbd1c21277beeb17023c2eefbd7091dc84d5ebf936"
+    },
+    {
+      "path": "living-documentation/PRODUCT/2026_05_14_09_47_[PRODUCT]_vision_produit_et_mvp.md",
+      "hash": "8b77530e08e1709574d54058ce83df7c60757a6ca691c6994d59fc626ad15420"
+    },
+    {
+      "path": "living-documentation/ROADMAP/2026_05_14_09_48_[ROADMAP]_tickets_mvp.md",
+      "hash": "647c5145041d8bc1f391b8cdfddf70ea80bbe7b6fcc9ee82a390a2dbab6a612d"
+    }
+  ],
+  "AI/PROJECT-STACK": [
+    {
+      "path": "living-documentation/PRODUCT/2026_05_14_09_47_[PRODUCT]_vision_produit_et_mvp.md",
+      "hash": "8b77530e08e1709574d54058ce83df7c60757a6ca691c6994d59fc626ad15420"
+    },
+    {
+      "path": "living-documentation/TECHNICAL/2026_05_14_09_47_[TECHNICAL]_modele_de_donnees_mvp.md",
+      "hash": "3e1e23177669c21b4d82ccfe9b5cdf81c2d170c07f28746b00814aa7eb2e707a"
+    },
+    {
+      "path": "living-documentation/ROADMAP/2026_05_14_09_48_[ROADMAP]_tickets_mvp.md",
+      "hash": "647c5145041d8bc1f391b8cdfddf70ea80bbe7b6fcc9ee82a390a2dbab6a612d"
+    },
+    {
+      "path": "living-documentation/TECHNICAL/2026_05_14_09_49_[TECHNICAL]_recherche_semantique_post_mvp.md",
+      "hash": "7f667bca7c7a08779b69d3dbd1c21277beeb17023c2eefbd7091dc84d5ebf936"
+    }
+  ]
+}

@@ -1,4 +1,4 @@
-# PROJECT-USEFUL-COMMANDS - Template
+# PROJECT-USEFUL-COMMANDS
 
 Ce fichier décrit les commandes réellement utiles pour travailler sur le projet. Il doit permettre à une IA de choisir la bonne vérification sans deviner.
 
@@ -16,65 +16,73 @@ L'IA doit proposer une mise à jour de ce fichier lorsqu'une tâche :
 
 Avant d'ajouter une commande, vérifier qu'elle existe réellement dans `package.json`, un Makefile, un script ou la documentation du projet.
 
-## Package manager
+## État actuel
 
-Indiquer le package manager attendu et la règle associée.
+Le dépôt ne contient pas encore de code applicatif, de `package.json`, de scripts npm, de Makefile ou de configuration de tests.
 
-```text
-npm | pnpm | yarn | bun | autre
-```
+Ne pas lancer ni documenter comme disponible une commande applicative avant le Ticket 01.
 
-Si le projet impose un package manager, créer ou mettre à jour une règle dans `AI/rules/`.
+## Package manager cible
 
-## Installation
+`npm` est le choix par défaut pour initialiser le projet frontend, sauf décision explicite contraire au moment du Ticket 01.
 
-| Commande | Quand l'utiliser | Notes |
+Ce choix devra être confirmé par les fichiers réellement créés : `package.json` et lockfile.
+
+## Commandes actuellement vérifiables
+
+| Commande | Effet | Quand l'utiliser |
 |---|---|---|
-| `npm install` | Après clone ou changement de dépendances | Adapter au package manager réel. |
+| `git status --short` | Vérifie l'état Git du dépôt | Avant et après une série de modifications |
+
+## Commandes attendues après Ticket 01
+
+Ces commandes sont des attentes de roadmap, pas des commandes disponibles tant que le frontend n'existe pas.
+
+| Commande cible | Effet attendu | Condition avant documentation définitive |
+|---|---|---|
+| `npm install` | Installer les dépendances | Vérifier `package.json` et le lockfile |
+| `npm run dev` | Démarrer le serveur Vite local | Vérifier le script `dev` |
+| `npm run build` | Compiler l'app | Vérifier le script `build` |
+| `npm run lint` | Lancer le lint | Vérifier le script `lint` |
+| `npm run format` | Formater le code | Vérifier le script `format` si un formateur est ajouté |
+| `npm test` ou équivalent | Lancer les tests | Vérifier le runner choisi |
 
 ## Développement local
 
-| Commande | Effet | Notes |
-|---|---|---|
-| `npm run dev` | Démarre le serveur local | Préciser le port et les prérequis. |
+À compléter après création du projet Vite.
+
+L'agent doit noter le port réel du serveur de développement quand il est connu.
 
 ## Qualité
 
-| Commande | Effet | Quand la lancer |
-|---|---|---|
-| `npm run build` | Compile ou bundle le projet | Après changement de code typé, build config ou assets copiés. |
-| `npm test` | Lance les tests | Après changement de comportement. |
-| `npm run lint` | Lance le lint | Si le projet possède un lint. |
-| `npm run format` | Formate le code | Si le projet possède un formateur. |
+À compléter après création du projet frontend.
 
-## Tests ciblés
-
-Documenter les commandes qui permettent de vérifier un périmètre sans lancer toute la suite.
-
-| Commande | Périmètre |
-|---|---|
-| `npm test -- <pattern>` | Adapter au runner réel. |
+Règle actuelle : lancer la plus petite vérification utile disponible. Tant qu'aucun script applicatif n'existe, vérifier au minimum l'état Git et la cohérence documentaire via le MCP Living Documentation.
 
 ## Setup initial
 
-Lister les étapes nécessaires après un clone ou une initialisation.
+À compléter après Ticket 01.
+
+Le setup cible probable est :
 
 ```bash
-# Exemple à remplacer
-cp .env.example .env
 npm install
+npm run dev
 ```
+
+Ne pas le présenter comme validé tant que les scripts n'existent pas.
 
 ## Commandes dangereuses ou coûteuses
 
-Lister les commandes qui modifient l'environnement, suppriment des données, lancent un déploiement ou coûtent de l'argent.
-
 | Commande | Risque | Règle |
 |---|---|---|
-| `npm run deploy` | Déploiement réel | Demander validation explicite avant exécution. |
+| Déploiement Cloudflare | Déploiement réel ou modification d'environnement distant | Demander validation explicite avant exécution |
+| Réinitialisation de données locales | Perte de données utilisateur | Demander confirmation dans l'UI et dans toute commande ou script associé |
+| Suppression de bucket ou objets R2 | Perte de backups | Demander validation explicite avant exécution |
 
 ## Notes pour l'IA
 
-- Lancer la plus petite vérification utile avant de terminer.
-- Si une commande échoue, reporter la commande exacte, le symptôme et l'hypothèse la plus probable.
 - Ne pas inventer de scripts : si une commande manque, le dire et proposer de l'ajouter.
+- Après Ticket 01, remplacer les commandes cibles par les scripts réellement présents dans `package.json`.
+- Si une commande échoue, reporter la commande exacte, le symptôme et l'hypothèse la plus probable.
+- Quand un document technique ou ADR est aligné avec le code, mettre à jour ou rafraîchir ses métadonnées Living Documentation.
