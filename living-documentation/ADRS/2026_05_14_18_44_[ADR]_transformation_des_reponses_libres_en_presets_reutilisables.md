@@ -9,7 +9,7 @@
 
 ## Contexte
 
-Le Ticket 06 enrichit l'écran Aujourd'hui : une réponse libre intéressante doit pouvoir devenir un choix rapide réutilisable sans quitter le flux de saisie.
+Le Ticket 06 enrichit l'écran Aujourd'hui : une idée libre intéressante doit pouvoir devenir un choix rapide réutilisable sans quitter le flux de saisie.
 
 Le modèle `LearningPreset` contient déjà `createdFromEntryId`, ce qui permet de relier un choix rapide à l'entrée libre qui l'a inspiré sans modifier le schéma Dexie.
 
@@ -52,4 +52,4 @@ L'écran Aujourd'hui affiche l'action `Ajouter aux choix rapides` uniquement sur
 - ADR `Schéma Dexie v1 et snapshot JSON local`
 - `PRODUCT / Parcours et écrans MVP`
 - `TECHNICAL / Modèle de données MVP`
-- `WORKLOG / Ticket 06 Transformer une réponse libre en preset`
+- `WORKLOG / Ticket 06 Transformer une idée libre en preset`

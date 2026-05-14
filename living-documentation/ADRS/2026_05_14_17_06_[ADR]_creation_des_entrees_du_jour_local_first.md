@@ -1,17 +1,17 @@
 ---
 **date:** 2026-05-14
 **status:** Accepted
-**description:** L'écran Aujourd'hui crée localement les `LearningEntry` du jour depuis un preset, une réponse libre ou l'action vide, avec affichage live et suppression physique.
-**tags:** adr, entries, today-page, learning-entry, presets, dexie, local-first, empty-entry, deletion
+**description:** L'écran Aujourd'hui crée localement les `LearningEntry` du jour depuis une idée courte, une description obligatoire et une URL facultative, avec affichage live et suppression physique.
+**tags:** adr, entries, today-page, learning-entry, presets, dexie, local-first, description, url, deletion
 ---
 
 # Création des entrées du jour local-first
 
 ## Contexte
 
-Le Ticket 05 branche l'écran Aujourd'hui sur IndexedDB. Après l'onboarding, l'utilisateur dispose de presets locaux et doit pouvoir capturer rapidement un apprentissage sans backend.
+Le Ticket 05 branche l'écran Aujourd'hui sur IndexedDB. Après l'onboarding, l'utilisateur dispose de presets locaux et doit pouvoir capturer un apprentissage sans backend.
 
-Le modèle `LearningEntry` prévoit trois sources : `preset`, `custom` et `empty`. Il faut définir comment l'écran Aujourd'hui instancie ces sources et comment il affiche les entrées créées.
+Le modèle `LearningEntry` prévoit les sources `preset`, `custom` et `empty`. Les ajustements de l'écran Today ajoutent une description obligatoire et une URL facultative pour enrichir chaque apprentissage.
 
 ## Décision
 
@@ -22,9 +22,13 @@ L'écran Aujourd'hui lit en live depuis Dexie :
 
 La création d'entrée suit ces règles :
 
-- clic sur un preset : crée une `LearningEntry` `source: "preset"`, avec `content` égal au label du preset et `presetId` renseigné ;
-- réponse libre non vide : crée une `LearningEntry` `source: "custom"`, avec le contenu trimé ;
-- action `Rien pour le moment` : crée une `LearningEntry` `source: "empty"`, avec `content: "Rien pour le moment"`.
+- cliquer sur un preset ne crée plus immédiatement l'entrée : le preset préremplit le champ `Idée` ;
+- `Ajouter à ma journée` exige un champ `Idée` non vide et une `Description` non vide ;
+- si l'idée correspond au preset sélectionné, une `LearningEntry` `source: "preset"` est créée avec `presetId` renseigné ;
+- sinon une `LearningEntry` `source: "custom"` est créée avec le contenu libre trimé ;
+- `description` stocke le détail saisi dans la textarea ;
+- `url` stocke un lien facultatif validé côté client quand il est renseigné ;
+- l'action `Rien pour le moment` et le preset équivalent ne sont plus exposés dans la popup Today, même si la source `empty` reste supportée pour compatibilité avec les données existantes.
 
 Les nouvelles entrées démarrent avec `kept: false` et `discarded: false`. La curation et le rating restent réservés à la revue hebdomadaire.
 
@@ -36,15 +40,16 @@ La suppression depuis l'écran Aujourd'hui supprime physiquement l'entrée local
 
 ### PROS
 
-- La saisie du jour est rapide et immédiatement persistée localement.
+- Chaque apprentissage possède un résumé court et un détail relisible.
+- L'URL facultative prépare l'enrichissement visuel des cards, par exemple via miniature YouTube.
 - Les entrées du jour restent visibles après refresh via IndexedDB.
-- La séparation `empty` / `preset` garde une sémantique claire pour les futurs insights.
 - `usageCount` prépare le tri des choix rapides sans backend.
 
 ### CONS
 
+- La capture est moins instantanée qu'un simple clic preset, car une description est obligatoire.
+- Les anciennes entrées sans description restent possibles dans les données locales et doivent être affichées sans casser l'UI.
 - La suppression d'une entrée du jour est définitive pour le stockage local courant.
-- L'action `Rien pour le moment` est dédiée, donc le preset d'onboarding équivalent est masqué dans les choix rapides.
 - Les entrées ne sont pas automatiquement gardées : elles devront être qualifiées par la revue hebdomadaire.
 
 ## Documents liés

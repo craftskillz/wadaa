@@ -20,9 +20,9 @@ Ne pas documenter ici les détails volatils, les TODO temporaires ou les informa
 
 `Qu'as-tu appris aujourd'hui ?` est une application web personnelle de journaling d'apprentissage.
 
-Le produit permet maintenant d'initialiser l'expérience localement via onboarding, puis de capturer les apprentissages du jour depuis l'écran Aujourd'hui. Les entrées sont persistées dans IndexedDB et les réponses libres peuvent devenir des choix rapides réutilisables.
+Le produit permet maintenant d'initialiser l'expérience localement via onboarding, puis de capturer les apprentissages du jour depuis l'écran Aujourd'hui. Les entrées sont persistées dans IndexedDB avec idée courte, description obligatoire et URL facultative. Quand une URL est présente, une couverture est résolue en arrière-plan (YouTube → Microlink → favicon) et stockée localement sous forme de `Blob`. Les réponses libres peuvent devenir des choix rapides réutilisables, et l'écran Today utilise une timeline visuelle avec éléments de capture fixes et navigation principale en drawer inférieur.
 
-Le projet contient une base frontend MVP, un design system minimal, une couche de stockage local-first IndexedDB via Dexie, un onboarding local qui initialise settings + presets, un écran Aujourd'hui qui crée les `LearningEntry` du jour et la transformation des réponses `custom` en `LearningPreset`. La revue, les insights et le calendrier restent à implémenter.
+Le projet contient une base frontend MVP, un design system minimal, une couche de stockage local-first IndexedDB via Dexie, un onboarding local qui initialise settings + presets, un écran Aujourd'hui qui crée les `LearningEntry` du jour, la transformation des réponses `custom` en `LearningPreset`, et une direction visuelle basée sur un chemin chronologique. La revue, les insights et le calendrier restent à implémenter.
 
 ## Stack cible MVP
 
@@ -31,7 +31,7 @@ Le projet contient une base frontend MVP, un design system minimal, une couche d
 - **Framework frontend** : React
 - **Framework backend / serveur** : Cloudflare Workers pour backup/restore après le coeur local-first
 - **Base de données / stockage** : IndexedDB via Dexie dans le navigateur ; Cloudflare R2 pour snapshot JSON de backup plus tard
-- **API externes / intégrations** : Google OAuth plus tard pour isoler les backups ; Web Push plus tard pour les notifications
+- **API externes / intégrations** : Microlink (`https://api.microlink.io/`) pour résoudre les couvertures d'entrée pendant le MVP ; Google OAuth plus tard pour isoler les backups ; Web Push plus tard pour les notifications
 - **Authentification / autorisation** : aucune obligatoire au coeur MVP ; Google OAuth prévu post-coeur local-first
 - **Styles / design system** : Tailwind CSS ; composants maison inspirés shadcn/ui
 - **Charts** : Recharts
@@ -43,7 +43,7 @@ Le projet contient une base frontend MVP, un design system minimal, une couche d
 
 ## Stack réellement installée
 
-Versions installées après le Ticket 06 :
+Versions installées après le Ticket 07 :
 
 - **React** : `react` 19.2.6, `react-dom` 19.2.6
 - **Routing** : `react-router-dom` 7.15.0
@@ -74,9 +74,9 @@ vite.config.ts                    <- configuration Vite + React + Tailwind
 eslint.config.js                  <- configuration ESLint flat config
 tsconfig*.json                    <- configuration TypeScript
 src/app/                          <- App, router et navigation
-src/components/layout/            <- AppShell, BottomNav, PageHeader
+src/components/layout/            <- AppShell, BottomNav drawer, PageHeader
 src/components/ui/                <- design system minimal : Button, Card, Input, Textarea, EmojiBadge, EmptyState, StatusPill
-src/features/entries/             <- écran Aujourd'hui, création/suppression d'entrées, custom vers preset, calendrier
+src/features/entries/             <- écran Aujourd'hui, timeline, création/suppression d'entrées, custom vers preset, calendrier
 src/features/reviews/             <- revue hebdomadaire
 src/features/insights/            <- courbes et stats
 src/features/settings/            <- réglages et vérification export/import local
@@ -129,8 +129,11 @@ Les dossiers `presets` et `lib/dates` restent à enrichir pour les tickets suiva
 
 - **Local-first** : IndexedDB est la source principale de vérité pendant le MVP. Voir l'ADR `MVP local-first avec IndexedDB comme source principale`.
 - **Onboarding** : le premier lancement est déterminé par l'absence de `UserSettings("local")`; l'onboarding crée settings et presets initiaux. Voir l'ADR `Onboarding déterminé par settings local`.
-- **LearningEntry** : réponse utilisateur pour un jour donné, issue d'un preset, d'un texte libre ou de `Rien pour le moment`. Voir l'ADR `Création des entrées du jour local-first`.
-- **LearningPreset** : choix rapide réutilisable, y compris depuis une réponse libre transformée en preset. Voir l'ADR `Transformation des réponses libres en presets réutilisables`.
+- **LearningEntry** : apprentissage utilisateur pour un jour donné, composé d'une idée courte (`content`), d'une description optionnelle dans les anciennes données mais obligatoire dans la popup Today actuelle, et d'une URL facultative. Voir l'ADR `Création des entrées du jour local-first`.
+- **Couverture d'entrée** : `LearningEntry.coverImage?: Blob` est résolu en arrière-plan via `src/features/entries/coverImage.ts` (YouTube → Microlink → favicon DuckDuckGo), redimensionné en JPEG ≤720px et stocké dans IndexedDB. Exclu de l'export JSON. Voir l'ADR `Miniatures locales et résolution des couvertures d'entrée`.
+- **LearningPreset** : choix rapide réutilisable, y compris depuis une idée libre transformée en preset. Voir l'ADR `Transformation des réponses libres en presets réutilisables`.
+- **Timeline Today** : l'écran Aujourd'hui affiche les entrées sur un chemin vertical chronologique prolongé jusqu'au bas visible, avec cards alternées, pastilles fixes, bouton `+` centré verticalement, empty state fixe si besoin, popup centrée et cards enrichies par URL/miniature YouTube. Voir l'ADR `Timeline visuelle Today et navigation drawer`.
+- **Navigation drawer** : `BottomNav` est un drawer inférieur fixe avec poignée violette visible, ouvert au survol, au focus ou au tap.
 - **WeeklyReview** : moment de curation hebdomadaire où l'utilisateur garde, jette et note ses apprentissages.
 - **Export/import local** : `src/lib/db/localData.ts` exporte et restaure un snapshot JSON complet avec validation minimale.
 - **Insights** : courbes et métriques locales calculées depuis les entrées gardées.
@@ -146,10 +149,12 @@ Les dossiers `presets` et `lib/dates` restent à enrichir pour les tickets suiva
 - **Données locales** : les modèles doivent rester compatibles avec export/import JSON complet.
 - **Dexie** : ne pas indexer les booléens dans le schéma IndexedDB ; filtrer ces champs côté requête si nécessaire.
 - **Onboarding** : ne pas considérer l'utilisateur initialisé sans `UserSettings("local")` ; garder la finalisation settings + presets transactionnelle.
-- **Entrées du jour** : créer les entrées via `src/features/entries/entryStorage.ts`; garder `kept` et `discarded` à `false` jusqu'à la revue hebdomadaire.
+- **Entrées du jour** : créer les entrées via `src/features/entries/entryStorage.ts`; la popup Today exige une idée et une description ; garder `kept` et `discarded` à `false` jusqu'à la revue hebdomadaire.
+- **Couvertures locales** : ne pas charger la couverture pendant la requête utilisateur ; `entryStorage` déclenche `resolveAndStoreCoverImage` en arrière-plan après création, et Dexie `liveQuery` rafraîchit la card quand le `Blob` est stocké ; exclure le champ `coverImage` de l'export JSON dans `localData.ts`.
 - **Custom vers preset** : transformer une entrée libre via `createPresetFromCustomEntry`; éviter les doublons par `normalizePresetLabel` et réactiver un preset archivé équivalent plutôt que créer un doublon.
-- **Routing** : les routes MVP sont centralisées dans `src/app/router.tsx` et la navigation principale dans `src/app/navigation.ts`.
-- **Layout** : `AppShell` porte le fond, la zone scrollable et la navigation basse ; les pages ne doivent pas recréer le shell.
+- **Timeline Today** : trier les entrées chronologiquement côté `TodayPage` pour placer les nouvelles entrées en bas du chemin ; garder le formulaire dans la popup centrée déclenchée par `+` ; seule la question principale reste dans le flux scrollable parmi les éléments de capture.
+- **Navigation** : les routes MVP sont centralisées dans `src/app/router.tsx` et la navigation principale dans `src/app/navigation.ts`; `BottomNav` est le drawer partagé.
+- **Layout** : `AppShell` porte le fond, la zone scrollable pleine largeur, le padding bas pour le drawer et la navigation ; ne pas réintroduire de `max-width` global qui déplacerait la scrollbar vers l'intérieur.
 - **UI partagée** : privilégier les composants de `src/components/ui/` avant d'ajouter des classes Tailwind longues directement dans une page.
 - **Documentation** : mettre à jour les documents Living Documentation et les ADR lorsque le code rend une décision durable fausse, incomplète ou obsolète.
 - **Magic numbers** : nommer les valeurs numériques porteuses de sens dans le code applicatif, conformément à `AI/rules/no-magic-numbers.md`.

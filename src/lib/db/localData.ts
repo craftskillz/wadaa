@@ -1,8 +1,14 @@
 import { db } from "./database";
 import { parseLocalDataExport } from "./validation";
-import type { LocalDataExport, LocalDataSummary } from "./types";
+import type { LearningEntry, LocalDataExport, LocalDataSummary } from "./types";
 
 const LOCAL_DATA_SCHEMA_VERSION = 1;
+
+function stripExportFields(entry: LearningEntry): LearningEntry {
+  const exportable: LearningEntry = { ...entry };
+  delete exportable.coverImage;
+  return exportable;
+}
 
 export async function exportLocalData(): Promise<LocalDataExport> {
   const [entries, presets, weeklyReviews, settings] = await Promise.all([
@@ -16,7 +22,7 @@ export async function exportLocalData(): Promise<LocalDataExport> {
     schemaVersion: LOCAL_DATA_SCHEMA_VERSION,
     exportedAt: new Date().toISOString(),
     data: {
-      entries,
+      entries: entries.map(stripExportFields),
       presets,
       weeklyReviews,
       settings,

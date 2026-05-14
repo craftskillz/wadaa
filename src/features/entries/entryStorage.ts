@@ -2,6 +2,7 @@ import { db, entriesRepository, presetsRepository } from "../../lib/db";
 import type { LearningEntry, LearningPreset } from "../../lib/db";
 import { getTodayDateKey } from "../../lib/dates";
 import { createId } from "../../lib/ids";
+import { resolveAndStoreCoverImage } from "./coverImage";
 
 const ENTRY_ID_PREFIX = "entry";
 const PRESET_ID_PREFIX = "preset";
@@ -13,17 +14,27 @@ type CreatePresetFromEntryResult = {
   status: "created" | "alreadyExists" | "restored";
 };
 
+type EntryDetails = {
+  description?: string;
+  url?: string;
+};
+
 function createBaseEntry(
   source: LearningEntry["source"],
   content: string,
   presetId?: string,
+  details: EntryDetails = {},
 ): LearningEntry {
   const now = new Date().toISOString();
+  const description = details.description?.trim();
+  const url = details.url?.trim();
 
   return {
     id: createId(ENTRY_ID_PREFIX),
     date: getTodayDateKey(),
     content,
+    ...(description ? { description } : {}),
+    ...(url ? { url } : {}),
     source,
     presetId,
     kept: false,
@@ -37,12 +48,23 @@ export function isEmptyPreset(preset: LearningPreset) {
   return preset.label === EMPTY_PRESET_LABEL;
 }
 
-export async function createEntryFromPreset(preset: LearningPreset) {
-  if (isEmptyPreset(preset)) {
-    return createEmptyEntry();
+function scheduleCoverImageResolution(entry: LearningEntry) {
+  if (!entry.url) {
+    return;
   }
 
-  const entry = createBaseEntry("preset", preset.label, preset.id);
+  void resolveAndStoreCoverImage(entry.id, entry.url);
+}
+
+export async function createEntryFromPreset(
+  preset: LearningPreset,
+  details?: EntryDetails,
+) {
+  if (isEmptyPreset(preset)) {
+    return createEmptyEntry(details);
+  }
+
+  const entry = createBaseEntry("preset", preset.label, preset.id, details);
   const updatedAt = new Date().toISOString();
 
   await db.transaction("rw", db.entries, db.presets, async () => {
@@ -53,20 +75,26 @@ export async function createEntryFromPreset(preset: LearningPreset) {
       updatedAt,
     });
   });
+
+  scheduleCoverImageResolution(entry);
 }
 
-export async function createCustomEntry(content: string) {
+export async function createCustomEntry(content: string, details?: EntryDetails) {
   const trimmedContent = content.trim();
 
   if (!trimmedContent) {
     return;
   }
 
-  await entriesRepository.put(createBaseEntry("custom", trimmedContent));
+  const entry = createBaseEntry("custom", trimmedContent, undefined, details);
+  await entriesRepository.put(entry);
+  scheduleCoverImageResolution(entry);
 }
 
-export function createEmptyEntry() {
-  return entriesRepository.put(createBaseEntry("empty", EMPTY_ENTRY_CONTENT));
+export async function createEmptyEntry(details?: EntryDetails) {
+  const entry = createBaseEntry("empty", EMPTY_ENTRY_CONTENT, undefined, details);
+  await entriesRepository.put(entry);
+  scheduleCoverImageResolution(entry);
 }
 
 export function normalizePresetLabel(label: string) {

@@ -88,6 +88,8 @@ function isLearningEntry(value: unknown): value is LearningEntry {
     isString(value.id) &&
     isString(value.date) &&
     isString(value.content) &&
+    isOptionalString(value.description) &&
+    isOptionalString(value.url) &&
     isEntrySource(value.source) &&
     isOptionalString(value.presetId) &&
     isEntryMood(value.mood) &&

@@ -13,7 +13,7 @@ Done
 
 ## Objectif
 
-Permettre une saisie ultra rapide depuis l'écran Aujourd'hui : presets, réponse libre, option `Rien pour le moment`, affichage des entrées du jour et suppression.
+Permettre une saisie ultra rapide depuis l'écran Aujourd'hui : presets, idée libre, option `Rien pour le moment`, affichage des entrées du jour et suppression.
 
 ## Réalisé
 
@@ -45,4 +45,4 @@ Permettre une saisie ultra rapide depuis l'écran Aujourd'hui : presets, répons
 
 ## Notes de reprise
 
-Le prochain ticket recommandé est le Ticket 06 : transformer une réponse libre en preset. Les entrées custom existent maintenant et peuvent être utilisées comme source de création de `LearningPreset` avec `createdFromEntryId`.
+Le prochain ticket recommandé est le Ticket 06 : transformer une idée libre en preset. Les entrées custom existent maintenant et peuvent être utilisées comme source de création de `LearningPreset` avec `createdFromEntryId`.

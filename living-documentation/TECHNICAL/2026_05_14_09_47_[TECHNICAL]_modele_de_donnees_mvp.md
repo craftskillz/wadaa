@@ -42,7 +42,7 @@ Le Ticket 05 ajoute la création des entrées du jour dans `src/features/entries
 
 - `entryStorage.ts` crée les entrées `preset`, `custom` et `empty` ;
 - `useTodayData.ts` lit en live les presets actifs et les entrées de la date locale du jour ;
-- `TodayPage.tsx` affiche les choix rapides, le champ libre, les entrées du jour et la suppression.
+- `TodayPage.tsx` affiche les choix rapides, les champs d'idée/description/URL, les entrées du jour et la suppression.
 
 Le Ticket 06 ajoute la transformation des réponses libres en presets réutilisables :
 
@@ -76,6 +76,8 @@ type LearningEntry = {
   id: string;
   date: string; // YYYY-MM-DD
   content: string;
+  description?: string;
+  url?: string;
   source: "preset" | "custom" | "empty";
   presetId?: string;
   mood?: "low" | "neutral" | "high";
@@ -91,10 +93,13 @@ Rôle : représenter une réponse de l'utilisateur pour un jour donné.
 
 Règles actuelles :
 
+- `content` est l'idée courte affichée en titre de card ;
+- `description` stocke le détail obligatoire saisi depuis la popup Today ;
+- `url` stocke un lien facultatif utilisé pour enrichir l'affichage, avec miniature YouTube si l'URL est reconnue ;
 - une entrée `preset` référence un `presetId` et son `content` reprend le label du preset au moment de la saisie ;
 - une entrée `custom` reprend le texte libre trimé ;
 - une entrée `custom` peut inspirer un preset via `LearningPreset.createdFromEntryId`, sans changer sa source ;
-- une entrée `empty` représente `Rien pour le moment` ;
+- une entrée `empty` représente `Rien pour le moment` dans les anciennes données et dans la couche de stockage, mais l'action n'est plus exposée dans la popup Today ;
 - les nouvelles entrées commencent avec `kept: false` et `discarded: false` ;
 - les insights principaux ignorent les entrées `discarded` ;
 - le score quotidien MVP utilise les ratings des entrées gardées.
@@ -119,9 +124,10 @@ Rôle : fournir les choix rapides de l'écran Aujourd'hui.
 Règles actuelles :
 
 - les presets archivés ne sont plus proposés dans les choix rapides ;
-- le preset `Je n'ai rien appris pour le moment` est masqué sur Aujourd'hui au profit d'une action dédiée `Rien pour le moment` ;
-- cliquer sur un preset incrémente `usageCount` dans la même transaction que la création d'entrée ;
-- une réponse libre peut créer un preset avec `createdFromEntryId` ;
+- le preset `Je n'ai rien appris pour le moment` est masqué sur Aujourd'hui ;
+- cliquer sur un preset préremplit l'idée, puis la création réelle exige une description ;
+- quand une entrée est créée depuis un preset, `usageCount` est incrémenté dans la même transaction que la création d'entrée ;
+- une idée libre peut créer un preset avec `createdFromEntryId` ;
 - les doublons simples sont évités en comparant les labels trimés, avec espaces multiples repliés et minuscule locale française ;
 - un preset archivé équivalent est réactivé plutôt que dupliqué.
 

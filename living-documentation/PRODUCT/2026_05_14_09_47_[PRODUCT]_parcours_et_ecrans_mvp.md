@@ -64,31 +64,44 @@ Critères d'acceptation :
 
 ## Aujourd'hui
 
-Objectif : permettre une saisie ultra rapide.
+Objectif : permettre une saisie rapide dans une expérience visuelle de journaling, tout en conservant assez de contexte pour relire l'apprentissage plus tard.
 
-UI attendue :
+UI attendue après les ajustements du Ticket 07 :
 
-- grande question : `Qu'as-tu appris aujourd'hui ?` ;
-- liste de boutons ou pills avec presets ;
-- champ libre : `Écris ton apprentissage...` ;
-- bouton : `Ajouter à ma journée` ;
-- option rapide : `Rien pour le moment`.
+- grande question scrollable : `Qu'as-tu appris aujourd'hui ?` ;
+- pastilles fixes en haut : `Aujourd'hui` et compteur d'apprentissages ;
+- chemin vertical sinusoïdal représentant la progression du jour, étiré jusqu'au bas de la zone scrollable et jusque dans la zone basse du drawer ;
+- bouton `+` fixe, centré verticalement sur le chemin ;
+- empty state fixe sous le bouton `+` lorsqu'aucune entrée n'existe ;
+- popup d'ajout centrée horizontalement et verticalement ;
+- choix rapides qui préremplissent l'idée sans créer immédiatement l'entrée ;
+- champ `Idée` pour le résumé court ;
+- champ `Description` obligatoire, en textarea haute et redimensionnable ;
+- champ `URL facultative` ;
+- bouton unique `Ajouter à ma journée` ;
+- entrées du jour affichées en cards alternées à gauche et à droite du chemin ;
+- cards affichant l'idée, la description, l'URL éventuelle et une miniature YouTube si l'URL est reconnue ;
+- navigation principale sous forme de drawer inférieur rétractable avec poignée visible.
 
 Comportement :
 
-- cliquer sur un preset crée une entrée ;
-- écrire dans le champ libre crée une entrée custom ;
-- `Rien pour le moment` crée une entrée `empty` ;
-- afficher les entrées du jour en dessous ;
+- cliquer sur un preset préremplit l'idée ;
+- écrire dans le champ idée crée une entrée custom si aucun preset correspondant n'est sélectionné ;
+- la description est obligatoire pour ajouter l'entrée ;
+- l'URL est facultative et doit être valide si renseignée ;
+- les entrées du jour apparaissent sur le chemin chronologique, les plus récentes en bas ;
 - permettre de supprimer une entrée du jour ;
 - permettre à une entrée custom de devenir un preset.
 
 Critères d'acceptation :
 
-- une entrée peut être ajoutée en moins de 3 secondes ;
+- une entrée peut être ajoutée rapidement, avec description obligatoire ;
 - les entrées du jour s'affichent immédiatement ;
 - les données restent après refresh ;
-- l'écran est mobile-first.
+- l'écran est mobile-first ;
+- le footer est un drawer inférieur ;
+- le chemin vertical est sinusoïdal ;
+- les idées se disposent alternativement à droite et à gauche du chemin.
 
 ## Revue hebdomadaire
 

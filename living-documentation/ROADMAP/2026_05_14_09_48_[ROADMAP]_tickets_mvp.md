@@ -14,17 +14,18 @@
 3. [x] ~~Ticket 03 - Installer IndexedDB avec Dexie~~
 4. [x] ~~Ticket 04 - Créer l'onboarding~~
 5. [x] ~~Ticket 05 - Écran Aujourd'hui~~
-6. [x] ~~Ticket 06 - Transformer une réponse libre en preset~~
-7. [ ] Ticket 08 - Revue hebdomadaire
-8. [ ] Ticket 09 - Courbe d'apprentissage
-9. [ ] Ticket 10 - Réglages
-10. [ ] Ticket 07 - Calendrier d'apprentissage
-11. [ ] Ticket 11 - Worker R2
-12. [ ] Ticket 12 - Backup/restore
-13. [ ] Ticket 13 - Auth Google
-14. [ ] Ticket 14 - Reminders UI
-15. [ ] Ticket 15 - Web Push notifications
-16. [ ] Ticket 16 - Polish UI moderne
+6. [x] ~~Ticket 06 - Transformer une idée libre en preset~~
+7. [x] ~~Ticket 07 - Améliorations visuelles~~
+8. [ ] Ticket 08 - Revue hebdomadaire
+9. [ ] Ticket 09 - Courbe d'apprentissage
+10. [ ] Ticket 10 - Réglages
+11. [ ] Ticket 11 - Calendrier d'apprentissage
+12. [ ] Ticket 12 - Worker R2
+13. [ ] Ticket 13 - Backup/restore
+14. [ ] Ticket 14 - Auth Google
+15. [ ] Ticket 15 - Reminders UI
+16. [ ] Ticket 16 - Web Push notifications
+17. [ ] Ticket 17 - Polish UI moderne
 
 ## Ticket 01 - Initialiser le projet frontend
 
@@ -135,7 +136,7 @@ Tâches :
 - afficher la grande question ;
 - afficher les presets sous forme de boutons ou pills ;
 - afficher un champ libre ;
-- créer une entrée depuis un preset, une réponse libre ou `Rien pour le moment` ;
+- créer une entrée depuis un preset, une idée libre ou `Rien pour le moment` ;
 - afficher les entrées du jour ;
 - permettre la suppression d'une entrée du jour.
 
@@ -146,7 +147,7 @@ Critères d'acceptation :
 - les données restent après refresh ;
 - l'écran est mobile-first.
 
-## Ticket 06 - Transformer une réponse libre en preset
+## Ticket 06 - Transformer une idée libre en preset
 
 Objectif : permettre à l'utilisateur d'enrichir sa propre liste de réponses.
 
@@ -160,11 +161,33 @@ Tâches :
 
 Critères d'acceptation :
 
-- une réponse libre peut devenir un preset ;
+- une idée libre peut devenir un preset ;
 - le preset apparaît ensuite dans les choix rapides ;
 - les doublons simples sont évités.
 
-## Ticket 07 - Calendrier d'apprentissage
+## Ticket 07 - Améliorations visuelles
+
+Objectif : Apporter des améliorations visuelles à la page Today
+
+Tâches :
+
+- La barre du bas contenant Jour, Semaine, Mois, Stats, Réglages doit etre une sorte de drawer vertical qui apparait (en montant vers le haut) quand on s'approche de lui et qui disparait si on s'en eloigne
+  - Il faudrait aussi probablement un petit indicateur visuel indiquant qu'elle existe, ou bien une petite partie supérieure doit etre visible
+
+- le layout de cette page devrait etre different
+  - J'imagine une page traversée verticallement par un ligne chronologique de haut en bas (sinusoidale, comme un chemin) et en ajoutant des idées capturées elle alterneraient en sortes de Cards alternativement à droit et à gauche (liée peut être par des pointillés)
+  - Il ne faut donc plus que les idées ajoutée apparaissent en dessous mais apparaissent en bas
+  - Il faudrait egalement que le scrolling vertical soit un infini scroll qui fait apparaitre les cards en scrollant
+  - Quand au panneau d'ajout le l'imagine plutot ouvert en mode popup avec le meme design mais trigger par un bouton (+) fixe, dans la partie haute 1/5 en plein milieu sur la ligne (chemin)
+
+Critères d'acceptation :
+
+- Le "footer" est une sorte de drawer vertical
+- Le chemin vertical est une ligne verticale sinusoidale
+- On peut ajouter des idées, elles se disposent alternativement à droite et à gauche du chemin
+- le scrolling vertical est un infiniScroll
+
+## Ticket 08 - Calendrier d'apprentissage
 
 Objectif : visualiser les jours avec apprentissages.
 
@@ -181,7 +204,7 @@ Critères d'acceptation :
 - on peut consulter une journée passée ;
 - le design reste simple et lisible.
 
-## Ticket 08 - Revue hebdomadaire
+## Ticket 09 - Revue hebdomadaire
 
 Objectif : créer le moment fort du produit.
 
@@ -200,7 +223,7 @@ Critères d'acceptation :
 - une `WeeklyReview` est créée ;
 - les entrées jetées ne sont plus visibles dans les insights principaux.
 
-## Ticket 09 - Courbe d'apprentissage
+## Ticket 10 - Courbe d'apprentissage
 
 Objectif : donner un feedback visuel motivant.
 
@@ -219,7 +242,7 @@ Critères d'acceptation :
 - les entrées jetées ne comptent pas ;
 - un empty state motivant apparaît sans données.
 
-## Ticket 10 - Réglages
+## Ticket 11 - Réglages
 
 Objectif : permettre à l'utilisateur de contrôler son expérience.
 
@@ -239,7 +262,7 @@ Critères d'acceptation :
 - l'import JSON restaure l'état ;
 - les presets sont modifiables.
 
-## Ticket 11 - Cloudflare Worker pour backup R2
+## Ticket 12 - Cloudflare Worker pour backup R2
 
 Objectif : ajouter un backup cloud minimal.
 
@@ -272,7 +295,7 @@ Critères d'acceptation :
 - le Worker ne connaît pas la logique métier ;
 - R2 ne stocke qu'un snapshot JSON.
 
-## Ticket 12 - Boutons backup / restore dans l'app
+## Ticket 13 - Boutons backup / restore dans l'app
 
 Objectif : connecter l'app au backup R2.
 
@@ -292,7 +315,7 @@ Critères d'acceptation :
 - messages de succès et erreur propres ;
 - pas de sauvegarde automatique pour l'instant.
 
-## Ticket 13 - Auth Google OAuth
+## Ticket 14 - Auth Google OAuth
 
 Objectif : identifier proprement l'utilisateur.
 
@@ -311,7 +334,7 @@ Critères d'acceptation :
 - les données restent local-first ;
 - l'app reste utilisable sans connexion si possible.
 
-## Ticket 14 - Reminders MVP côté UI
+## Ticket 15 - Reminders MVP côté UI
 
 Objectif : créer une première version des rappels sans complexité serveur.
 
@@ -327,7 +350,7 @@ Critères d'acceptation :
 - le bandeau apparaît au bon moment quand l'app est ouverte ;
 - Web Push n'est pas obligatoire.
 
-## Ticket 15 - Web Push notifications
+## Ticket 16 - Web Push notifications
 
 Objectif : permettre à l'utilisateur d'être contacté même quand l'app n'est pas ouverte.
 
@@ -346,7 +369,7 @@ Critères d'acceptation :
 - une notification test fonctionne ;
 - l'app reste utilisable si la permission est refusée.
 
-## Ticket 16 - Polish UI moderne
+## Ticket 17 - Polish UI moderne
 
 Objectif : rendre l'app désirable.
 

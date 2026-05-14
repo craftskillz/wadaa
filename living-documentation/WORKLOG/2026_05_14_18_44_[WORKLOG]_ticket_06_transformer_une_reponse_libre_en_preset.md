@@ -5,11 +5,11 @@
 **tags:** worklog, ticket-06, entries, presets, today-page, dexie, local-first
 ---
 
-# Ticket 06 - Transformer une réponse libre en preset
+# Ticket 06 - Transformer une idée libre en preset
 
 ## Contexte
 
-Le Ticket 06 doit permettre à l'utilisateur d'enrichir ses choix rapides depuis une réponse libre saisie sur l'écran Aujourd'hui.
+Le Ticket 06 doit permettre à l'utilisateur d'enrichir ses choix rapides depuis une idée libre saisie sur l'écran Aujourd'hui.
 
 ## Réalisation
 

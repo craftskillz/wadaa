@@ -21,8 +21,8 @@ L'utilisateur peut :
 
 - répondre `Rien pour le moment` ;
 - choisir une réponse prédéfinie ;
-- ajouter une réponse libre ;
-- transformer une réponse libre en option réutilisable ;
+- ajouter une idée libre ;
+- transformer une idée libre en option réutilisable ;
 - revoir sa semaine ;
 - mettre des étoiles aux apprentissages importants ;
 - supprimer le bruit ;

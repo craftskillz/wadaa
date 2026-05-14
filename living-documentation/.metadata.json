@@ -28,15 +28,15 @@
     },
     {
       "path": "living-documentation/PRODUCT/2026_05_14_09_47_[PRODUCT]_parcours_et_ecrans_mvp.md",
-      "hash": "d5802699503bfb06aac5cdd76a921d13b6c38762a747e8177eb29d18d82b15a7"
+      "hash": "0295f87d33442da2c9224c541c7cfc9f25b92d063f0c59c0c93606bb8df4140f"
     },
     {
       "path": "living-documentation/ROADMAP/2026_05_14_09_48_[ROADMAP]_tickets_mvp.md",
-      "hash": "518adfe071bc0d81ca7d653788e5e97100d3ce4e00679f60e39baf16689333e5"
+      "hash": "fbd0b0c1814cd053fd5d1f86ed7a7acf7b6b682184555107f43d38e9db9b9816"
     },
     {
       "path": "living-documentation/AI/PROJECT-STACK.md",
-      "hash": "ca48107af6cb308338abb94718d4df7a0b69a0ca0c4712b33286ad599ba4181a"
+      "hash": "3b4a0d0f5bda50a7587ace6613a7545c9bca309d9d3688a62bdac04705ef3088"
     },
     {
       "path": "package.json",
@@ -52,7 +52,7 @@
     },
     {
       "path": "src/components/layout/AppShell.tsx",
-      "hash": "ff10335c621a10fddab1b7b2cfbc9833ad41c721d22568dfe7bf685d89c6e577"
+      "hash": "94a5e5730f65e22a6cdfc07dbc9592909bd7778bb61659b9a515b7930537706a"
     },
     {
       "path": "src/lib/db/database.ts",
@@ -70,21 +70,21 @@
     },
     {
       "path": "living-documentation/ROADMAP/2026_05_14_09_48_[ROADMAP]_tickets_mvp.md",
-      "hash": "518adfe071bc0d81ca7d653788e5e97100d3ce4e00679f60e39baf16689333e5"
+      "hash": "fbd0b0c1814cd053fd5d1f86ed7a7acf7b6b682184555107f43d38e9db9b9816"
     }
   ],
   "AI/PROJECT-STACK": [
     {
       "path": "living-documentation/PRODUCT/2026_05_14_09_47_[PRODUCT]_vision_produit_et_mvp.md",
-      "hash": "8b77530e08e1709574d54058ce83df7c60757a6ca691c6994d59fc626ad15420"
+      "hash": "983455a57d35d7bd31cc2edac0412cc46166c3a33c82a818abe6806bbcfcd27d"
     },
     {
       "path": "living-documentation/TECHNICAL/2026_05_14_09_47_[TECHNICAL]_modele_de_donnees_mvp.md",
-      "hash": "a46280ac3822cdb2780429fcc4105c4af076cb98084b6e6646ef54a0ea83f7a6"
+      "hash": "0f699abe0f51607940574e3881b33c4ed08f45c900822a0b988cdec739464bea"
     },
     {
       "path": "living-documentation/ROADMAP/2026_05_14_09_48_[ROADMAP]_tickets_mvp.md",
-      "hash": "518adfe071bc0d81ca7d653788e5e97100d3ce4e00679f60e39baf16689333e5"
+      "hash": "d7df4a0cbc0ebc96025ecc85d4bbd7fdec741e52d6c31f1d79cb70aaa00a758a"
     },
     {
       "path": "living-documentation/TECHNICAL/2026_05_14_09_49_[TECHNICAL]_recherche_semantique_post_mvp.md",
@@ -108,7 +108,7 @@
     },
     {
       "path": "src/components/layout/AppShell.tsx",
-      "hash": "ff10335c621a10fddab1b7b2cfbc9833ad41c721d22568dfe7bf685d89c6e577"
+      "hash": "94a5e5730f65e22a6cdfc07dbc9592909bd7778bb61659b9a515b7930537706a"
     },
     {
       "path": "src/styles/index.css",
@@ -120,7 +120,7 @@
     },
     {
       "path": "src/components/ui/Button.tsx",
-      "hash": "4d2d5a337a4aff9741dbac23b0dcfe68bf3f750c06c8ff8769051ff6a9ee6bc6"
+      "hash": "42cb7703e488785b45f1339585b9543f394d2d91133d58b37c028cfc180ff467"
     },
     {
       "path": "src/components/ui/Card.tsx",
@@ -156,7 +156,7 @@
     },
     {
       "path": "src/lib/db/types.ts",
-      "hash": "800c48bbfddb0a04859c4def7583ff49dcc16d8b963b64cb7bbc0c4c84fc086c"
+      "hash": "8c345c55dd1141f8ac0ca588508c49dc943fecbcc8f3527f4a9960dab70c2667"
     },
     {
       "path": "src/lib/db/database.ts",
@@ -168,7 +168,7 @@
     },
     {
       "path": "src/lib/db/validation.ts",
-      "hash": "6d64fc3895e9dc018adfd18b172d751840fdfc5e67b74ee87c9d34a7e0d9fbd3"
+      "hash": "747827ab9d67569391d16dc3089909aa9f682a82520e61808df440bd82b86cca"
     },
     {
       "path": "src/features/settings/SettingsPage.tsx",
@@ -192,7 +192,7 @@
     },
     {
       "path": "src/features/entries/entryStorage.ts",
-      "hash": "99f687b1243b2499289e9234f19e27f443509cc8e5cd91d18e687d2a86435941"
+      "hash": "aa062c4f4a05bc6a53c7ceae481aa7be97322eec62bbbe1100c5cfaaebe80195"
     },
     {
       "path": "src/features/entries/useTodayData.ts",
@@ -204,7 +204,11 @@
     },
     {
       "path": "src/features/entries/TodayPage.tsx",
-      "hash": "149055caf6abdfef71920852b141f1ebf4a67f1ec49fea7f2027581429183b08"
+      "hash": "459abc96749ce0580d085f7af7554ea82a67acd91b3ad3b5b462a74490e8bc6c"
+    },
+    {
+      "path": "src/components/layout/BottomNav.tsx",
+      "hash": "33238768354969064bb840ba899fe4c7354b9f3a22c15df0575fdbb1aaafe6df"
     }
   ],
   "AI/PROJECT-INSTRUCTIONS": [
@@ -238,7 +242,7 @@
   "WORKLOG/current-task": [
     {
       "path": "living-documentation/AI/PROJECT-STACK.md",
-      "hash": "ca48107af6cb308338abb94718d4df7a0b69a0ca0c4712b33286ad599ba4181a"
+      "hash": "697b534d3bd4c61c95e6fc3c903db526c4c1e3c4bb231b368dfad7a46850f875"
     },
     {
       "path": "living-documentation/AI/PROJECT-USEFUL-COMMANDS.md",
@@ -246,7 +250,7 @@
     },
     {
       "path": "living-documentation/ROADMAP/2026_05_14_09_48_[ROADMAP]_tickets_mvp.md",
-      "hash": "518adfe071bc0d81ca7d653788e5e97100d3ce4e00679f60e39baf16689333e5"
+      "hash": "d7df4a0cbc0ebc96025ecc85d4bbd7fdec741e52d6c31f1d79cb70aaa00a758a"
     },
     {
       "path": "package.json",
@@ -258,7 +262,7 @@
     },
     {
       "path": "src/components/layout/AppShell.tsx",
-      "hash": "ff10335c621a10fddab1b7b2cfbc9833ad41c721d22568dfe7bf685d89c6e577"
+      "hash": "94a5e5730f65e22a6cdfc07dbc9592909bd7778bb61659b9a515b7930537706a"
     },
     {
       "path": "README.md",
@@ -266,7 +270,7 @@
     },
     {
       "path": "src/components/ui/Button.tsx",
-      "hash": "4d2d5a337a4aff9741dbac23b0dcfe68bf3f750c06c8ff8769051ff6a9ee6bc6"
+      "hash": "42cb7703e488785b45f1339585b9543f394d2d91133d58b37c028cfc180ff467"
     },
     {
       "path": "src/components/ui/Card.tsx",
@@ -282,7 +286,7 @@
     },
     {
       "path": "src/features/entries/TodayPage.tsx",
-      "hash": "149055caf6abdfef71920852b141f1ebf4a67f1ec49fea7f2027581429183b08"
+      "hash": "459abc96749ce0580d085f7af7554ea82a67acd91b3ad3b5b462a74490e8bc6c"
     },
     {
       "path": "src/components/ui/Input.tsx",
@@ -302,7 +306,7 @@
     },
     {
       "path": "src/lib/db/types.ts",
-      "hash": "800c48bbfddb0a04859c4def7583ff49dcc16d8b963b64cb7bbc0c4c84fc086c"
+      "hash": "8c345c55dd1141f8ac0ca588508c49dc943fecbcc8f3527f4a9960dab70c2667"
     },
     {
       "path": "src/lib/db/database.ts",
@@ -314,7 +318,7 @@
     },
     {
       "path": "src/lib/db/validation.ts",
-      "hash": "6d64fc3895e9dc018adfd18b172d751840fdfc5e67b74ee87c9d34a7e0d9fbd3"
+      "hash": "747827ab9d67569391d16dc3089909aa9f682a82520e61808df440bd82b86cca"
     },
     {
       "path": "src/features/settings/SettingsPage.tsx",
@@ -334,7 +338,7 @@
     },
     {
       "path": "src/features/onboarding/onboardingOptions.ts",
-      "hash": "9e5da631d212ee0c1cf35b70320550ac4716f290d30766e6eecb2bdec7557315"
+      "hash": "9c5a5e0e24e364f343d074422fc6c22f07ca636b98c16c96ffb70285019564a1"
     },
     {
       "path": "src/lib/ids/createId.ts",
@@ -342,7 +346,7 @@
     },
     {
       "path": "src/features/entries/entryStorage.ts",
-      "hash": "99f687b1243b2499289e9234f19e27f443509cc8e5cd91d18e687d2a86435941"
+      "hash": "aa062c4f4a05bc6a53c7ceae481aa7be97322eec62bbbe1100c5cfaaebe80195"
     },
     {
       "path": "src/features/entries/useTodayData.ts",
@@ -351,6 +355,10 @@
     {
       "path": "src/lib/dates/today.ts",
       "hash": "806e90c45de28b3fc922245c4213de4483bb0d3d3cf39c88f3c72970cca355ba"
+    },
+    {
+      "path": "src/components/layout/BottomNav.tsx",
+      "hash": "33238768354969064bb840ba899fe4c7354b9f3a22c15df0575fdbb1aaafe6df"
     }
   ],
   "AI/PROJECT-USEFUL-COMMANDS": [
@@ -458,7 +466,7 @@
   "TECHNICAL/2026_05_14_09_47_[TECHNICAL]_modele_de_donnees_mvp": [
     {
       "path": "src/lib/db/types.ts",
-      "hash": "800c48bbfddb0a04859c4def7583ff49dcc16d8b963b64cb7bbc0c4c84fc086c"
+      "hash": "8c345c55dd1141f8ac0ca588508c49dc943fecbcc8f3527f4a9960dab70c2667"
     },
     {
       "path": "src/lib/db/database.ts",
@@ -470,7 +478,7 @@
     },
     {
       "path": "src/lib/db/validation.ts",
-      "hash": "6d64fc3895e9dc018adfd18b172d751840fdfc5e67b74ee87c9d34a7e0d9fbd3"
+      "hash": "747827ab9d67569391d16dc3089909aa9f682a82520e61808df440bd82b86cca"
     },
     {
       "path": "src/lib/db/repositories.ts",
@@ -482,7 +490,7 @@
     },
     {
       "path": "src/features/entries/entryStorage.ts",
-      "hash": "99f687b1243b2499289e9234f19e27f443509cc8e5cd91d18e687d2a86435941"
+      "hash": "aa062c4f4a05bc6a53c7ceae481aa7be97322eec62bbbe1100c5cfaaebe80195"
     },
     {
       "path": "src/features/entries/useTodayData.ts",
@@ -490,7 +498,7 @@
     },
     {
       "path": "src/features/entries/TodayPage.tsx",
-      "hash": "149055caf6abdfef71920852b141f1ebf4a67f1ec49fea7f2027581429183b08"
+      "hash": "459abc96749ce0580d085f7af7554ea82a67acd91b3ad3b5b462a74490e8bc6c"
     },
     {
       "path": "src/lib/dates/today.ts",
@@ -556,7 +564,7 @@
   "ADRS/2026_05_14_16_44_[ADR]_onboarding_determine_par_settings_local": [
     {
       "path": "src/components/layout/AppShell.tsx",
-      "hash": "ff10335c621a10fddab1b7b2cfbc9833ad41c721d22568dfe7bf685d89c6e577"
+      "hash": "94a5e5730f65e22a6cdfc07dbc9592909bd7778bb61659b9a515b7930537706a"
     },
     {
       "path": "src/features/onboarding/OnboardingPage.tsx",
@@ -572,7 +580,7 @@
     },
     {
       "path": "src/features/onboarding/onboardingOptions.ts",
-      "hash": "9e5da631d212ee0c1cf35b70320550ac4716f290d30766e6eecb2bdec7557315"
+      "hash": "9c5a5e0e24e364f343d074422fc6c22f07ca636b98c16c96ffb70285019564a1"
     },
     {
       "path": "src/lib/ids/createId.ts",
@@ -608,11 +616,11 @@
   "ADRS/2026_05_14_17_06_[ADR]_creation_des_entrees_du_jour_local_first": [
     {
       "path": "src/features/entries/TodayPage.tsx",
-      "hash": "149055caf6abdfef71920852b141f1ebf4a67f1ec49fea7f2027581429183b08"
+      "hash": "459abc96749ce0580d085f7af7554ea82a67acd91b3ad3b5b462a74490e8bc6c"
     },
     {
       "path": "src/features/entries/entryStorage.ts",
-      "hash": "99f687b1243b2499289e9234f19e27f443509cc8e5cd91d18e687d2a86435941"
+      "hash": "aa062c4f4a05bc6a53c7ceae481aa7be97322eec62bbbe1100c5cfaaebe80195"
     },
     {
       "path": "src/features/entries/useTodayData.ts",
@@ -621,6 +629,14 @@
     {
       "path": "src/lib/dates/today.ts",
       "hash": "806e90c45de28b3fc922245c4213de4483bb0d3d3cf39c88f3c72970cca355ba"
+    },
+    {
+      "path": "src/lib/db/types.ts",
+      "hash": "8c345c55dd1141f8ac0ca588508c49dc943fecbcc8f3527f4a9960dab70c2667"
+    },
+    {
+      "path": "src/lib/db/validation.ts",
+      "hash": "747827ab9d67569391d16dc3089909aa9f682a82520e61808df440bd82b86cca"
     }
   ],
   "WORKLOG/2026_05_14_17_03_[WORKLOG]_ticket_05_ecran_aujourdhui": [
@@ -652,7 +668,7 @@
     },
     {
       "path": "src/features/entries/TodayPage.tsx",
-      "hash": "149055caf6abdfef71920852b141f1ebf4a67f1ec49fea7f2027581429183b08"
+      "hash": "2910b20c7389dd6ea054765d57fbe1382bcaf4fb3dc7de40fa3e21928e1a5e53"
     },
     {
       "path": "src/lib/db/types.ts",
@@ -671,6 +687,106 @@
     {
       "path": "src/lib/db/types.ts",
       "hash": "800c48bbfddb0a04859c4def7583ff49dcc16d8b963b64cb7bbc0c4c84fc086c"
+    }
+  ],
+  "ADRS/2026_05_14_20_59_[ADR]_timeline_visuelle_today_et_navigation_drawer": [
+    {
+      "path": "src/features/entries/TodayPage.tsx",
+      "hash": "459abc96749ce0580d085f7af7554ea82a67acd91b3ad3b5b462a74490e8bc6c"
+    },
+    {
+      "path": "src/components/layout/BottomNav.tsx",
+      "hash": "33238768354969064bb840ba899fe4c7354b9f3a22c15df0575fdbb1aaafe6df"
+    },
+    {
+      "path": "src/components/layout/AppShell.tsx",
+      "hash": "94a5e5730f65e22a6cdfc07dbc9592909bd7778bb61659b9a515b7930537706a"
+    },
+    {
+      "path": "src/components/ui/Button.tsx",
+      "hash": "42cb7703e488785b45f1339585b9543f394d2d91133d58b37c028cfc180ff467"
+    },
+    {
+      "path": "src/features/entries/entryStorage.ts",
+      "hash": "aa062c4f4a05bc6a53c7ceae481aa7be97322eec62bbbe1100c5cfaaebe80195"
+    }
+  ],
+  "WORKLOG/2026_05_14_20_59_[WORKLOG]_ticket_07_ameliorations_visuelles": [
+    {
+      "path": "src/features/entries/TodayPage.tsx",
+      "hash": "459abc96749ce0580d085f7af7554ea82a67acd91b3ad3b5b462a74490e8bc6c"
+    },
+    {
+      "path": "src/components/layout/BottomNav.tsx",
+      "hash": "33238768354969064bb840ba899fe4c7354b9f3a22c15df0575fdbb1aaafe6df"
+    },
+    {
+      "path": "src/components/layout/AppShell.tsx",
+      "hash": "94a5e5730f65e22a6cdfc07dbc9592909bd7778bb61659b9a515b7930537706a"
+    },
+    {
+      "path": "src/components/ui/Button.tsx",
+      "hash": "42cb7703e488785b45f1339585b9543f394d2d91133d58b37c028cfc180ff467"
+    },
+    {
+      "path": "src/features/entries/entryStorage.ts",
+      "hash": "aa062c4f4a05bc6a53c7ceae481aa7be97322eec62bbbe1100c5cfaaebe80195"
+    },
+    {
+      "path": "src/lib/db/types.ts",
+      "hash": "8c345c55dd1141f8ac0ca588508c49dc943fecbcc8f3527f4a9960dab70c2667"
+    },
+    {
+      "path": "src/lib/db/validation.ts",
+      "hash": "747827ab9d67569391d16dc3089909aa9f682a82520e61808df440bd82b86cca"
+    }
+  ],
+  "PRODUCT/2026_05_14_09_47_[PRODUCT]_parcours_et_ecrans_mvp": [
+    {
+      "path": "src/features/entries/TodayPage.tsx",
+      "hash": "459abc96749ce0580d085f7af7554ea82a67acd91b3ad3b5b462a74490e8bc6c"
+    },
+    {
+      "path": "src/components/layout/BottomNav.tsx",
+      "hash": "33238768354969064bb840ba899fe4c7354b9f3a22c15df0575fdbb1aaafe6df"
+    },
+    {
+      "path": "src/components/layout/AppShell.tsx",
+      "hash": "94a5e5730f65e22a6cdfc07dbc9592909bd7778bb61659b9a515b7930537706a"
+    },
+    {
+      "path": "src/components/ui/Button.tsx",
+      "hash": "42cb7703e488785b45f1339585b9543f394d2d91133d58b37c028cfc180ff467"
+    },
+    {
+      "path": "src/features/entries/entryStorage.ts",
+      "hash": "aa062c4f4a05bc6a53c7ceae481aa7be97322eec62bbbe1100c5cfaaebe80195"
+    },
+    {
+      "path": "src/lib/db/types.ts",
+      "hash": "8c345c55dd1141f8ac0ca588508c49dc943fecbcc8f3527f4a9960dab70c2667"
+    }
+  ],
+  "ADRS/2026_05_14_22_18_[ADR]_miniatures_locales_et_resolution_des_couvertures_dentree": [
+    {
+      "path": "src/features/entries/coverImage.ts",
+      "hash": "07da1257b1a5979a84a54dd1112d2b98bbce3f4140979a8d19a4d861628c3796"
+    },
+    {
+      "path": "src/features/entries/entryStorage.ts",
+      "hash": "5edea2dc1c2c624f1c0eb4ea431296151edee10eb469c5a0c1b744c4e7d161f2"
+    },
+    {
+      "path": "src/features/entries/TodayPage.tsx",
+      "hash": "338bbaee840f9dc43fcf6ea0e1d792587f41f8fc77bc2ab36bef20c6dc1c1a86"
+    },
+    {
+      "path": "src/lib/db/types.ts",
+      "hash": "fea87f9f82bfa3ef7608d62f161cd43c8dbf9945f75c7da1e7b4e7d9c1a0c376"
+    },
+    {
+      "path": "src/lib/db/localData.ts",
+      "hash": "b7a5a4c9a75b957ad38eb95f023cf2641b6c1f8bdb3f96a5399b91c65ac80df4"
     }
   ]
 }

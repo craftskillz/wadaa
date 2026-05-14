@@ -19,6 +19,9 @@ export type LearningEntry = {
   id: string;
   date: string;
   content: string;
+  description?: string;
+  url?: string;
+  coverImage?: Blob;
   source: EntrySource;
   presetId?: string;
   mood?: EntryMood;
