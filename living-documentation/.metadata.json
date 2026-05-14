@@ -6,11 +6,19 @@
     },
     {
       "path": "living-documentation/TECHNICAL/2026_05_14_09_47_[TECHNICAL]_modele_de_donnees_mvp.md",
-      "hash": "3e1e23177669c21b4d82ccfe9b5cdf81c2d170c07f28746b00814aa7eb2e707a"
+      "hash": "00088f3c94c79526e43a8931213028cafb881f3b4d021e9c2da6e6d96b6fe908"
     },
     {
       "path": "living-documentation/ROADMAP/2026_05_14_09_48_[ROADMAP]_tickets_mvp.md",
       "hash": "647c5145041d8bc1f391b8cdfddf70ea80bbe7b6fcc9ee82a390a2dbab6a612d"
+    },
+    {
+      "path": "src/lib/db/database.ts",
+      "hash": "f3474af27956fd1608cccddf8e3fdb78fcadf926c8517373486cc4d1c2e0d0a0"
+    },
+    {
+      "path": "src/lib/db/localData.ts",
+      "hash": "5c70b0bfc47ece04f3cad219f0bdb3ae88b3d7aa649624d43104bb7f88b22ff6"
     }
   ],
   "ADRS/2026_05_14_09_49_[ADR]_stack_frontend_cible_react_typescript_vite_tailwind_dexie": [
@@ -28,11 +36,11 @@
     },
     {
       "path": "living-documentation/AI/PROJECT-STACK.md",
-      "hash": "5d86c74f648db08d4eb256e7563ad26aa1ff999a15599abb3dc347625a77c941"
+      "hash": "f01835aa894173c50a492f18792fbb3c184e282b548405a10955f91e483f4d88"
     },
     {
       "path": "package.json",
-      "hash": "316292fa86c2e5af519530828d8a2e12bd64ae066eacf5b6417357f75620c026"
+      "hash": "9aa6aa0b976919ffbc76da7bed60cad2d168375a68438692b5e0423ac141aceb"
     },
     {
       "path": "vite.config.ts",
@@ -45,6 +53,10 @@
     {
       "path": "src/components/layout/AppShell.tsx",
       "hash": "30ca5f2e21e68dacb2ab400f68cf62b74f8ac5d2632a3f4f2e4fcfcddbfa0061"
+    },
+    {
+      "path": "src/lib/db/database.ts",
+      "hash": "f3474af27956fd1608cccddf8e3fdb78fcadf926c8517373486cc4d1c2e0d0a0"
     }
   ],
   "ADRS/2026_05_14_09_49_[ADR]_reporter_embeddings_et_llm_apres_validation_produit": [
@@ -68,7 +80,7 @@
     },
     {
       "path": "living-documentation/TECHNICAL/2026_05_14_09_47_[TECHNICAL]_modele_de_donnees_mvp.md",
-      "hash": "3e1e23177669c21b4d82ccfe9b5cdf81c2d170c07f28746b00814aa7eb2e707a"
+      "hash": "00088f3c94c79526e43a8931213028cafb881f3b4d021e9c2da6e6d96b6fe908"
     },
     {
       "path": "living-documentation/ROADMAP/2026_05_14_09_48_[ROADMAP]_tickets_mvp.md",
@@ -80,7 +92,7 @@
     },
     {
       "path": "package.json",
-      "hash": "316292fa86c2e5af519530828d8a2e12bd64ae066eacf5b6417357f75620c026"
+      "hash": "9aa6aa0b976919ffbc76da7bed60cad2d168375a68438692b5e0423ac141aceb"
     },
     {
       "path": "vite.config.ts",
@@ -141,6 +153,26 @@
     {
       "path": "src/components/ui/StatusPill.tsx",
       "hash": "b419fb527982d7a55a01770ff1120c4643863282faa94cf22ce11d10d9a8a7b4"
+    },
+    {
+      "path": "src/lib/db/types.ts",
+      "hash": "800c48bbfddb0a04859c4def7583ff49dcc16d8b963b64cb7bbc0c4c84fc086c"
+    },
+    {
+      "path": "src/lib/db/database.ts",
+      "hash": "f3474af27956fd1608cccddf8e3fdb78fcadf926c8517373486cc4d1c2e0d0a0"
+    },
+    {
+      "path": "src/lib/db/localData.ts",
+      "hash": "5c70b0bfc47ece04f3cad219f0bdb3ae88b3d7aa649624d43104bb7f88b22ff6"
+    },
+    {
+      "path": "src/lib/db/validation.ts",
+      "hash": "6d64fc3895e9dc018adfd18b172d751840fdfc5e67b74ee87c9d34a7e0d9fbd3"
+    },
+    {
+      "path": "src/features/settings/SettingsPage.tsx",
+      "hash": "2bf2749a59f0ab79328bf1691f69310d828e8b1d2bc3172906d2aff0a0cbb69c"
     }
   ],
   "AI/PROJECT-INSTRUCTIONS": [
@@ -174,7 +206,7 @@
   "WORKLOG/current-task": [
     {
       "path": "living-documentation/AI/PROJECT-STACK.md",
-      "hash": "be3405f5282af7325b95e1ba241f172409314e89c7327e1b844efe565f0fb8ac"
+      "hash": "f01835aa894173c50a492f18792fbb3c184e282b548405a10955f91e483f4d88"
     },
     {
       "path": "living-documentation/AI/PROJECT-USEFUL-COMMANDS.md",
@@ -186,7 +218,7 @@
     },
     {
       "path": "package.json",
-      "hash": "316292fa86c2e5af519530828d8a2e12bd64ae066eacf5b6417357f75620c026"
+      "hash": "9aa6aa0b976919ffbc76da7bed60cad2d168375a68438692b5e0423ac141aceb"
     },
     {
       "path": "src/app/router.tsx",
@@ -235,6 +267,26 @@
     {
       "path": "src/components/ui/StatusPill.tsx",
       "hash": "b419fb527982d7a55a01770ff1120c4643863282faa94cf22ce11d10d9a8a7b4"
+    },
+    {
+      "path": "src/lib/db/types.ts",
+      "hash": "800c48bbfddb0a04859c4def7583ff49dcc16d8b963b64cb7bbc0c4c84fc086c"
+    },
+    {
+      "path": "src/lib/db/database.ts",
+      "hash": "f3474af27956fd1608cccddf8e3fdb78fcadf926c8517373486cc4d1c2e0d0a0"
+    },
+    {
+      "path": "src/lib/db/localData.ts",
+      "hash": "5c70b0bfc47ece04f3cad219f0bdb3ae88b3d7aa649624d43104bb7f88b22ff6"
+    },
+    {
+      "path": "src/lib/db/validation.ts",
+      "hash": "6d64fc3895e9dc018adfd18b172d751840fdfc5e67b74ee87c9d34a7e0d9fbd3"
+    },
+    {
+      "path": "src/features/settings/SettingsPage.tsx",
+      "hash": "2bf2749a59f0ab79328bf1691f69310d828e8b1d2bc3172906d2aff0a0cbb69c"
     }
   ],
   "AI/PROJECT-USEFUL-COMMANDS": [
@@ -337,6 +389,88 @@
     {
       "path": "src/features/onboarding/OnboardingPage.tsx",
       "hash": "90ba38f1f5518ab9c9df1fd0015a7ccd3ad7b5b15de6594305013173eed39884"
+    }
+  ],
+  "TECHNICAL/2026_05_14_09_47_[TECHNICAL]_modele_de_donnees_mvp": [
+    {
+      "path": "src/lib/db/types.ts",
+      "hash": "800c48bbfddb0a04859c4def7583ff49dcc16d8b963b64cb7bbc0c4c84fc086c"
+    },
+    {
+      "path": "src/lib/db/database.ts",
+      "hash": "f3474af27956fd1608cccddf8e3fdb78fcadf926c8517373486cc4d1c2e0d0a0"
+    },
+    {
+      "path": "src/lib/db/localData.ts",
+      "hash": "5c70b0bfc47ece04f3cad219f0bdb3ae88b3d7aa649624d43104bb7f88b22ff6"
+    },
+    {
+      "path": "src/lib/db/validation.ts",
+      "hash": "6d64fc3895e9dc018adfd18b172d751840fdfc5e67b74ee87c9d34a7e0d9fbd3"
+    },
+    {
+      "path": "src/lib/db/repositories.ts",
+      "hash": "91dbc3e7b462e40b8951d1db3184cc796746ae44d6514a14e7cd91ba69b1d524"
+    },
+    {
+      "path": "src/features/settings/SettingsPage.tsx",
+      "hash": "2bf2749a59f0ab79328bf1691f69310d828e8b1d2bc3172906d2aff0a0cbb69c"
+    }
+  ],
+  "WORKLOG/2026_05_14_16_17_[WORKLOG]_ticket_03_installer_indexeddb_avec_dexie": [
+    {
+      "path": "src/lib/db/types.ts",
+      "hash": "800c48bbfddb0a04859c4def7583ff49dcc16d8b963b64cb7bbc0c4c84fc086c"
+    },
+    {
+      "path": "src/lib/db/database.ts",
+      "hash": "f3474af27956fd1608cccddf8e3fdb78fcadf926c8517373486cc4d1c2e0d0a0"
+    },
+    {
+      "path": "src/lib/db/repositories.ts",
+      "hash": "91dbc3e7b462e40b8951d1db3184cc796746ae44d6514a14e7cd91ba69b1d524"
+    },
+    {
+      "path": "src/lib/db/localData.ts",
+      "hash": "5c70b0bfc47ece04f3cad219f0bdb3ae88b3d7aa649624d43104bb7f88b22ff6"
+    },
+    {
+      "path": "src/lib/db/validation.ts",
+      "hash": "6d64fc3895e9dc018adfd18b172d751840fdfc5e67b74ee87c9d34a7e0d9fbd3"
+    },
+    {
+      "path": "src/lib/db/index.ts",
+      "hash": "75b516305ca6c0da15fa602eac71ad0f1dcccaf1ea5435a9f7df0ab22ee4362a"
+    },
+    {
+      "path": "src/features/settings/SettingsPage.tsx",
+      "hash": "2bf2749a59f0ab79328bf1691f69310d828e8b1d2bc3172906d2aff0a0cbb69c"
+    }
+  ],
+  "ADRS/2026_05_14_16_28_[ADR]_schema_dexie_v1_et_snapshot_json_local": [
+    {
+      "path": "src/lib/db/types.ts",
+      "hash": "800c48bbfddb0a04859c4def7583ff49dcc16d8b963b64cb7bbc0c4c84fc086c"
+    },
+    {
+      "path": "src/lib/db/database.ts",
+      "hash": "f3474af27956fd1608cccddf8e3fdb78fcadf926c8517373486cc4d1c2e0d0a0"
+    },
+    {
+      "path": "src/lib/db/localData.ts",
+      "hash": "5c70b0bfc47ece04f3cad219f0bdb3ae88b3d7aa649624d43104bb7f88b22ff6"
+    },
+    {
+      "path": "src/lib/db/validation.ts",
+      "hash": "6d64fc3895e9dc018adfd18b172d751840fdfc5e67b74ee87c9d34a7e0d9fbd3"
+    },
+    {
+      "path": "src/lib/db/repositories.ts",
+      "hash": "91dbc3e7b462e40b8951d1db3184cc796746ae44d6514a14e7cd91ba69b1d524"
+    },
+    {
+      "path": "src/lib/db/index.ts",
+      "hash": "75b516305ca6c0da15fa602eac71ad0f1dcccaf1ea5435a9f7df0ab22ee4362a"
     }
   ]
 }

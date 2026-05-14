@@ -1,8 +1,8 @@
 ---
 **date:** 2026-05-14
 **status:** Draft
-**description:** Modèle de données local-first du MVP, destiné au stockage IndexedDB via Dexie et aux exports/imports JSON.
-**tags:** technique, donnees, indexeddb, dexie, local-first, entries, presets, weekly-reviews, settings
+**description:** Modèle de données local-first du MVP, stocké dans IndexedDB via Dexie et compatible avec export/import JSON complet.
+**tags:** technique, donnees, indexeddb, dexie, local-first, entries, presets, weekly-reviews, settings, export-json
 ---
 
 # Modèle de données MVP
@@ -27,6 +27,18 @@ Cloudflare R2
 ```
 
 Le backend ne porte pas la logique métier du MVP. Il sert uniquement au backup et à la restauration d'un snapshot JSON complet quand cette capacité sera ajoutée.
+
+## Implémentation actuelle
+
+Le Ticket 03 implémente le stockage local dans `src/lib/db/` :
+
+- `types.ts` contient les types `UserSettings`, `LearningEntry`, `LearningPreset`, `WeeklyReview` et le format d'export `LocalDataExport` ;
+- `database.ts` crée la base Dexie `what-did-you-learn-today` en version 1 ;
+- `repositories.ts` expose les helpers CRUD par table ;
+- `validation.ts` valide minimalement les snapshots JSON avant import ;
+- `localData.ts` exporte, importe et résume les données locales.
+
+Le schéma Dexie indexe uniquement des clés IndexedDB sûres : chaînes et nombres. Les booléens comme `kept`, `discarded` et `archived` restent stockés dans les objets, mais ne sont pas indexés.
 
 ## UserSettings
 
@@ -120,12 +132,27 @@ Règles attendues :
 
 ## Export/import JSON complet
 
-Le stockage local doit fournir :
+Le stockage local fournit :
 
 - un export complet des settings, entries, presets et weeklyReviews ;
 - un import complet capable de restaurer cet état ;
 - une validation minimale avant import ;
-- une confirmation utilisateur avant restauration destructive.
+- une confirmation utilisateur avant restauration destructive dans l'interface Settings.
+
+Le format d'export courant est :
+
+```ts
+type LocalDataExport = {
+  schemaVersion: 1;
+  exportedAt: string;
+  data: {
+    entries: LearningEntry[];
+    presets: LearningPreset[];
+    weeklyReviews: WeeklyReview[];
+    settings: UserSettings[];
+  };
+};
+```
 
 ## Backup cloud prévu
 

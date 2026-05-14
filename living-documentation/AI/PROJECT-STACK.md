@@ -22,7 +22,7 @@ Ne pas documenter ici les détails volatils, les TODO temporaires ou les informa
 
 Le produit doit permettre à l'utilisateur de capturer très rapidement ses apprentissages du jour, de curer sa semaine, de garder ou jeter les entrées, de noter les apprentissages importants, puis de visualiser une courbe simple.
 
-Le projet contient maintenant une base frontend MVP initialisée par le Ticket 01 et un design system minimal formalisé par le Ticket 02 : React + TypeScript + Vite + Tailwind CSS, routes principales, layout global, navigation mobile-first et composants UI réutilisables. Le coeur métier local-first reste à implémenter à partir du Ticket 03.
+Le projet contient maintenant une base frontend MVP, un design system minimal et une couche de stockage local-first IndexedDB via Dexie. Le coeur métier de saisie, onboarding, revue et insights reste à brancher sur cette couche à partir des tickets suivants.
 
 ## Stack cible MVP
 
@@ -43,7 +43,7 @@ Le projet contient maintenant une base frontend MVP initialisée par le Ticket 0
 
 ## Stack réellement installée
 
-Versions installées après le Ticket 01 :
+Versions installées après le Ticket 03 :
 
 - **React** : `react` 19.2.6, `react-dom` 19.2.6
 - **Routing** : `react-router-dom` 7.15.0
@@ -51,11 +51,11 @@ Versions installées après le Ticket 01 :
 - **TypeScript** : 6.0.3
 - **Styles** : `tailwindcss` 4.3.0, `@tailwindcss/vite` 4.3.0
 - **Icons** : `lucide-react` 1.16.0
+- **Stockage local** : `dexie` pour IndexedDB
 - **Lint** : `eslint` 10.3.0, `typescript-eslint`, `eslint-plugin-react-hooks`, `eslint-plugin-react-refresh`
 
 Dépendances non encore installées mais prévues par la roadmap :
 
-- Dexie pour IndexedDB ;
 - Recharts pour les courbes ;
 - outils Cloudflare / Workers ;
 - auth Google ;
@@ -79,8 +79,9 @@ src/components/ui/                <- design system minimal : Button, Card, Input
 src/features/entries/             <- écran Aujourd'hui et calendrier
 src/features/reviews/             <- revue hebdomadaire
 src/features/insights/            <- courbes et stats
-src/features/settings/            <- réglages
+src/features/settings/            <- réglages et vérification export/import local
 src/features/onboarding/          <- première expérience
+src/lib/db/                       <- Dexie, types, repositories CRUD, export/import JSON local
 src/lib/styles/                   <- helpers de classes CSS
 src/styles/                       <- CSS global Tailwind
 memory/MEMORY.md                  <- index de mémoire projet
@@ -120,7 +121,7 @@ src/
   styles/
 ```
 
-Les dossiers `presets`, `lib/db`, `lib/dates` et `lib/ids` sont présents mais ne contiennent pas encore de logique métier.
+Les dossiers `presets`, `lib/dates` et `lib/ids` sont présents mais ne contiennent pas encore de logique métier.
 
 ## Concepts centraux
 
@@ -128,6 +129,7 @@ Les dossiers `presets`, `lib/db`, `lib/dates` et `lib/ids` sont présents mais n
 - **LearningEntry** : réponse utilisateur pour un jour donné, issue d'un preset, d'un texte libre ou de `Rien pour le moment`. Voir `TECHNICAL / Modèle de données MVP`.
 - **LearningPreset** : choix rapide réutilisable, y compris depuis une réponse libre transformée en preset.
 - **WeeklyReview** : moment de curation hebdomadaire où l'utilisateur garde, jette et note ses apprentissages.
+- **Export/import local** : `src/lib/db/localData.ts` exporte et restaure un snapshot JSON complet avec validation minimale.
 - **Insights** : courbes et métriques locales calculées depuis les entrées gardées.
 - **Design system minimal** : composants UI maison Tailwind dans `src/components/ui/`, partagés par les pages pour garder une identité cohérente.
 - **Backup R2** : snapshot JSON manuel prévu après le coeur local-first, sans logique métier dans le Worker.
@@ -139,6 +141,7 @@ Les dossiers `presets`, `lib/db`, `lib/dates` et `lib/ids` sont présents mais n
 - **Simplicité serveur** : ne pas introduire de backend métier tant que le coeur local-first suffit.
 - **UX mobile-first** : les écrans doivent être rapides, tactiles et agréables à ouvrir plusieurs fois par jour.
 - **Données locales** : les modèles doivent rester compatibles avec export/import JSON complet.
+- **Dexie** : ne pas indexer les booléens dans le schéma IndexedDB ; filtrer ces champs côté requête si nécessaire.
 - **Routing** : les routes MVP sont centralisées dans `src/app/router.tsx` et la navigation principale dans `src/app/navigation.ts`.
 - **Layout** : `AppShell` porte le fond, la zone scrollable et la navigation basse ; les pages ne doivent pas recréer le shell.
 - **UI partagée** : privilégier les composants de `src/components/ui/` avant d'ajouter des classes Tailwind longues directement dans une page.

@@ -2,7 +2,7 @@
 **date:** 2026-05-14
 **status:** Idle
 **description:** Point de reprise partagé entre assistants IA pour suivre la tâche courante, son statut, les fichiers touchés, les vérifications et la prochaine action.
-**tags:** worklog, handoff, progression, reprise, agents-ia, ticket-02, design-system
+**tags:** worklog, handoff, progression, reprise, agents-ia, ticket-03, indexeddb, dexie
 ---
 
 # Current task
@@ -19,40 +19,37 @@ Aucune tâche d'implémentation n'est en cours.
 
 ## Dernière action réalisée
 
-Ticket 02 terminé : design system minimal créé, composants UI réutilisables ajoutés, pages placeholders refactorées, lint/build et vérifications navigateur effectuées.
+Ticket 03 terminé : Dexie installé, base IndexedDB locale créée, types MVP ajoutés, repositories CRUD créés, export/import JSON complet ajoutés, et panneau Settings `Données locales` branché pour vérifier les compteurs, l'export et l'import.
 
 ## Prochaine action recommandée
 
-Démarrer le Ticket 03 : installer IndexedDB avec Dexie.
+Démarrer le Ticket 04 : créer l'onboarding.
 
-Priorité recommandée pour Ticket 03 : créer les modèles TypeScript, la base Dexie, les tables `entries`, `presets`, `weeklyReviews`, `settings`, puis les fonctions d'export/import JSON complet.
+Priorité recommandée pour Ticket 04 : utiliser `settingsRepository` pour sauvegarder les heures de rappel, le premier jour de semaine et les premiers presets locaux, puis rediriger vers l'écran Aujourd'hui.
 
 ## Fichiers ou zones concernés
 
-- `src/components/ui/`
-- `src/lib/styles/classNames.ts`
-- `src/features/entries/`
-- `src/features/reviews/`
-- `src/features/insights/`
-- `src/features/settings/`
-- `src/features/onboarding/`
-- `living-documentation/WORKLOG/2026_05_14_14_42_[WORKLOG]_ticket_02_creer_le_design_system_minimal.md`
+- `package.json`
+- `package-lock.json`
+- `src/lib/db/`
+- `src/features/settings/SettingsPage.tsx`
+- `living-documentation/TECHNICAL/2026_05_14_09_47_[TECHNICAL]_modele_de_donnees_mvp.md`
+- `living-documentation/WORKLOG/2026_05_14_16_17_[WORKLOG]_ticket_03_installer_indexeddb_avec_dexie.md`
 - `living-documentation/AI/PROJECT-STACK.md`
 
 ## Vérifications récentes
 
+- `npm install dexie` : OK après autorisation réseau.
 - `npm run lint` : OK.
 - `npm run build` : OK.
-- Serveur utilisateur Vite lancé sur `localhost:5173`.
-- `http://localhost:5173/` répond au terminal.
-- `http://[::1]:5173/` vérifié dans le navigateur Codex.
-- `http://127.0.0.1:5173/` ne répond pas dans cet environnement.
-- Routes `/`, `/week`, `/calendar`, `/insights`, `/settings` vérifiées dans le navigateur.
-- DOM mobile `390x844` vérifié.
-- MCP Living Documentation disponible.
+- `curl -I http://localhost:5173/settings` : OK 200.
+- `curl -I http://[::1]:5173/settings` : OK 200.
+- MCP Living Documentation disponible, documents et métadonnées mis à jour.
 
 ## Notes de reprise
 
-Pour les prochaines vérifications navigateur Codex, utiliser `http://[::1]:5173/` si `http://127.0.0.1:5173/` échoue.
+Le schéma Dexie n'indexe pas les booléens (`kept`, `discarded`, `archived`) car ce ne sont pas des clés IndexedDB sûres. Filtrer ces champs côté requête si nécessaire.
 
-Le Ticket 02 exclut volontairement IndexedDB, la logique métier persistée, le backup cloud, l'auth et les notifications Web Push. Ces sujets restent pour les tickets suivants.
+Le Ticket 03 reste volontairement sans backend. Le backup R2, l'auth Google, l'onboarding complet et la saisie réelle des entrées restent pour les tickets suivants.
+
+Pour les prochaines vérifications navigateur Codex, utiliser `http://[::1]:5173/` si `http://127.0.0.1:5173/` échoue.
