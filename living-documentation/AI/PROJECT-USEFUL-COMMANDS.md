@@ -18,71 +18,75 @@ Avant d'ajouter une commande, vérifier qu'elle existe réellement dans `package
 
 ## État actuel
 
-Le dépôt ne contient pas encore de code applicatif, de `package.json`, de scripts npm, de Makefile ou de configuration de tests.
+Le projet frontend est initialisé avec npm, Vite, React, TypeScript, Tailwind CSS et ESLint.
 
-Ne pas lancer ni documenter comme disponible une commande applicative avant le Ticket 01.
+Les scripts disponibles sont ceux de `package.json`.
 
-## Package manager cible
+## Package manager
 
-`npm` est le choix par défaut pour initialiser le projet frontend, sauf décision explicite contraire au moment du Ticket 01.
+`npm` est le package manager du projet. Le lockfile est `package-lock.json`.
 
-Ce choix devra être confirmé par les fichiers réellement créés : `package.json` et lockfile.
+## Installation
 
-## Commandes actuellement vérifiables
-
-| Commande | Effet | Quand l'utiliser |
+| Commande | Quand l'utiliser | Notes |
 |---|---|---|
-| `git status --short` | Vérifie l'état Git du dépôt | Avant et après une série de modifications |
-
-## Commandes attendues après Ticket 01
-
-Ces commandes sont des attentes de roadmap, pas des commandes disponibles tant que le frontend n'existe pas.
-
-| Commande cible | Effet attendu | Condition avant documentation définitive |
-|---|---|---|
-| `npm install` | Installer les dépendances | Vérifier `package.json` et le lockfile |
-| `npm run dev` | Démarrer le serveur Vite local | Vérifier le script `dev` |
-| `npm run build` | Compiler l'app | Vérifier le script `build` |
-| `npm run lint` | Lancer le lint | Vérifier le script `lint` |
-| `npm run format` | Formater le code | Vérifier le script `format` si un formateur est ajouté |
-| `npm test` ou équivalent | Lancer les tests | Vérifier le runner choisi |
+| `npm install` | Après clone ou changement de dépendances | Utiliser npm pour respecter `package-lock.json`. |
 
 ## Développement local
 
-À compléter après création du projet Vite.
-
-L'agent doit noter le port réel du serveur de développement quand il est connu.
+| Commande | Effet | Notes |
+|---|---|---|
+| `npm run dev` | Démarre le serveur Vite local | Port par défaut vérifié : `5173`. URL locale : `http://127.0.0.1:5173/` ou `http://localhost:5173/`. |
+| `npm run dev -- --host 127.0.0.1` | Démarre Vite en liant explicitement `127.0.0.1` | Utile pour les vérifications navigateur locales dans Codex. |
+| `npm run preview` | Sert le build de production localement | À utiliser après `npm run build` pour vérifier le bundle final. |
 
 ## Qualité
 
-À compléter après création du projet frontend.
+| Commande | Effet | Quand la lancer |
+|---|---|---|
+| `npm run build` | Lance `tsc -b` puis `vite build` | Après changement TypeScript, routing, config Vite, Tailwind ou assets. |
+| `npm run lint` | Lance ESLint sur le dépôt | Après changement dans `src/` ou config lint. |
+| `git status --short` | Vérifie l'état Git du dépôt | Avant et après une série de modifications. |
 
-Règle actuelle : lancer la plus petite vérification utile disponible. Tant qu'aucun script applicatif n'existe, vérifier au minimum l'état Git et la cohérence documentaire via le MCP Living Documentation.
+## Tests ciblés
+
+Aucun runner de tests automatisés n'est encore installé.
+
+Pour le Ticket 01, les vérifications disponibles sont :
+
+```bash
+npm run lint
+npm run build
+npm run dev -- --host 127.0.0.1
+```
+
+La vérification visuelle a été faite dans le navigateur Codex sur desktop et mobile.
 
 ## Setup initial
-
-À compléter après Ticket 01.
-
-Le setup cible probable est :
 
 ```bash
 npm install
 npm run dev
 ```
 
-Ne pas le présenter comme validé tant que les scripts n'existent pas.
+Puis ouvrir :
+
+```text
+http://127.0.0.1:5173/
+```
 
 ## Commandes dangereuses ou coûteuses
 
 | Commande | Risque | Règle |
 |---|---|---|
-| Déploiement Cloudflare | Déploiement réel ou modification d'environnement distant | Demander validation explicite avant exécution |
-| Réinitialisation de données locales | Perte de données utilisateur | Demander confirmation dans l'UI et dans toute commande ou script associé |
-| Suppression de bucket ou objets R2 | Perte de backups | Demander validation explicite avant exécution |
+| Déploiement Cloudflare | Déploiement réel ou modification d'environnement distant | Demander validation explicite avant exécution. |
+| Réinitialisation de données locales | Perte de données utilisateur | Demander confirmation dans l'UI et dans toute commande ou script associé. |
+| Suppression de bucket ou objets R2 | Perte de backups | Demander validation explicite avant exécution. |
 
 ## Notes pour l'IA
 
 - Ne pas inventer de scripts : si une commande manque, le dire et proposer de l'ajouter.
-- Après Ticket 01, remplacer les commandes cibles par les scripts réellement présents dans `package.json`.
+- Lancer `npm run lint` et `npm run build` avant de terminer un changement frontend.
+- Après changement visuel significatif, démarrer Vite et vérifier l'interface dans le navigateur.
 - Si une commande échoue, reporter la commande exacte, le symptôme et l'hypothèse la plus probable.
 - Quand un document technique ou ADR est aligné avec le code, mettre à jour ou rafraîchir ses métadonnées Living Documentation.

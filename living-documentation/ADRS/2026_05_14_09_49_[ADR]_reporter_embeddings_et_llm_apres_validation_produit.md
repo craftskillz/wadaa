@@ -1,6 +1,6 @@
 ---
 **date:** 2026-05-14
-**status:** To be validated
+**status:** Accepted
 **description:** Les embeddings, la recherche sémantique et les usages LLM sont explicitement exclus du MVP afin de valider d'abord le coeur local-first.
 **tags:** adr, embeddings, llm, recherche-semantique, post-mvp, scope, mvp, simplicite
 ---

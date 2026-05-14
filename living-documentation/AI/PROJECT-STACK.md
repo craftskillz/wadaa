@@ -22,11 +22,9 @@ Ne pas documenter ici les détails volatils, les TODO temporaires ou les informa
 
 Le produit doit permettre à l'utilisateur de capturer très rapidement ses apprentissages du jour, de curer sa semaine, de garder ou jeter les entrées, de noter les apprentissages importants, puis de visualiser une courbe simple.
 
-Le projet est en phase de cadrage initial. Le dépôt contient actuellement la documentation Living Documentation et les fichiers d'instructions IA. Le code applicatif doit être créé à partir du Ticket 01.
+Le projet contient maintenant une base frontend MVP initialisée par le Ticket 01 : React + TypeScript + Vite + Tailwind CSS, avec routes principales, layout global et navigation mobile-first. Le coeur métier local-first reste à implémenter à partir du Ticket 03.
 
 ## Stack cible MVP
-
-Cette stack est une cible validée par ADR, mais elle n'est pas encore installée tant que le Ticket 01 n'a pas été réalisé.
 
 - **Langage principal** : TypeScript
 - **Runtime** : navigateur, Node.js pour les commandes de développement
@@ -38,39 +36,71 @@ Cette stack est une cible validée par ADR, mais elle n'est pas encore installé
 - **Styles / design system** : Tailwind CSS ; composants maison inspirés shadcn/ui
 - **Charts** : Recharts
 - **Build / bundler** : Vite
-- **Package manager** : à confirmer lors du Ticket 01, `npm` par défaut sauf décision contraire
-- **Tests** : à définir lors du Ticket 01
-- **Lint / formatage** : à définir lors du Ticket 01
+- **Package manager** : npm
+- **Tests** : non installé pour l'instant
+- **Lint / formatage** : ESLint installé ; pas de formateur dédié installé
 - **Déploiement / hébergement** : Cloudflare Pages ou Workers avec assets statiques
 
 ## Stack réellement installée
 
-Aucune stack applicative n'est encore installée dans le dépôt.
+Versions installées après le Ticket 01 :
 
-Ne pas supposer l'existence de `package.json`, `src/`, scripts npm, tests ou configuration Tailwind avant le Ticket 01.
+- **React** : `react` 19.2.6, `react-dom` 19.2.6
+- **Routing** : `react-router-dom` 7.15.0
+- **Build** : `vite` 8.0.13, `@vitejs/plugin-react` 6.0.1
+- **TypeScript** : 6.0.3
+- **Styles** : `tailwindcss` 4.3.0, `@tailwindcss/vite` 4.3.0
+- **Icons** : `lucide-react` 1.16.0
+- **Lint** : `eslint` 10.3.0, `typescript-eslint`, `eslint-plugin-react-hooks`, `eslint-plugin-react-refresh`
+
+Dépendances non encore installées mais prévues par la roadmap :
+
+- Dexie pour IndexedDB ;
+- Recharts pour les courbes ;
+- outils Cloudflare / Workers ;
+- auth Google ;
+- Web Push.
 
 ## Arborescence source utile actuelle
 
 ```text
+README.md                         <- presentation humaine du projet et demarrage local
 AGENTS.md                         <- point d'entrée Codex et agents compatibles
 CLAUDE.md                         <- point d'entrée Claude
+package.json                      <- scripts npm et dépendances frontend
+package-lock.json                 <- lockfile npm
+index.html                        <- entrée HTML Vite
+vite.config.ts                    <- configuration Vite + React + Tailwind
+eslint.config.js                  <- configuration ESLint flat config
+tsconfig*.json                    <- configuration TypeScript
+src/app/                          <- App, router et navigation
+src/components/layout/            <- shell global, bottom nav, header de page
+src/components/ui/                <- composants UI transverses initiaux
+src/features/entries/             <- écran Aujourd'hui et calendrier
+src/features/reviews/             <- revue hebdomadaire
+src/features/insights/            <- courbes et stats
+src/features/settings/            <- réglages
+src/features/onboarding/          <- première expérience
+src/styles/                       <- CSS global Tailwind
 memory/MEMORY.md                  <- index de mémoire projet
 living-documentation/AI/          <- instructions IA, stack, commandes et règles
 living-documentation/ADRS/        <- décisions durables
 living-documentation/PRODUCT/     <- vision produit et parcours MVP
 living-documentation/TECHNICAL/   <- modèle de données et options techniques
 living-documentation/ROADMAP/     <- backlog MVP ordonné
+living-documentation/WORKLOG/     <- suivi de progression entre agents
 ```
 
 ## Arborescence applicative cible
 
-À créer pendant le Ticket 01 :
+La structure cible du Ticket 01 existe :
 
 ```text
 src/
   app/
     App.tsx
     router.tsx
+    navigation.ts
   components/
     ui/
     layout/
@@ -80,12 +110,15 @@ src/
     reviews/
     insights/
     settings/
+    onboarding/
   lib/
     db/
     dates/
     ids/
   styles/
 ```
+
+Les dossiers `presets`, `lib/db`, `lib/dates` et `lib/ids` sont présents mais ne contiennent pas encore de logique métier.
 
 ## Concepts centraux
 
@@ -103,5 +136,7 @@ src/
 - **Simplicité serveur** : ne pas introduire de backend métier tant que le coeur local-first suffit.
 - **UX mobile-first** : les écrans doivent être rapides, tactiles et agréables à ouvrir plusieurs fois par jour.
 - **Données locales** : les modèles doivent rester compatibles avec export/import JSON complet.
+- **Routing** : les routes MVP sont centralisées dans `src/app/router.tsx` et la navigation principale dans `src/app/navigation.ts`.
+- **Layout** : `AppShell` porte le fond, la zone scrollable et la navigation basse ; les pages ne doivent pas recréer le shell.
 - **Documentation** : mettre à jour les documents Living Documentation et les ADR lorsque le code rend une décision durable fausse, incomplète ou obsolète.
 - **Magic numbers** : nommer les valeurs numériques porteuses de sens dans le code applicatif, conformément à `AI/rules/no-magic-numbers.md`.

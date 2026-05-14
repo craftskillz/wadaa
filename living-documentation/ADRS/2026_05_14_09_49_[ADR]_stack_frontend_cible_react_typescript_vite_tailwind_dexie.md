@@ -1,6 +1,6 @@
 ---
 **date:** 2026-05-14
-**status:** To be validated
+**status:** Accepted
 **description:** La stack cible du frontend MVP combine React, TypeScript, Vite, Tailwind CSS, Recharts et Dexie pour livrer une app locale moderne et légère.
 **tags:** adr, react, typescript, vite, tailwind, dexie, recharts, frontend, mvp
 ---

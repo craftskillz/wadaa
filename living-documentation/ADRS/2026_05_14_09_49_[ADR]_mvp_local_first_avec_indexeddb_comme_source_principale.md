@@ -1,6 +1,6 @@
 ---
 **date:** 2026-05-14
-**status:** To be validated
+**status:** Accepted
 **description:** Le MVP utilise le navigateur et IndexedDB comme source principale de vérité, avec un backend limité au backup/restore de snapshot JSON.
 **tags:** adr, local-first, indexeddb, dexie, mvp, backup, r2, cout-faible, architecture
 ---

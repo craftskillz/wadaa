@@ -28,7 +28,23 @@
     },
     {
       "path": "living-documentation/AI/PROJECT-STACK.md",
-      "hash": "0fd00fb28026121c05df504cb6f13daba885f6fc0e2c853ac6c356be643730bb"
+      "hash": "5d86c74f648db08d4eb256e7563ad26aa1ff999a15599abb3dc347625a77c941"
+    },
+    {
+      "path": "package.json",
+      "hash": "316292fa86c2e5af519530828d8a2e12bd64ae066eacf5b6417357f75620c026"
+    },
+    {
+      "path": "vite.config.ts",
+      "hash": "bb86efeb11e83afcc5bf8a83127418024746b107a60ba6c7ccc187dca9cd1b5d"
+    },
+    {
+      "path": "src/app/router.tsx",
+      "hash": "fc7131776e8ba6d291b894580ce85b26327206b22b81f952913269c3867e3675"
+    },
+    {
+      "path": "src/components/layout/AppShell.tsx",
+      "hash": "30ca5f2e21e68dacb2ab400f68cf62b74f8ac5d2632a3f4f2e4fcfcddbfa0061"
     }
   ],
   "ADRS/2026_05_14_09_49_[ADR]_reporter_embeddings_et_llm_apres_validation_produit": [
@@ -61,6 +77,132 @@
     {
       "path": "living-documentation/TECHNICAL/2026_05_14_09_49_[TECHNICAL]_recherche_semantique_post_mvp.md",
       "hash": "7f667bca7c7a08779b69d3dbd1c21277beeb17023c2eefbd7091dc84d5ebf936"
+    },
+    {
+      "path": "package.json",
+      "hash": "316292fa86c2e5af519530828d8a2e12bd64ae066eacf5b6417357f75620c026"
+    },
+    {
+      "path": "vite.config.ts",
+      "hash": "bb86efeb11e83afcc5bf8a83127418024746b107a60ba6c7ccc187dca9cd1b5d"
+    },
+    {
+      "path": "src/app/router.tsx",
+      "hash": "fc7131776e8ba6d291b894580ce85b26327206b22b81f952913269c3867e3675"
+    },
+    {
+      "path": "src/app/navigation.ts",
+      "hash": "5683c5f9683e9b7721154f8618a7a3ceaa8a77868b1f23f16f08b981e50cf62c"
+    },
+    {
+      "path": "src/components/layout/AppShell.tsx",
+      "hash": "30ca5f2e21e68dacb2ab400f68cf62b74f8ac5d2632a3f4f2e4fcfcddbfa0061"
+    },
+    {
+      "path": "src/styles/index.css",
+      "hash": "eb3fe967212fdec89e5fee787ea31baae4a8dc0f63ccef6568b803d21b8bbe58"
+    },
+    {
+      "path": "README.md",
+      "hash": "d195e1eae180630eae6e7175a556b90120f8a86af57287ee108f48dbc8e2d0b1"
+    }
+  ],
+  "AI/PROJECT-INSTRUCTIONS": [
+    {
+      "path": "AGENTS.md",
+      "hash": "be477b365fa425a08ab21ec917e6c0bccabbb3a5469e6167cb4f3271c933349f"
+    },
+    {
+      "path": "CLAUDE.md",
+      "hash": "1cc36bdcf81c81d9bd685505b03cbf6a5c3cc8979d08f4520b117fa762d0b09d"
+    },
+    {
+      "path": "living-documentation/AI/rules/track-current-work.md",
+      "hash": "c31b87e2bdccbf09ec434c788fab93c592e61af09efefe7df85ed4778cc1e492"
+    },
+    {
+      "path": "living-documentation/WORKLOG/current-task.md",
+      "hash": "732155223dbd73e851ae69207dab6f15e800a30af30ddcb8311ef343be165543"
+    }
+  ],
+  "AI/rules/track-current-work": [
+    {
+      "path": "living-documentation/WORKLOG/current-task.md",
+      "hash": "732155223dbd73e851ae69207dab6f15e800a30af30ddcb8311ef343be165543"
+    },
+    {
+      "path": "living-documentation/AI/PROJECT-INSTRUCTIONS.md",
+      "hash": "b3948c738705a52fca3d574ed6c5468b2d3f8388d98d0c9f6bb30e18de0e85fb"
+    }
+  ],
+  "WORKLOG/current-task": [
+    {
+      "path": "living-documentation/AI/PROJECT-STACK.md",
+      "hash": "cdb4f20298828aae99c4e4cf0a24a542b1ea58a5839166862cb9624802d7106f"
+    },
+    {
+      "path": "living-documentation/AI/PROJECT-USEFUL-COMMANDS.md",
+      "hash": "0cea1cb3abb6ebc403076370c9310ea15053cdde962f7fe8bda3fc8da4f03f03"
+    },
+    {
+      "path": "living-documentation/ROADMAP/2026_05_14_09_48_[ROADMAP]_tickets_mvp.md",
+      "hash": "647c5145041d8bc1f391b8cdfddf70ea80bbe7b6fcc9ee82a390a2dbab6a612d"
+    },
+    {
+      "path": "package.json",
+      "hash": "316292fa86c2e5af519530828d8a2e12bd64ae066eacf5b6417357f75620c026"
+    },
+    {
+      "path": "src/app/router.tsx",
+      "hash": "fc7131776e8ba6d291b894580ce85b26327206b22b81f952913269c3867e3675"
+    },
+    {
+      "path": "src/components/layout/AppShell.tsx",
+      "hash": "30ca5f2e21e68dacb2ab400f68cf62b74f8ac5d2632a3f4f2e4fcfcddbfa0061"
+    },
+    {
+      "path": "README.md",
+      "hash": "d195e1eae180630eae6e7175a556b90120f8a86af57287ee108f48dbc8e2d0b1"
+    }
+  ],
+  "AI/PROJECT-USEFUL-COMMANDS": [
+    {
+      "path": "package.json",
+      "hash": "316292fa86c2e5af519530828d8a2e12bd64ae066eacf5b6417357f75620c026"
+    },
+    {
+      "path": "vite.config.ts",
+      "hash": "bb86efeb11e83afcc5bf8a83127418024746b107a60ba6c7ccc187dca9cd1b5d"
+    }
+  ],
+  "WORKLOG/2026_05_14_13_51_[WORKLOG]_ticket_01_initialiser_le_projet_frontend": [
+    {
+      "path": "package.json",
+      "hash": "316292fa86c2e5af519530828d8a2e12bd64ae066eacf5b6417357f75620c026"
+    },
+    {
+      "path": "vite.config.ts",
+      "hash": "bb86efeb11e83afcc5bf8a83127418024746b107a60ba6c7ccc187dca9cd1b5d"
+    },
+    {
+      "path": "src/app/router.tsx",
+      "hash": "fc7131776e8ba6d291b894580ce85b26327206b22b81f952913269c3867e3675"
+    },
+    {
+      "path": "src/components/layout/AppShell.tsx",
+      "hash": "30ca5f2e21e68dacb2ab400f68cf62b74f8ac5d2632a3f4f2e4fcfcddbfa0061"
+    },
+    {
+      "path": "src/components/layout/BottomNav.tsx",
+      "hash": "93004ecd80c2d6cab03d818528b71803fda820afea3d30b36f6732c8b6a4ce7d"
+    },
+    {
+      "path": "src/features/entries/TodayPage.tsx",
+      "hash": "d449c3cecdee5039a9f3bae6521845a1bbdfb4018ed1af9c7e9e3cd5f3d990ac"
+    },
+    {
+      "path": "src/styles/index.css",
+      "hash": "eb3fe967212fdec89e5fee787ea31baae4a8dc0f63ccef6568b803d21b8bbe58"
     }
   ]
 }
