@@ -38,6 +38,12 @@ Le Ticket 03 implémente le stockage local dans `src/lib/db/` :
 - `validation.ts` valide minimalement les snapshots JSON avant import ;
 - `localData.ts` exporte, importe et résume les données locales.
 
+Le Ticket 05 ajoute la création des entrées du jour dans `src/features/entries/` :
+
+- `entryStorage.ts` crée les entrées `preset`, `custom` et `empty` ;
+- `useTodayData.ts` lit en live les presets actifs et les entrées de la date locale du jour ;
+- `TodayPage.tsx` affiche les choix rapides, le champ libre, les entrées du jour et la suppression.
+
 Le schéma Dexie indexe uniquement des clés IndexedDB sûres : chaînes et nombres. Les booléens comme `kept`, `discarded` et `archived` restent stockés dans les objets, mais ne sont pas indexés.
 
 ## UserSettings
@@ -76,11 +82,12 @@ type LearningEntry = {
 
 Rôle : représenter une réponse de l'utilisateur pour un jour donné.
 
-Règles attendues :
+Règles actuelles :
 
-- une entrée `preset` référence idéalement un `presetId` ;
-- une entrée `custom` peut devenir un preset ;
+- une entrée `preset` référence un `presetId` et son `content` reprend le label du preset au moment de la saisie ;
+- une entrée `custom` reprend le texte libre trimé ;
 - une entrée `empty` représente `Rien pour le moment` ;
+- les nouvelles entrées commencent avec `kept: false` et `discarded: false` ;
 - les insights principaux ignorent les entrées `discarded` ;
 - le score quotidien MVP utilise les ratings des entrées gardées.
 
@@ -101,10 +108,12 @@ type LearningPreset = {
 
 Rôle : fournir les choix rapides de l'écran Aujourd'hui.
 
-Règles attendues :
+Règles actuelles :
 
 - les presets archivés ne sont plus proposés dans les choix rapides ;
-- une réponse libre peut créer un preset avec `createdFromEntryId` ;
+- le preset `Je n'ai rien appris pour le moment` est masqué sur Aujourd'hui au profit d'une action dédiée `Rien pour le moment` ;
+- cliquer sur un preset incrémente `usageCount` dans la même transaction que la création d'entrée ;
+- une réponse libre peut créer un preset avec `createdFromEntryId` au Ticket 06 ;
 - les doublons simples doivent être évités avant création.
 
 ## WeeklyReview

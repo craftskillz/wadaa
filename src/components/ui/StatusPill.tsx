@@ -1,7 +1,9 @@
+import type { ReactNode } from "react";
+
 import { classNames } from "../../lib/styles/classNames";
 
 type StatusPillProps = {
-  children: string;
+  children: ReactNode;
   tone?: "mint" | "violet" | "blue" | "slate";
   className?: string;
 };

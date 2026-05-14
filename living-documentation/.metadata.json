@@ -6,11 +6,11 @@
     },
     {
       "path": "living-documentation/TECHNICAL/2026_05_14_09_47_[TECHNICAL]_modele_de_donnees_mvp.md",
-      "hash": "00088f3c94c79526e43a8931213028cafb881f3b4d021e9c2da6e6d96b6fe908"
+      "hash": "addff4e42ef734e20b1b6f1527a9f533682f84ad4884837c8b07fe9dc2a3079f"
     },
     {
       "path": "living-documentation/ROADMAP/2026_05_14_09_48_[ROADMAP]_tickets_mvp.md",
-      "hash": "3c8060db239d6a8fb240c001be3701963f8e9dcd1dcb082dbc714f390b2578e3"
+      "hash": "cfe4d9c4b0fd0c3f9386595a15f33cb97da8e14e86f8ff82733e6c5e28b57771"
     },
     {
       "path": "src/lib/db/database.ts",
@@ -32,11 +32,11 @@
     },
     {
       "path": "living-documentation/ROADMAP/2026_05_14_09_48_[ROADMAP]_tickets_mvp.md",
-      "hash": "3c8060db239d6a8fb240c001be3701963f8e9dcd1dcb082dbc714f390b2578e3"
+      "hash": "cfe4d9c4b0fd0c3f9386595a15f33cb97da8e14e86f8ff82733e6c5e28b57771"
     },
     {
       "path": "living-documentation/AI/PROJECT-STACK.md",
-      "hash": "8910cdc5dc122f320598eca582a008694c7d5e993027a58adcb4759537467495"
+      "hash": "c1af374596fa2e98d121a2cdb27c1e153718658952e418e09f0d9dbb2e2099c4"
     },
     {
       "path": "package.json",
@@ -70,7 +70,7 @@
     },
     {
       "path": "living-documentation/ROADMAP/2026_05_14_09_48_[ROADMAP]_tickets_mvp.md",
-      "hash": "647c5145041d8bc1f391b8cdfddf70ea80bbe7b6fcc9ee82a390a2dbab6a612d"
+      "hash": "cfe4d9c4b0fd0c3f9386595a15f33cb97da8e14e86f8ff82733e6c5e28b57771"
     }
   ],
   "AI/PROJECT-STACK": [
@@ -80,11 +80,11 @@
     },
     {
       "path": "living-documentation/TECHNICAL/2026_05_14_09_47_[TECHNICAL]_modele_de_donnees_mvp.md",
-      "hash": "00088f3c94c79526e43a8931213028cafb881f3b4d021e9c2da6e6d96b6fe908"
+      "hash": "addff4e42ef734e20b1b6f1527a9f533682f84ad4884837c8b07fe9dc2a3079f"
     },
     {
       "path": "living-documentation/ROADMAP/2026_05_14_09_48_[ROADMAP]_tickets_mvp.md",
-      "hash": "3c8060db239d6a8fb240c001be3701963f8e9dcd1dcb082dbc714f390b2578e3"
+      "hash": "cfe4d9c4b0fd0c3f9386595a15f33cb97da8e14e86f8ff82733e6c5e28b57771"
     },
     {
       "path": "living-documentation/TECHNICAL/2026_05_14_09_49_[TECHNICAL]_recherche_semantique_post_mvp.md",
@@ -152,7 +152,7 @@
     },
     {
       "path": "src/components/ui/StatusPill.tsx",
-      "hash": "b419fb527982d7a55a01770ff1120c4643863282faa94cf22ce11d10d9a8a7b4"
+      "hash": "84debe612c999cdbafa6bbc8c8c80199e9c52da3067d54f785c4ae8bc13794af"
     },
     {
       "path": "src/lib/db/types.ts",
@@ -189,6 +189,18 @@
     {
       "path": "src/lib/ids/createId.ts",
       "hash": "c0e1a9e602dfb4f980b5f0005b7aa00b015f6097bdc8635f3ec4ea864797a083"
+    },
+    {
+      "path": "src/features/entries/entryStorage.ts",
+      "hash": "4aa8d5ed4b7bc6e955ee0dd0e52c9c489d7af6beaf892954134d2ef2931e4771"
+    },
+    {
+      "path": "src/features/entries/useTodayData.ts",
+      "hash": "30f27a346e548e617dd4612b4181a49c768f63401d22af6f78ee2f6391b6de16"
+    },
+    {
+      "path": "src/lib/dates/today.ts",
+      "hash": "806e90c45de28b3fc922245c4213de4483bb0d3d3cf39c88f3c72970cca355ba"
     }
   ],
   "AI/PROJECT-INSTRUCTIONS": [
@@ -222,7 +234,7 @@
   "WORKLOG/current-task": [
     {
       "path": "living-documentation/AI/PROJECT-STACK.md",
-      "hash": "8910cdc5dc122f320598eca582a008694c7d5e993027a58adcb4759537467495"
+      "hash": "c1af374596fa2e98d121a2cdb27c1e153718658952e418e09f0d9dbb2e2099c4"
     },
     {
       "path": "living-documentation/AI/PROJECT-USEFUL-COMMANDS.md",
@@ -230,7 +242,7 @@
     },
     {
       "path": "living-documentation/ROADMAP/2026_05_14_09_48_[ROADMAP]_tickets_mvp.md",
-      "hash": "3c8060db239d6a8fb240c001be3701963f8e9dcd1dcb082dbc714f390b2578e3"
+      "hash": "cfe4d9c4b0fd0c3f9386595a15f33cb97da8e14e86f8ff82733e6c5e28b57771"
     },
     {
       "path": "package.json",
@@ -266,7 +278,7 @@
     },
     {
       "path": "src/features/entries/TodayPage.tsx",
-      "hash": "74816a738c97ee338ba5905bf25d2c1dbb19d480d1fc8049b46561238c21422c"
+      "hash": "2c14dbc9bb769d77cfcabd54c2436c7c02f7cf4effd076b12171f461022a6830"
     },
     {
       "path": "src/components/ui/Input.tsx",
@@ -282,7 +294,7 @@
     },
     {
       "path": "src/components/ui/StatusPill.tsx",
-      "hash": "b419fb527982d7a55a01770ff1120c4643863282faa94cf22ce11d10d9a8a7b4"
+      "hash": "84debe612c999cdbafa6bbc8c8c80199e9c52da3067d54f785c4ae8bc13794af"
     },
     {
       "path": "src/lib/db/types.ts",
@@ -323,6 +335,18 @@
     {
       "path": "src/lib/ids/createId.ts",
       "hash": "c0e1a9e602dfb4f980b5f0005b7aa00b015f6097bdc8635f3ec4ea864797a083"
+    },
+    {
+      "path": "src/features/entries/entryStorage.ts",
+      "hash": "4aa8d5ed4b7bc6e955ee0dd0e52c9c489d7af6beaf892954134d2ef2931e4771"
+    },
+    {
+      "path": "src/features/entries/useTodayData.ts",
+      "hash": "30f27a346e548e617dd4612b4181a49c768f63401d22af6f78ee2f6391b6de16"
+    },
+    {
+      "path": "src/lib/dates/today.ts",
+      "hash": "806e90c45de28b3fc922245c4213de4483bb0d3d3cf39c88f3c72970cca355ba"
     }
   ],
   "AI/PROJECT-USEFUL-COMMANDS": [
@@ -451,6 +475,22 @@
     {
       "path": "src/features/settings/SettingsPage.tsx",
       "hash": "2bf2749a59f0ab79328bf1691f69310d828e8b1d2bc3172906d2aff0a0cbb69c"
+    },
+    {
+      "path": "src/features/entries/entryStorage.ts",
+      "hash": "4aa8d5ed4b7bc6e955ee0dd0e52c9c489d7af6beaf892954134d2ef2931e4771"
+    },
+    {
+      "path": "src/features/entries/useTodayData.ts",
+      "hash": "30f27a346e548e617dd4612b4181a49c768f63401d22af6f78ee2f6391b6de16"
+    },
+    {
+      "path": "src/features/entries/TodayPage.tsx",
+      "hash": "2c14dbc9bb769d77cfcabd54c2436c7c02f7cf4effd076b12171f461022a6830"
+    },
+    {
+      "path": "src/lib/dates/today.ts",
+      "hash": "806e90c45de28b3fc922245c4213de4483bb0d3d3cf39c88f3c72970cca355ba"
     }
   ],
   "WORKLOG/2026_05_14_16_17_[WORKLOG]_ticket_03_installer_indexeddb_avec_dexie": [
@@ -506,7 +546,7 @@
     },
     {
       "path": "src/lib/db/index.ts",
-      "hash": "75b516305ca6c0da15fa602eac71ad0f1dcccaf1ea5435a9f7df0ab22ee4362a"
+      "hash": "112493f888596e495284759f8f136fb7a0bf84343d7278917466142e8088715e"
     }
   ],
   "ADRS/2026_05_14_16_44_[ADR]_onboarding_determine_par_settings_local": [
@@ -559,6 +599,46 @@
     {
       "path": "src/lib/ids/createId.ts",
       "hash": "c0e1a9e602dfb4f980b5f0005b7aa00b015f6097bdc8635f3ec4ea864797a083"
+    }
+  ],
+  "ADRS/2026_05_14_17_06_[ADR]_creation_des_entrees_du_jour_local_first": [
+    {
+      "path": "src/features/entries/TodayPage.tsx",
+      "hash": "2c14dbc9bb769d77cfcabd54c2436c7c02f7cf4effd076b12171f461022a6830"
+    },
+    {
+      "path": "src/features/entries/entryStorage.ts",
+      "hash": "4aa8d5ed4b7bc6e955ee0dd0e52c9c489d7af6beaf892954134d2ef2931e4771"
+    },
+    {
+      "path": "src/features/entries/useTodayData.ts",
+      "hash": "30f27a346e548e617dd4612b4181a49c768f63401d22af6f78ee2f6391b6de16"
+    },
+    {
+      "path": "src/lib/dates/today.ts",
+      "hash": "806e90c45de28b3fc922245c4213de4483bb0d3d3cf39c88f3c72970cca355ba"
+    }
+  ],
+  "WORKLOG/2026_05_14_17_03_[WORKLOG]_ticket_05_ecran_aujourdhui": [
+    {
+      "path": "src/features/entries/TodayPage.tsx",
+      "hash": "2c14dbc9bb769d77cfcabd54c2436c7c02f7cf4effd076b12171f461022a6830"
+    },
+    {
+      "path": "src/features/entries/entryStorage.ts",
+      "hash": "4aa8d5ed4b7bc6e955ee0dd0e52c9c489d7af6beaf892954134d2ef2931e4771"
+    },
+    {
+      "path": "src/features/entries/useTodayData.ts",
+      "hash": "30f27a346e548e617dd4612b4181a49c768f63401d22af6f78ee2f6391b6de16"
+    },
+    {
+      "path": "src/lib/dates/today.ts",
+      "hash": "806e90c45de28b3fc922245c4213de4483bb0d3d3cf39c88f3c72970cca355ba"
+    },
+    {
+      "path": "src/components/ui/StatusPill.tsx",
+      "hash": "84debe612c999cdbafa6bbc8c8c80199e9c52da3067d54f785c4ae8bc13794af"
     }
   ]
 }

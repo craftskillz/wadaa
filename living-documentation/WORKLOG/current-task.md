@@ -2,7 +2,7 @@
 **date:** 2026-05-14
 **status:** Idle
 **description:** Point de reprise partagé entre assistants IA pour suivre la tâche courante, son statut, les fichiers touchés, les vérifications et la prochaine action.
-**tags:** worklog, handoff, progression, reprise, agents-ia, ticket-04, onboarding
+**tags:** worklog, handoff, progression, reprise, agents-ia, ticket-05, entries
 ---
 
 # Current task
@@ -19,34 +19,34 @@ Aucune tâche d'implémentation n'est en cours.
 
 ## Dernière action réalisée
 
-Ticket 04 terminé : onboarding interactif créé, garde de premier lancement ajouté, settings et presets initiaux sauvegardés localement dans Dexie, puis redirection vers Aujourd'hui après finalisation.
+Ticket 05 terminé : l'écran Aujourd'hui charge les presets actifs, crée des entrées `preset`, `custom` et `empty`, affiche les entrées du jour en live, incrémente `usageCount` des presets et permet la suppression d'une entrée.
 
 ## Prochaine action recommandée
 
-Démarrer le Ticket 05 : Écran Aujourd'hui.
+Démarrer le Ticket 06 : transformer une réponse libre en preset.
 
-Priorité recommandée pour Ticket 05 : charger les presets non archivés depuis IndexedDB, créer les `LearningEntry` du jour depuis un preset, une réponse libre ou `Rien pour le moment`, afficher les entrées du jour et permettre leur suppression.
+Priorité recommandée pour Ticket 06 : afficher l'action `Ajouter aux choix rapides` sur les entrées `custom`, créer un `LearningPreset` avec `createdFromEntryId`, éviter les doublons simples, puis faire apparaître le preset dans les choix rapides.
 
 ## Fichiers ou zones concernés
 
-- `src/components/layout/AppShell.tsx`
-- `src/features/onboarding/`
-- `src/lib/db/`
-- `src/lib/ids/`
-- `living-documentation/ADRS/2026_05_14_16_44_[ADR]_onboarding_determine_par_settings_local.md`
-- `living-documentation/WORKLOG/2026_05_14_16_41_[WORKLOG]_ticket_04_creer_onboarding.md`
-- `living-documentation/AI/PROJECT-STACK.md`
+- `src/features/entries/TodayPage.tsx`
+- `src/features/entries/entryStorage.ts`
+- `src/features/entries/useTodayData.ts`
+- `src/lib/dates/`
+- `src/components/ui/StatusPill.tsx`
+- `living-documentation/ADRS/2026_05_14_17_06_[ADR]_creation_des_entrees_du_jour_local_first.md`
+- `living-documentation/WORKLOG/2026_05_14_17_03_[WORKLOG]_ticket_05_ecran_aujourdhui.md`
 
 ## Vérifications récentes
 
 - `npm run lint` : OK.
 - `npm run build` : OK.
-- `curl -I http://localhost:5173/onboarding` : OK 200.
-- `curl -I http://[::1]:5173/onboarding` : OK 200.
+- `curl -I http://localhost:5173/` : OK 200.
+- `curl -I http://[::1]:5173/` : OK 200.
 - MCP Living Documentation disponible, ADR créé et métadonnées rafraîchies.
 
 ## Notes de reprise
 
-Le Ticket 04 reste sans notifications Web Push, sans auth et sans backend. Les reminders sauvegardés sont des préférences passives jusqu'au Ticket Reminders UI.
+Le Ticket 05 supprime physiquement une entrée depuis Aujourd'hui. La curation `discarded` reste réservée à la revue hebdomadaire.
 
-Le premier lancement est déterminé par l'absence de `UserSettings("local")`. Pour rejouer l'onboarding, prévoir une action explicite de reset ou suppression des données locales.
+Les entrées nouvelles commencent avec `kept: false` et `discarded: false`; le rating reste hors scope jusqu'à la revue.

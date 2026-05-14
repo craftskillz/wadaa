@@ -20,9 +20,9 @@ Ne pas documenter ici les détails volatils, les TODO temporaires ou les informa
 
 `Qu'as-tu appris aujourd'hui ?` est une application web personnelle de journaling d'apprentissage.
 
-Le produit doit permettre à l'utilisateur de capturer très rapidement ses apprentissages du jour, de curer sa semaine, de garder ou jeter les entrées, de noter les apprentissages importants, puis de visualiser une courbe simple.
+Le produit permet maintenant d'initialiser l'expérience localement via onboarding, puis de capturer les apprentissages du jour depuis l'écran Aujourd'hui. Les entrées sont persistées dans IndexedDB et restent disponibles après refresh.
 
-Le projet contient maintenant une base frontend MVP, un design system minimal, une couche de stockage local-first IndexedDB via Dexie et un onboarding local qui initialise settings + presets. Le coeur métier de saisie, revue et insights reste à brancher sur cette couche à partir des tickets suivants.
+Le projet contient une base frontend MVP, un design system minimal, une couche de stockage local-first IndexedDB via Dexie, un onboarding local qui initialise settings + presets, et un écran Aujourd'hui qui crée les `LearningEntry` du jour. La transformation custom vers preset, la revue, les insights et le calendrier restent à implémenter.
 
 ## Stack cible MVP
 
@@ -43,7 +43,7 @@ Le projet contient maintenant une base frontend MVP, un design system minimal, u
 
 ## Stack réellement installée
 
-Versions installées après le Ticket 04 :
+Versions installées après le Ticket 05 :
 
 - **React** : `react` 19.2.6, `react-dom` 19.2.6
 - **Routing** : `react-router-dom` 7.15.0
@@ -76,12 +76,13 @@ tsconfig*.json                    <- configuration TypeScript
 src/app/                          <- App, router et navigation
 src/components/layout/            <- AppShell, BottomNav, PageHeader
 src/components/ui/                <- design system minimal : Button, Card, Input, Textarea, EmojiBadge, EmptyState, StatusPill
-src/features/entries/             <- écran Aujourd'hui et calendrier
+src/features/entries/             <- écran Aujourd'hui, création/suppression d'entrées, calendrier
 src/features/reviews/             <- revue hebdomadaire
 src/features/insights/            <- courbes et stats
 src/features/settings/            <- réglages et vérification export/import local
 src/features/onboarding/          <- onboarding, options initiales, sauvegarde settings + presets
 src/lib/db/                       <- Dexie, types, repositories CRUD, export/import JSON local
+src/lib/dates/                    <- helpers de date locale pour les entrées du jour
 src/lib/ids/                      <- génération d'identifiants applicatifs
 src/lib/styles/                   <- helpers de classes CSS
 src/styles/                       <- CSS global Tailwind
@@ -122,13 +123,13 @@ src/
   styles/
 ```
 
-Les dossiers `presets` et `lib/dates` sont présents mais ne contiennent pas encore de logique métier.
+Les dossiers `presets` et `lib/dates` restent à enrichir pour les tickets suivants.
 
 ## Concepts centraux
 
 - **Local-first** : IndexedDB est la source principale de vérité pendant le MVP. Voir l'ADR `MVP local-first avec IndexedDB comme source principale`.
 - **Onboarding** : le premier lancement est déterminé par l'absence de `UserSettings("local")`; l'onboarding crée settings et presets initiaux. Voir l'ADR `Onboarding déterminé par settings local`.
-- **LearningEntry** : réponse utilisateur pour un jour donné, issue d'un preset, d'un texte libre ou de `Rien pour le moment`. Voir `TECHNICAL / Modèle de données MVP`.
+- **LearningEntry** : réponse utilisateur pour un jour donné, issue d'un preset, d'un texte libre ou de `Rien pour le moment`. Voir l'ADR `Création des entrées du jour local-first`.
 - **LearningPreset** : choix rapide réutilisable, y compris depuis une réponse libre transformée en preset.
 - **WeeklyReview** : moment de curation hebdomadaire où l'utilisateur garde, jette et note ses apprentissages.
 - **Export/import local** : `src/lib/db/localData.ts` exporte et restaure un snapshot JSON complet avec validation minimale.
@@ -145,6 +146,7 @@ Les dossiers `presets` et `lib/dates` sont présents mais ne contiennent pas enc
 - **Données locales** : les modèles doivent rester compatibles avec export/import JSON complet.
 - **Dexie** : ne pas indexer les booléens dans le schéma IndexedDB ; filtrer ces champs côté requête si nécessaire.
 - **Onboarding** : ne pas considérer l'utilisateur initialisé sans `UserSettings("local")` ; garder la finalisation settings + presets transactionnelle.
+- **Entrées du jour** : créer les entrées via `src/features/entries/entryStorage.ts`; garder `kept` et `discarded` à `false` jusqu'à la revue hebdomadaire.
 - **Routing** : les routes MVP sont centralisées dans `src/app/router.tsx` et la navigation principale dans `src/app/navigation.ts`.
 - **Layout** : `AppShell` porte le fond, la zone scrollable et la navigation basse ; les pages ne doivent pas recréer le shell.
 - **UI partagée** : privilégier les composants de `src/components/ui/` avant d'ajouter des classes Tailwind longues directement dans une page.

@@ -9,7 +9,7 @@ Avant toute modification :
 3. Lire `living-documentation/AI/PROJECT-USEFUL-COMMANDS.md` pour connaître les commandes de développement, build, test, lint et setup.
 4. Lire `memory/MEMORY.md` et charger seulement les fichiers mémoire utiles à la tâche.
 5. Lire toutes les règles dans `living-documentation/AI/rules/*.md`.
-6. Lire `living-documentation/WORKLOG/current-task.md` si présent pour reprendre l'état de la tâche courante.
+6. Lire `living-documentation/WORKLOG/current-task.md` si présent pour reprendre l'état de la tâche courante, et `living-documentation/WORKLOG/ROADMAP.md` si présent pour savoir quel ticket attaquer ensuite.
 7. Inspecter les ADR dans `living-documentation/ADRS/` en lisant d'abord `description` et `tags`, puis ouvrir l'ADR complet seulement s'il est pertinent.
 8. Vérifier si le MCP `living-documentation` est disponible et l'utiliser pour créer, mettre à jour et fiabiliser la documentation lorsque la tâche touche une décision, une règle, une commande, la stack ou un document technique.
 
