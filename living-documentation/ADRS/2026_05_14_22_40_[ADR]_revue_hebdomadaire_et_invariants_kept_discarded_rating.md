@@ -1,6 +1,6 @@
 ---
 **date:** 2026-05-15
-**status:** To be validated
+**status:** Accepted
 **description:** La revue hebdomadaire navigue librement entre semaines, encode trois états transitoires par entrée pendant la revue, supprime définitivement les entrées jetées à la validation, et écrit atomiquement les champs kept/rating plus une WeeklyReview indexée par semaine.
 **tags:** adr, weekly-review, revue-hebdomadaire, kept, discarded, rating, dexie, transaction, navigation-libre, week-range, hard-delete
 

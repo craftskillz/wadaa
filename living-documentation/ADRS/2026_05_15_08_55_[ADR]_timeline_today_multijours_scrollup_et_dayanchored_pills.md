@@ -1,6 +1,6 @@
 ---
 **date:** 2026-05-15
-**status:** To be validated
+**status:** Accepted
 **description:** L'écran Aujourd'hui s'étend sur les 7 derniers jours, ne rend que les jours non vides plus aujourd'hui, observe le scroll sur le vrai container, persiste le jour actif en localStorage et re-snap pendant 2,5s pour absorber les shifts de layout asynchrones.
 **tags:** adr, today-page, timeline, scroll, multi-day, scroll-container, intersection, today-anchor, ux, svg-path, localstorage, scroll-restoration
 

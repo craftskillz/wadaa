@@ -59,7 +59,7 @@ function scheduleCoverImageResolution(entry: LearningEntry) {
 export async function createEntryFromPreset(
   preset: LearningPreset,
   details?: EntryDetails,
-) {
+): Promise<string | undefined> {
   if (isEmptyPreset(preset)) {
     return createEmptyEntry(details);
   }
@@ -77,24 +77,32 @@ export async function createEntryFromPreset(
   });
 
   scheduleCoverImageResolution(entry);
+  return entry.id;
 }
 
-export async function createCustomEntry(content: string, details?: EntryDetails) {
+export async function createCustomEntry(
+  content: string,
+  details?: EntryDetails,
+): Promise<string | undefined> {
   const trimmedContent = content.trim();
 
   if (!trimmedContent) {
-    return;
+    return undefined;
   }
 
   const entry = createBaseEntry("custom", trimmedContent, undefined, details);
   await entriesRepository.put(entry);
   scheduleCoverImageResolution(entry);
+  return entry.id;
 }
 
-export async function createEmptyEntry(details?: EntryDetails) {
+export async function createEmptyEntry(
+  details?: EntryDetails,
+): Promise<string> {
   const entry = createBaseEntry("empty", EMPTY_ENTRY_CONTENT, undefined, details);
   await entriesRepository.put(entry);
   scheduleCoverImageResolution(entry);
+  return entry.id;
 }
 
 export function normalizePresetLabel(label: string) {

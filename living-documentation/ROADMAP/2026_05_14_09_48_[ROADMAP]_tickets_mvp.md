@@ -17,15 +17,17 @@
 6. [x] ~~Ticket 06 - Transformer une idée libre en preset~~
 7. [x] ~~Ticket 07 - Améliorations visuelles~~
 8. [x] ~~Ticket 08 - Revue hebdomadaire~~
-9. [ ] Ticket 09 - Courbe d'apprentissage
-10. [ ] Ticket 10 - Réglages
-11. [ ] Ticket 11 - Calendrier d'apprentissage
-12. [ ] Ticket 12 - Worker R2
-13. [ ] Ticket 13 - Backup/restore
-14. [ ] Ticket 14 - Auth Google
-15. [ ] Ticket 15 - Reminders UI
-16. [ ] Ticket 16 - Web Push notifications
-17. [ ] Ticket 17 - Polish UI moderne
+9. [ ] Ticket 09 - Chemin SVG
+10. [ ] Ticket 10 - Correctifs divers
+11. [ ] Ticket 11 - Courbe d'apprentissage
+12. [ ] Ticket 12 - Réglages
+13. [ ] Ticket 13 - Calendrier d'apprentissage
+14. [ ] Ticket 14 - Worker R2
+15. [ ] Ticket 15 - Backup/restore
+16. [ ] Ticket 16 - Auth Google
+17. [ ] Ticket 17 - Reminders UI
+18. [ ] Ticket 18 - Web Push notifications
+19. [ ] Ticket 19 - Polish UI moderne
 
 ## Ticket 01 - Initialiser le projet frontend
 
@@ -206,7 +208,34 @@ Critères d'acceptation :
 - une `WeeklyReview` est créée ;
 - les entrées jetées ne sont plus visibles dans les insights principaux.
 
-## Ticket 09 - Courbe d'apprentissage
+## Ticket 09 - Chemin SVG
+
+Objectif : Améliorer le rendu poétique de l'application
+En effet un chemin comme un fleuve est poétiquement et inconsciemment fort.
+
+Tâches :
+
+- Transformer le chemin SVG vertical de la page Today en une sorte de fleuve qui s'écoule
+  Si ca te semble complexe, discutes avec moi les possibilités pour décider ensemble
+
+Critères d'acceptation :
+
+- le chemin SVG actuel est remplaçé par un beau chemin ressemblant à l'écoulement d'un fleuve
+
+## Ticket 10 - Correctifs divers
+
+Objectif : corriger certains bugs ou evolutions
+
+Tâches :
+
+- Dans les Cards parfois les images ne sont pas trouvées où ne conviennent pas
+  Dans n'importe quelle carte il faudrait pouvoir modifer l'image
+
+Critères d'acceptation :
+
+- L'utilisateur peut modifier n'importe quelle image en cliquant dessus (petit pinceau dans le coin)
+
+## Ticket 11 - Courbe d'apprentissage
 
 Objectif : donner un feedback visuel motivant.
 
@@ -225,7 +254,7 @@ Critères d'acceptation :
 - les entrées jetées ne comptent pas ;
 - un empty state motivant apparaît sans données.
 
-## Ticket 10 - Réglages
+## Ticket 12 - Réglages
 
 Objectif : permettre à l'utilisateur de contrôler son expérience.
 
@@ -245,7 +274,7 @@ Critères d'acceptation :
 - l'import JSON restaure l'état ;
 - les presets sont modifiables.
 
-## Ticket 11 - Calendrier d'apprentissage
+## Ticket 13 - Calendrier d'apprentissage
 
 Objectif : visualiser les jours avec apprentissages.
 
@@ -262,7 +291,7 @@ Critères d'acceptation :
 - on peut consulter une journée passée ;
 - le design reste simple et lisible.
 
-## Ticket 12 - Cloudflare Worker pour backup R2
+## Ticket 14 - Cloudflare Worker pour backup R2
 
 Objectif : ajouter un backup cloud minimal.
 
@@ -295,7 +324,7 @@ Critères d'acceptation :
 - le Worker ne connaît pas la logique métier ;
 - R2 ne stocke qu'un snapshot JSON.
 
-## Ticket 13 - Boutons backup / restore dans l'app
+## Ticket 15 - Boutons backup / restore dans l'app
 
 Objectif : connecter l'app au backup R2.
 
@@ -315,7 +344,7 @@ Critères d'acceptation :
 - messages de succès et erreur propres ;
 - pas de sauvegarde automatique pour l'instant.
 
-## Ticket 14 - Auth Google OAuth
+## Ticket 16 - Auth Google OAuth
 
 Objectif : identifier proprement l'utilisateur.
 
@@ -334,7 +363,7 @@ Critères d'acceptation :
 - les données restent local-first ;
 - l'app reste utilisable sans connexion si possible.
 
-## Ticket 15 - Reminders MVP côté UI
+## Ticket 17 - Reminders MVP côté UI
 
 Objectif : créer une première version des rappels sans complexité serveur.
 
@@ -350,7 +379,7 @@ Critères d'acceptation :
 - le bandeau apparaît au bon moment quand l'app est ouverte ;
 - Web Push n'est pas obligatoire.
 
-## Ticket 16 - Web Push notifications
+## Ticket 18 - Web Push notifications
 
 Objectif : permettre à l'utilisateur d'être contacté même quand l'app n'est pas ouverte.
 
@@ -369,7 +398,7 @@ Critères d'acceptation :
 - une notification test fonctionne ;
 - l'app reste utilisable si la permission est refusée.
 
-## Ticket 17 - Polish UI moderne
+## Ticket 19 - Polish UI moderne
 
 Objectif : rendre l'app désirable.
 

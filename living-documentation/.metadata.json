@@ -792,7 +792,7 @@
   "ADRS/2026_05_14_22_40_[ADR]_revue_hebdomadaire_et_invariants_kept_discarded_rating": [
     {
       "path": "src/features/reviews/WeekPage.tsx",
-      "hash": "ba0842dcbae5d976c2624c2d2d9b842fb22f4a31c2529906e2f6af3fec4748d9"
+      "hash": "bad67bafd362c60b718c7121b1d8412dc908f35b0890cb3637966028f252ab69"
     },
     {
       "path": "src/features/reviews/reviewStorage.ts",
@@ -810,7 +810,7 @@
   "ADRS/2026_05_15_08_55_[ADR]_timeline_today_multijours_scrollup_et_dayanchored_pills": [
     {
       "path": "src/features/entries/TodayPage.tsx",
-      "hash": "1baef307fd02707d7f9848e77d718501617857139dd84a37cb794aa12af5eee0"
+      "hash": "06b7a2cc828c80a830f7bb576d8964daca544f56b95b5adfc098359a90bbc507"
     },
     {
       "path": "src/features/entries/useTimelineData.ts",
@@ -823,6 +823,22 @@
     {
       "path": "src/lib/dates/today.ts",
       "hash": "b68e28e12399507c1d89b182ec7098af9fc967b2164049c7d70ddc2b0399325f"
+    }
+  ],
+  "ADRS/2026_05_15_18_42_[ADR]_heuristique_de_rendu_des_couvertures_today": [
+    {
+      "path": "src/features/entries/TodayPage.tsx",
+      "hash": "06b7a2cc828c80a830f7bb576d8964daca544f56b95b5adfc098359a90bbc507"
+    }
+  ],
+  "ADRS/2026_05_15_18_43_[ADR]_identite_visuelle_des_jours_sur_today": [
+    {
+      "path": "src/features/entries/TodayPage.tsx",
+      "hash": "06b7a2cc828c80a830f7bb576d8964daca544f56b95b5adfc098359a90bbc507"
+    },
+    {
+      "path": "src/features/entries/entryStorage.ts",
+      "hash": "032f11a0840ff26975c5833cc5c5c5e931de5400e778cd65dec4e78720ee3832"
     }
   ]
 }

@@ -53,6 +53,108 @@ const AUTO_SCROLL_GRACE_PERIOD_MS = 2500;
 const COVER_MIN_FILL_RATIO = 1.2;
 const COVER_MAX_FILL_RATIO = 2.0;
 
+type DayTheme = {
+  primaryColor: string;
+  secondaryColor: string;
+  pill: { background: string; color: string; ring: string };
+};
+
+type GradientDirection = "leftToRight" | "rightToLeft";
+
+function buildDayBackground(
+  theme: DayTheme,
+  direction: GradientDirection,
+): string {
+  const primaryX = direction === "leftToRight" ? "22%" : "78%";
+  const secondaryX = direction === "leftToRight" ? "78%" : "22%";
+  return `radial-gradient(at ${primaryX} 28%, ${theme.primaryColor} 0%, transparent 55%), radial-gradient(at ${secondaryX} 75%, ${theme.secondaryColor} 0%, transparent 60%)`;
+}
+
+// Indexed by day of week (0 = Sunday, 6 = Saturday).
+// Order chosen as a soft rainbow so adjacent calendar days share neighbouring hues.
+// Composition (gradient layout) is unified — only colours vary per day.
+const DAY_THEMES: DayTheme[] = [
+  {
+    // Sunday — Sage (lime/green)
+    primaryColor: "rgba(190, 242, 100, 0.55)",
+    secondaryColor: "rgba(134, 239, 172, 0.4)",
+    pill: {
+      background: "rgb(236 252 203)",
+      color: "rgb(63 98 18)",
+      ring: "rgb(217 249 157)",
+    },
+  },
+  {
+    // Monday — Sunset (orange/amber)
+    primaryColor: "rgba(253, 186, 116, 0.55)",
+    secondaryColor: "rgba(252, 211, 77, 0.4)",
+    pill: {
+      background: "rgb(255 237 213)",
+      color: "rgb(154 52 18)",
+      ring: "rgb(254 215 170)",
+    },
+  },
+  {
+    // Tuesday — Sunrise (amber/rose)
+    primaryColor: "rgba(253, 224, 71, 0.55)",
+    secondaryColor: "rgba(252, 165, 165, 0.4)",
+    pill: {
+      background: "rgb(254 243 199)",
+      color: "rgb(146 64 14)",
+      ring: "rgb(253 230 138)",
+    },
+  },
+  {
+    // Wednesday — Blossom (rose/pink)
+    primaryColor: "rgba(249, 168, 212, 0.55)",
+    secondaryColor: "rgba(244, 114, 182, 0.4)",
+    pill: {
+      background: "rgb(252 231 243)",
+      color: "rgb(157 23 77)",
+      ring: "rgb(251 207 232)",
+    },
+  },
+  {
+    // Thursday — Lavender (violet/indigo)
+    primaryColor: "rgba(196, 181, 253, 0.55)",
+    secondaryColor: "rgba(165, 180, 252, 0.4)",
+    pill: {
+      background: "rgb(237 233 254)",
+      color: "rgb(76 29 149)",
+      ring: "rgb(221 214 254)",
+    },
+  },
+  {
+    // Friday — Sky (sky/blue)
+    primaryColor: "rgba(125, 211, 252, 0.55)",
+    secondaryColor: "rgba(147, 197, 253, 0.4)",
+    pill: {
+      background: "rgb(224 242 254)",
+      color: "rgb(7 89 133)",
+      ring: "rgb(186 230 253)",
+    },
+  },
+  {
+    // Saturday — Mint (emerald/teal)
+    primaryColor: "rgba(110, 231, 183, 0.55)",
+    secondaryColor: "rgba(94, 234, 212, 0.4)",
+    pill: {
+      background: "rgb(209 250 229)",
+      color: "rgb(6 95 70)",
+      ring: "rgb(167 243 208)",
+    },
+  },
+];
+
+const NEUTRAL_PILL = {
+  background: "rgb(241 245 249)",
+  color: "rgb(51 65 85)",
+  ring: "rgb(226 232 240)",
+};
+
+const DAY_BACKGROUND_FADE_MASK =
+  "linear-gradient(to bottom, transparent 0%, black 18%, black 82%, transparent 100%)";
+
 function readStoredActiveDay(): string | null {
   if (typeof window === "undefined") {
     return null;
@@ -153,7 +255,12 @@ function EntryCoverImage({ entry }: { entry: LearningEntry }) {
   }
 
   return (
-    <div className="flex aspect-video w-full items-center justify-center bg-slate-100 text-slate-400">
+    <div
+      aria-busy="true"
+      aria-label="Chargement de l'aperçu"
+      className="relative flex aspect-video w-full animate-pulse items-center justify-center overflow-hidden bg-gradient-to-br from-slate-100 via-slate-50 to-slate-100 text-slate-300"
+      role="status"
+    >
       <ImageIcon aria-hidden="true" className="size-7" />
     </div>
   );
@@ -254,7 +361,10 @@ function EntryArticle({
   onCreatePreset,
 }: EntryCardProps) {
   return (
-    <article className="grid min-h-44 grid-cols-[minmax(0,1fr)_3rem_minmax(0,1fr)] items-center gap-1 sm:grid-cols-[minmax(0,1fr)_4rem_minmax(0,1fr)] sm:gap-4">
+    <article
+      className="grid min-h-44 grid-cols-[minmax(0,1fr)_3rem_minmax(0,1fr)] items-center gap-1 sm:grid-cols-[minmax(0,1fr)_4rem_minmax(0,1fr)] sm:gap-4"
+      data-entry-id={entry.id}
+    >
       <div className={isLeft ? "col-start-1" : "col-start-3"}>
         <Card className="p-3 shadow-xl sm:p-4" tone="solid">
           <div className="mb-2 flex flex-wrap items-center gap-2">
@@ -349,6 +459,8 @@ type DaySectionProps = {
   presets: LearningPreset[];
   isSubmitting: boolean;
   todayRef: React.RefObject<HTMLElement | null>;
+  startIndex: number;
+  background: string;
   onDelete: (entryId: string) => void;
   onCreatePreset: (entryId: string) => void;
   onOpenComposer: () => void;
@@ -360,13 +472,14 @@ function DaySection({
   presets,
   isSubmitting,
   todayRef,
+  startIndex,
+  background,
   onDelete,
   onCreatePreset,
   onOpenComposer,
 }: DaySectionProps) {
   const { dateKey, entries } = day;
   const isToday = dateKey === todayKey;
-  const dayLabel = formatDayLabel(dateKey, todayKey);
 
   return (
     <section
@@ -374,6 +487,15 @@ function DaySection({
       data-day-section={dateKey}
       ref={isToday ? todayRef : undefined}
     >
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0"
+        style={{
+          backgroundImage: background,
+          maskImage: DAY_BACKGROUND_FADE_MASK,
+          WebkitMaskImage: DAY_BACKGROUND_FADE_MASK,
+        }}
+      />
       <TimelinePath />
 
       {isToday ? (
@@ -382,18 +504,14 @@ function DaySection({
             Qu'as-tu appris aujourd'hui&nbsp;?
           </h1>
         </header>
-      ) : (
-        <header className="relative z-10 mx-auto mb-10 flex max-w-2xl justify-center pt-4 text-center">
-          <StatusPill tone="slate">{dayLabel}</StatusPill>
-        </header>
-      )}
+      ) : null}
 
       {entries.length > 0 ? (
         <div className="relative z-10 mx-auto max-w-5xl space-y-10">
           {entries.map((entry, index) => (
             <EntryArticle
               entry={entry}
-              isLeft={index % 2 === 0}
+              isLeft={(startIndex + index) % 2 === 0}
               isSubmitting={isSubmitting}
               key={entry.id}
               onCreatePreset={onCreatePreset}
@@ -435,6 +553,27 @@ export function TodayPage() {
       ),
     [days, todayKey],
   );
+  const dayStartIndices = useMemo(
+    () =>
+      renderedDays.reduce<number[]>((accumulator, day, index) => {
+        const previous = accumulator[index - 1] ?? 0;
+        const previousLength = renderedDays[index - 1]?.entries.length ?? 0;
+        accumulator.push(previous + previousLength);
+        return accumulator;
+      }, []),
+    [renderedDays],
+  );
+  const dayThemesByDateKey = useMemo(() => {
+    const result: Record<string, DayTheme> = {};
+    renderedDays.forEach((day, index) => {
+      const distanceFromToday = renderedDays.length - 1 - index;
+      const themeIndex =
+        ((distanceFromToday % DAY_THEMES.length) + DAY_THEMES.length) %
+        DAY_THEMES.length;
+      result[day.dateKey] = DAY_THEMES[themeIndex];
+    });
+    return result;
+  }, [renderedDays]);
   const dayKeys = useMemo(
     () => renderedDays.map((day) => day.dateKey),
     [renderedDays],
@@ -442,6 +581,7 @@ export function TodayPage() {
   const activeDay = useActiveDay(dayKeys);
   const todaySectionRef = useRef<HTMLElement | null>(null);
   const userInteractedRef = useRef(false);
+  const pendingScrollEntryIdRef = useRef<string | null>(null);
   const [mountTime] = useState(() => performance.now());
   const [customContent, setCustomContent] = useState("");
   const [description, setDescription] = useState("");
@@ -470,6 +610,17 @@ export function TodayPage() {
     ? activeDayEntry.entries.filter((entry) => entry.source !== "empty").length
     : 0;
   const isOnToday = activeDayEntry?.dateKey === todayKey;
+  const activeDayPillStyle = useMemo(() => {
+    const pill =
+      activeDayEntry && dayThemesByDateKey[activeDayEntry.dateKey]
+        ? dayThemesByDateKey[activeDayEntry.dateKey].pill
+        : NEUTRAL_PILL;
+    return {
+      backgroundColor: pill.background,
+      color: pill.color,
+      boxShadow: `0 0 0 1px ${pill.ring}`,
+    };
+  }, [activeDayEntry, dayThemesByDateKey]);
 
   useLayoutEffect(() => {
     if (userInteractedRef.current) {
@@ -493,6 +644,20 @@ export function TodayPage() {
     );
     targetSection?.scrollIntoView({ block: "start" });
   }, [renderedDays, todayKey, mountTime]);
+
+  useLayoutEffect(() => {
+    const targetId = pendingScrollEntryIdRef.current;
+    if (!targetId) {
+      return;
+    }
+    const target = document.querySelector<HTMLElement>(
+      `[data-entry-id="${targetId}"]`,
+    );
+    if (target) {
+      target.scrollIntoView({ block: "nearest", behavior: "smooth" });
+      pendingScrollEntryIdRef.current = null;
+    }
+  }, [renderedDays]);
 
   useEffect(() => {
     function markUserInteraction() {
@@ -597,20 +762,20 @@ export function TodayPage() {
         ...(normalizedUrl ? { url: normalizedUrl } : {}),
       };
 
-      if (
+      const newEntryId =
         selectedPreset &&
         normalizePresetLabel(selectedPreset.label) ===
           normalizePresetLabel(trimmedContent)
-      ) {
-        await createEntryFromPreset(selectedPreset, entryDetails);
-      } else {
-        await createCustomEntry(trimmedContent, entryDetails);
+          ? await createEntryFromPreset(selectedPreset, entryDetails)
+          : await createCustomEntry(trimmedContent, entryDetails);
+
+      if (newEntryId) {
+        pendingScrollEntryIdRef.current = newEntryId;
       }
 
       resetComposer();
       setIsComposerOpen(false);
       showStatusToast("Réponse ajoutée.", "success");
-      scrollToToday();
     } catch (error) {
       showStatusToast(
         error instanceof Error ? error.message : "Ajout impossible.",
@@ -670,7 +835,7 @@ export function TodayPage() {
   }
 
   return (
-    <section className="relative mx-auto max-w-5xl pb-20">
+    <section className="relative -mx-4 pb-20 sm:-mx-6 lg:-mx-8">
       <StatusToastBanner
         isVisible={isStatusToastVisible}
         toast={statusToast}
@@ -678,9 +843,12 @@ export function TodayPage() {
 
       <div className="fixed left-1/2 top-4 z-30 w-[min(92vw,34rem)] -translate-x-1/2 text-center">
         <div className="flex items-center justify-center gap-2">
-          <StatusPill tone={isOnToday ? "mint" : "slate"}>
+          <span
+            className="inline-flex items-center rounded-full px-3 py-1 text-sm font-semibold transition-colors duration-300 ease-out"
+            style={activeDayPillStyle}
+          >
             {activeDayLabel}
-          </StatusPill>
+          </span>
           <StatusPill tone="violet">
             {activeLearningCount} apprentissage
             {activeLearningCount > 1 ? "s" : ""}
@@ -798,19 +966,27 @@ export function TodayPage() {
       ) : null}
 
       <div className="relative z-10">
-        {renderedDays.map((day) => (
-          <DaySection
-            day={day}
-            isSubmitting={isSubmitting}
-            key={day.dateKey}
-            onCreatePreset={handleCreatePreset}
-            onDelete={handleDelete}
-            onOpenComposer={() => setIsComposerOpen(true)}
-            presets={presets}
-            todayKey={todayKey}
-            todayRef={todaySectionRef}
-          />
-        ))}
+        {renderedDays.map((day, index) => {
+          const direction: GradientDirection =
+            index % 2 === 0 ? "leftToRight" : "rightToLeft";
+          const theme = dayThemesByDateKey[day.dateKey] ?? DAY_THEMES[0];
+          const background = buildDayBackground(theme, direction);
+          return (
+            <DaySection
+              background={background}
+              day={day}
+              isSubmitting={isSubmitting}
+              key={day.dateKey}
+              onCreatePreset={handleCreatePreset}
+              onDelete={handleDelete}
+              onOpenComposer={() => setIsComposerOpen(true)}
+              presets={presets}
+              startIndex={dayStartIndices[index] ?? 0}
+              todayKey={todayKey}
+              todayRef={todaySectionRef}
+            />
+          );
+        })}
       </div>
     </section>
   );

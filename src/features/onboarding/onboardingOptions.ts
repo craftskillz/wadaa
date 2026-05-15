@@ -7,6 +7,16 @@ export const INITIAL_PRESET_OPTIONS = [
     label: "J'ai appris un concept technique",
   },
   {
+    id: "interesting-podcast",
+    emoji: "🎙️",
+    label: "J'ai écouté un podcast intéressant",
+  },
+  {
+    id: "interesting-conference",
+    emoji: "🎤",
+    label: "J'ai visionné une conférence intéressante",
+  },
+  {
     id: "understood-error",
     emoji: "🔍",
     label: "J'ai compris une erreur",
@@ -20,6 +30,11 @@ export const INITIAL_PRESET_OPTIONS = [
     id: "discovered-music",
     emoji: "🎶",
     label: "J'ai découvert de la bonne musique",
+  },
+  {
+    id: "great-movie",
+    emoji: "🎞️",
+    label: "J'ai vu un super film au cinéma",
   },
   {
     id: "self-learning",

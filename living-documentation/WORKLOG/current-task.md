@@ -11,13 +11,26 @@ Ce document est le point de reprise entre assistants IA. Tout agent doit le lire
 
 ## Statut courant
 
-Idle
+Idle — Ticket 08 livré + Bonus 1 (polish visuel et comportemental de Today) livré et documenté.
 
 ## Tâche courante
 
 Aucune tâche d'implémentation en cours.
 
 ## Dernière action réalisée
+
+Bonus 1 — Polish visuel et comportemental de Today (2026-05-15) :
+
+- Heuristique d'object-fit pour les couvertures (cover si ratio 1.2-2.0, contain sinon) + skeleton animé pendant le chargement.
+- 7 thèmes pastel pour les jours rendus, composition unifiée (deux blobs radiaux), direction alternée selon parité de l'index, mapping par position rendue (today = thème 0, on remonte le passé) pour rester continu malgré les jours vides.
+- Mask vertical (transparent → opaque → transparent) sur le fond de chaque section pour fondre dans la couleur du jour suivant via le fond AppShell.
+- Wrapper outer pleine largeur viewport via marges négatives.
+- Pastille fixe du jour actif synchronise sa couleur avec le thème du jour.
+- Alternance L/R des cards désormais continue d'un jour à l'autre via `dayStartIndices` cumulé.
+- Scroll smooth vers la nouvelle entrée après ajout (`scrollIntoView({ block: "nearest", behavior: "smooth" })` sur `[data-entry-id]`), suppression de l'ancien scroll-to-today.
+- ADR `Heuristique de rendu des couvertures Today` créé via MCP, métadonnées attachées.
+- ADR `Identité visuelle des jours sur Today` créé via MCP, métadonnées attachées.
+- WORKLOG `Bonus 1 — Polish visuel et comportemental de Today` créé via MCP.
 
 Amélioration de la page Today suite à demande utilisateur (2026-05-15) — extension de la timeline aux 7 derniers jours :
 
@@ -49,14 +62,9 @@ Avant cet ajustement, Ticket 08 (Revue hebdomadaire) livré :
 
 ## Prochaine action recommandée
 
-Vérifications manuelles navigateur recommandées avant de démarrer le ticket suivant :
+Démarrer le **Ticket 09 — Correctifs divers** (édition d'image dans une card via petit pinceau dans le coin), tel qu'inscrit dans la roadmap mise à jour.
 
-1. Aller sur `/week`, naviguer en arrière/avant entre semaines, vérifier que les entrées de chaque semaine sont bien filtrées.
-2. Sur une semaine avec entrées : noter, garder/jeter chacune, valider, recharger, rouvrir et vérifier que l'état est conservé.
-3. Ajouter une nouvelle entrée sur une semaine déjà validée, retourner à la revue, vérifier qu'elle apparaît « à décider » et bloque la revalidation tant qu'elle n'a pas reçu de décision.
-4. Vérifier que les entrées `Pause` (empty) n'apparaissent pas dans la revue.
-
-Puis démarrer le **Ticket 09 — Courbe d'apprentissage** : calculer les métriques locales à partir des entrées `kept` (exclure `discarded` et `à décider`), afficher des courbes 7j / 30j, et les cards `jours actifs` / `apprentissages gardés` / `score moyen` / `meilleure journée`.
+Vérifications navigateur recommandées avant : valider visuellement le bonus Today (couleurs, fondus, alternance, scroll) et le Ticket 08 (revue hebdomadaire avec navigation entre semaines, suppression effective des jetés).
 
 ## Fichiers ou zones concernés
 
