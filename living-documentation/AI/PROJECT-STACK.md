@@ -134,7 +134,7 @@ Les dossiers `presets` et `lib/dates` restent à enrichir pour les tickets suiva
 - **LearningPreset** : choix rapide réutilisable, y compris depuis une idée libre transformée en preset. Voir l'ADR `Transformation des réponses libres en presets réutilisables`.
 - **Timeline Today** : l'écran Aujourd'hui affiche les entrées sur un chemin vertical chronologique prolongé jusqu'au bas visible, avec cards alternées, pastilles fixes, bouton `+` centré verticalement, empty state fixe si besoin, popup centrée et cards enrichies par URL/miniature YouTube. Voir l'ADR `Timeline visuelle Today et navigation drawer`.
 - **Navigation drawer** : `BottomNav` est un drawer inférieur fixe avec poignée violette visible, ouvert au survol, au focus ou au tap.
-- **WeeklyReview** : moment de curation hebdomadaire où l'utilisateur garde, jette et note ses apprentissages.
+- **WeeklyReview** : moment de curation hebdomadaire implémenté dans `src/features/reviews/WeekPage.tsx`. L'utilisateur navigue librement entre semaines, note ses apprentissages sur 5 étoiles, choisit garder ou jeter, et valide. À la validation, les entrées gardées sont mises à jour (`kept = true, rating`) et les entrées jetées sont **supprimées définitivement** de la base. La `WeeklyReview` est upsert avec `id = weeklyReview_<weekStart>` et conserve les IDs jetés en historique. Voir l'ADR `Revue hebdomadaire et invariants kept discarded rating`.
 - **Export/import local** : `src/lib/db/localData.ts` exporte et restaure un snapshot JSON complet avec validation minimale.
 - **Insights** : courbes et métriques locales calculées depuis les entrées gardées.
 - **Design system minimal** : composants UI maison Tailwind dans `src/components/ui/`, partagés par les pages pour garder une identité cohérente.

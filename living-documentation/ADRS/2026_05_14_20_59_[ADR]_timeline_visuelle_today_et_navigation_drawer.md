@@ -1,6 +1,6 @@
 ---
 **date:** 2026-05-14
-**status:** To be validated
+**status:** Accepted
 **description:** L'écran Aujourd'hui adopte une timeline verticale sinusoïdale avec popup de saisie enrichie, cards média, éléments fixes et navigation principale en drawer inférieur rétractable.
 **tags:** adr, today-page, timeline, visual-design, bottom-nav, drawer, popup, media-card, mobile-first, ux
 ---

@@ -2,15 +2,15 @@
   "ADRS/2026_05_14_09_49_[ADR]_mvp_local_first_avec_indexeddb_comme_source_principale": [
     {
       "path": "living-documentation/PRODUCT/2026_05_14_09_47_[PRODUCT]_vision_produit_et_mvp.md",
-      "hash": "8b77530e08e1709574d54058ce83df7c60757a6ca691c6994d59fc626ad15420"
+      "hash": "983455a57d35d7bd31cc2edac0412cc46166c3a33c82a818abe6806bbcfcd27d"
     },
     {
       "path": "living-documentation/TECHNICAL/2026_05_14_09_47_[TECHNICAL]_modele_de_donnees_mvp.md",
-      "hash": "a46280ac3822cdb2780429fcc4105c4af076cb98084b6e6646ef54a0ea83f7a6"
+      "hash": "0f699abe0f51607940574e3881b33c4ed08f45c900822a0b988cdec739464bea"
     },
     {
       "path": "living-documentation/ROADMAP/2026_05_14_09_48_[ROADMAP]_tickets_mvp.md",
-      "hash": "518adfe071bc0d81ca7d653788e5e97100d3ce4e00679f60e39baf16689333e5"
+      "hash": "350bec062200ec69c1cbb86377451f4e64c143fb5322358ec7a6f0e4b1081164"
     },
     {
       "path": "src/lib/db/database.ts",
@@ -18,25 +18,25 @@
     },
     {
       "path": "src/lib/db/localData.ts",
-      "hash": "5c70b0bfc47ece04f3cad219f0bdb3ae88b3d7aa649624d43104bb7f88b22ff6"
+      "hash": "b7a5a4c9a75b957ad38eb95f023cf2641b6c1f8bdb3f96a5399b91c65ac80df4"
     }
   ],
   "ADRS/2026_05_14_09_49_[ADR]_stack_frontend_cible_react_typescript_vite_tailwind_dexie": [
     {
       "path": "living-documentation/PRODUCT/2026_05_14_09_47_[PRODUCT]_vision_produit_et_mvp.md",
-      "hash": "8b77530e08e1709574d54058ce83df7c60757a6ca691c6994d59fc626ad15420"
+      "hash": "983455a57d35d7bd31cc2edac0412cc46166c3a33c82a818abe6806bbcfcd27d"
     },
     {
       "path": "living-documentation/PRODUCT/2026_05_14_09_47_[PRODUCT]_parcours_et_ecrans_mvp.md",
-      "hash": "0295f87d33442da2c9224c541c7cfc9f25b92d063f0c59c0c93606bb8df4140f"
+      "hash": "cfa630d654087cc6ced7aa2331e2716670b20fec881fb2db58311fd2d9555d77"
     },
     {
       "path": "living-documentation/ROADMAP/2026_05_14_09_48_[ROADMAP]_tickets_mvp.md",
-      "hash": "fbd0b0c1814cd053fd5d1f86ed7a7acf7b6b682184555107f43d38e9db9b9816"
+      "hash": "350bec062200ec69c1cbb86377451f4e64c143fb5322358ec7a6f0e4b1081164"
     },
     {
       "path": "living-documentation/AI/PROJECT-STACK.md",
-      "hash": "3b4a0d0f5bda50a7587ace6613a7545c9bca309d9d3688a62bdac04705ef3088"
+      "hash": "05550b95e3dfef7747edb264a389ccce2688cf2d4bf5fbf4a03c12bbd0605ad6"
     },
     {
       "path": "package.json",
@@ -66,11 +66,11 @@
     },
     {
       "path": "living-documentation/PRODUCT/2026_05_14_09_47_[PRODUCT]_vision_produit_et_mvp.md",
-      "hash": "8b77530e08e1709574d54058ce83df7c60757a6ca691c6994d59fc626ad15420"
+      "hash": "983455a57d35d7bd31cc2edac0412cc46166c3a33c82a818abe6806bbcfcd27d"
     },
     {
       "path": "living-documentation/ROADMAP/2026_05_14_09_48_[ROADMAP]_tickets_mvp.md",
-      "hash": "fbd0b0c1814cd053fd5d1f86ed7a7acf7b6b682184555107f43d38e9db9b9816"
+      "hash": "350bec062200ec69c1cbb86377451f4e64c143fb5322358ec7a6f0e4b1081164"
     }
   ],
   "AI/PROJECT-STACK": [
@@ -538,7 +538,7 @@
   "ADRS/2026_05_14_16_28_[ADR]_schema_dexie_v1_et_snapshot_json_local": [
     {
       "path": "src/lib/db/types.ts",
-      "hash": "800c48bbfddb0a04859c4def7583ff49dcc16d8b963b64cb7bbc0c4c84fc086c"
+      "hash": "fea87f9f82bfa3ef7608d62f161cd43c8dbf9945f75c7da1e7b4e7d9c1a0c376"
     },
     {
       "path": "src/lib/db/database.ts",
@@ -546,11 +546,11 @@
     },
     {
       "path": "src/lib/db/localData.ts",
-      "hash": "5c70b0bfc47ece04f3cad219f0bdb3ae88b3d7aa649624d43104bb7f88b22ff6"
+      "hash": "b7a5a4c9a75b957ad38eb95f023cf2641b6c1f8bdb3f96a5399b91c65ac80df4"
     },
     {
       "path": "src/lib/db/validation.ts",
-      "hash": "6d64fc3895e9dc018adfd18b172d751840fdfc5e67b74ee87c9d34a7e0d9fbd3"
+      "hash": "747827ab9d67569391d16dc3089909aa9f682a82520e61808df440bd82b86cca"
     },
     {
       "path": "src/lib/db/repositories.ts",
@@ -616,11 +616,11 @@
   "ADRS/2026_05_14_17_06_[ADR]_creation_des_entrees_du_jour_local_first": [
     {
       "path": "src/features/entries/TodayPage.tsx",
-      "hash": "459abc96749ce0580d085f7af7554ea82a67acd91b3ad3b5b462a74490e8bc6c"
+      "hash": "338bbaee840f9dc43fcf6ea0e1d792587f41f8fc77bc2ab36bef20c6dc1c1a86"
     },
     {
       "path": "src/features/entries/entryStorage.ts",
-      "hash": "aa062c4f4a05bc6a53c7ceae481aa7be97322eec62bbbe1100c5cfaaebe80195"
+      "hash": "5edea2dc1c2c624f1c0eb4ea431296151edee10eb469c5a0c1b744c4e7d161f2"
     },
     {
       "path": "src/features/entries/useTodayData.ts",
@@ -632,7 +632,7 @@
     },
     {
       "path": "src/lib/db/types.ts",
-      "hash": "8c345c55dd1141f8ac0ca588508c49dc943fecbcc8f3527f4a9960dab70c2667"
+      "hash": "fea87f9f82bfa3ef7608d62f161cd43c8dbf9945f75c7da1e7b4e7d9c1a0c376"
     },
     {
       "path": "src/lib/db/validation.ts",
@@ -664,15 +664,15 @@
   "ADRS/2026_05_14_18_44_[ADR]_transformation_des_reponses_libres_en_presets_reutilisables": [
     {
       "path": "src/features/entries/entryStorage.ts",
-      "hash": "99f687b1243b2499289e9234f19e27f443509cc8e5cd91d18e687d2a86435941"
+      "hash": "5edea2dc1c2c624f1c0eb4ea431296151edee10eb469c5a0c1b744c4e7d161f2"
     },
     {
       "path": "src/features/entries/TodayPage.tsx",
-      "hash": "2910b20c7389dd6ea054765d57fbe1382bcaf4fb3dc7de40fa3e21928e1a5e53"
+      "hash": "338bbaee840f9dc43fcf6ea0e1d792587f41f8fc77bc2ab36bef20c6dc1c1a86"
     },
     {
       "path": "src/lib/db/types.ts",
-      "hash": "800c48bbfddb0a04859c4def7583ff49dcc16d8b963b64cb7bbc0c4c84fc086c"
+      "hash": "fea87f9f82bfa3ef7608d62f161cd43c8dbf9945f75c7da1e7b4e7d9c1a0c376"
     }
   ],
   "WORKLOG/2026_05_14_18_44_[WORKLOG]_ticket_06_transformer_une_reponse_libre_en_preset": [
@@ -692,7 +692,7 @@
   "ADRS/2026_05_14_20_59_[ADR]_timeline_visuelle_today_et_navigation_drawer": [
     {
       "path": "src/features/entries/TodayPage.tsx",
-      "hash": "459abc96749ce0580d085f7af7554ea82a67acd91b3ad3b5b462a74490e8bc6c"
+      "hash": "338bbaee840f9dc43fcf6ea0e1d792587f41f8fc77bc2ab36bef20c6dc1c1a86"
     },
     {
       "path": "src/components/layout/BottomNav.tsx",
@@ -708,7 +708,7 @@
     },
     {
       "path": "src/features/entries/entryStorage.ts",
-      "hash": "aa062c4f4a05bc6a53c7ceae481aa7be97322eec62bbbe1100c5cfaaebe80195"
+      "hash": "5edea2dc1c2c624f1c0eb4ea431296151edee10eb469c5a0c1b744c4e7d161f2"
     }
   ],
   "WORKLOG/2026_05_14_20_59_[WORKLOG]_ticket_07_ameliorations_visuelles": [
@@ -787,6 +787,24 @@
     {
       "path": "src/lib/db/localData.ts",
       "hash": "b7a5a4c9a75b957ad38eb95f023cf2641b6c1f8bdb3f96a5399b91c65ac80df4"
+    }
+  ],
+  "ADRS/2026_05_14_22_40_[ADR]_revue_hebdomadaire_et_invariants_kept_discarded_rating": [
+    {
+      "path": "src/features/reviews/WeekPage.tsx",
+      "hash": "ba0842dcbae5d976c2624c2d2d9b842fb22f4a31c2529906e2f6af3fec4748d9"
+    },
+    {
+      "path": "src/features/reviews/reviewStorage.ts",
+      "hash": "d79067bfe49ea601e1dcb635bf83a8546dec6e846539771268d609dbe0418b51"
+    },
+    {
+      "path": "src/features/reviews/useWeekReviewData.ts",
+      "hash": "745a037fd462bf409fde66d15118a6056bdba4991876fb3f52f61246bf104e41"
+    },
+    {
+      "path": "src/lib/dates/week.ts",
+      "hash": "9804fe91c709a6de46278629e5011fa5efc3341e0921f03537d1ce04e729fd53"
     }
   ]
 }

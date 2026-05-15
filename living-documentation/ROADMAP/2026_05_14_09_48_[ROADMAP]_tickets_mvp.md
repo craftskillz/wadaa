@@ -16,7 +16,7 @@
 5. [x] ~~Ticket 05 - Écran Aujourd'hui~~
 6. [x] ~~Ticket 06 - Transformer une idée libre en preset~~
 7. [x] ~~Ticket 07 - Améliorations visuelles~~
-8. [ ] Ticket 08 - Revue hebdomadaire
+8. [x] ~~Ticket 08 - Revue hebdomadaire~~
 9. [ ] Ticket 09 - Courbe d'apprentissage
 10. [ ] Ticket 10 - Réglages
 11. [ ] Ticket 11 - Calendrier d'apprentissage
@@ -187,24 +187,7 @@ Critères d'acceptation :
 - On peut ajouter des idées, elles se disposent alternativement à droite et à gauche du chemin
 - le scrolling vertical est un infiniScroll
 
-## Ticket 08 - Calendrier d'apprentissage
-
-Objectif : visualiser les jours avec apprentissages.
-
-Tâches :
-
-- créer une vue mensuelle simple ;
-- indiquer les jours actifs ;
-- afficher une intensité selon le nombre d'entrées ou les étoiles ;
-- ouvrir le détail d'une journée passée.
-
-Critères d'acceptation :
-
-- le calendrier montre les jours actifs ;
-- on peut consulter une journée passée ;
-- le design reste simple et lisible.
-
-## Ticket 09 - Revue hebdomadaire
+## Ticket 08 - Revue hebdomadaire
 
 Objectif : créer le moment fort du produit.
 
@@ -223,7 +206,7 @@ Critères d'acceptation :
 - une `WeeklyReview` est créée ;
 - les entrées jetées ne sont plus visibles dans les insights principaux.
 
-## Ticket 10 - Courbe d'apprentissage
+## Ticket 09 - Courbe d'apprentissage
 
 Objectif : donner un feedback visuel motivant.
 
@@ -242,7 +225,7 @@ Critères d'acceptation :
 - les entrées jetées ne comptent pas ;
 - un empty state motivant apparaît sans données.
 
-## Ticket 11 - Réglages
+## Ticket 10 - Réglages
 
 Objectif : permettre à l'utilisateur de contrôler son expérience.
 
@@ -261,6 +244,23 @@ Critères d'acceptation :
 - l'export JSON fonctionne ;
 - l'import JSON restaure l'état ;
 - les presets sont modifiables.
+
+## Ticket 11 - Calendrier d'apprentissage
+
+Objectif : visualiser les jours avec apprentissages.
+
+Tâches :
+
+- créer une vue mensuelle simple ;
+- indiquer les jours actifs ;
+- afficher une intensité selon le nombre d'entrées ou les étoiles ;
+- ouvrir le détail d'une journée passée.
+
+Critères d'acceptation :
+
+- le calendrier montre les jours actifs ;
+- on peut consulter une journée passée ;
+- le design reste simple et lisible.
 
 ## Ticket 12 - Cloudflare Worker pour backup R2
 

@@ -1,6 +1,6 @@
 ---
 **date:** 2026-05-14
-**status:** To be validated
+**status:** Accepted
 **description:** Les couvertures d'entrée sont téléchargées en arrière-plan via YouTube puis Microlink en mode `embed` (image puis logo) puis favicon, redimensionnées, stockées en Blob dans IndexedDB et exclues de l'export JSON.
 **tags:** adr, local-first, today-page, cover-image, microlink, microlink-embed, favicon, blob, indexeddb, dexie, export-json, cors
 

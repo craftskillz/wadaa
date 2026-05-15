@@ -1,10 +1,4 @@
-import {
-  type FormEvent,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import { type FormEvent, useEffect, useMemo, useState } from "react";
 import {
   BookOpen,
   BookmarkPlus,
@@ -23,7 +17,9 @@ import {
   EmojiBadge,
   Input,
   StatusPill,
+  StatusToastBanner,
   Textarea,
+  useStatusToast,
 } from "../../components/ui";
 import { formatTimeLabel } from "../../lib/dates";
 import {
@@ -41,13 +37,6 @@ const TIMELINE_VIEWBOX_WIDTH = 120;
 const TIMELINE_VIEWBOX_HEIGHT = 1200;
 const TIMELINE_PATH =
   "M60 0 C18 120 102 240 60 360 C18 480 102 600 60 720 C18 840 102 960 60 1080 C42 1140 50 1170 60 1200";
-const STATUS_TOAST_VISIBLE_MS = 2200;
-const STATUS_TOAST_FADE_MS = 300;
-
-type StatusToast = {
-  id: number;
-  message: string;
-};
 
 function hasVisiblePresetForEntry(
   entryContent: string,
@@ -198,11 +187,9 @@ export function TodayPage() {
   const [description, setDescription] = useState("");
   const [entryUrl, setEntryUrl] = useState("");
   const [selectedPresetId, setSelectedPresetId] = useState<string | undefined>();
-  const [statusToast, setStatusToast] = useState<StatusToast | null>(null);
-  const [isStatusToastVisible, setIsStatusToastVisible] = useState(false);
+  const { statusToast, isStatusToastVisible, showStatusToast } = useStatusToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isComposerOpen, setIsComposerOpen] = useState(false);
-  const statusToastIdRef = useRef(0);
   const timelineEntries = useMemo(
     () =>
       [...entries].sort((left, right) =>
@@ -217,32 +204,6 @@ export function TodayPage() {
   const learningEntriesCount = entries.filter(
     (entry) => entry.source !== "empty",
   ).length;
-
-  useEffect(() => {
-    if (!statusToast) {
-      return;
-    }
-
-    const fadeTimer = window.setTimeout(() => {
-      setIsStatusToastVisible(false);
-    }, STATUS_TOAST_VISIBLE_MS);
-    const clearTimer = window.setTimeout(() => {
-      setStatusToast((currentToast) =>
-        currentToast?.id === statusToast.id ? null : currentToast,
-      );
-    }, STATUS_TOAST_VISIBLE_MS + STATUS_TOAST_FADE_MS);
-
-    return () => {
-      window.clearTimeout(fadeTimer);
-      window.clearTimeout(clearTimer);
-    };
-  }, [statusToast]);
-
-  function showStatusMessage(message: string) {
-    statusToastIdRef.current += 1;
-    setIsStatusToastVisible(true);
-    setStatusToast({ id: statusToastIdRef.current, message });
-  }
 
   function resetComposer() {
     setCustomContent("");
@@ -285,12 +246,12 @@ export function TodayPage() {
     const trimmedDescription = description.trim();
 
     if (!trimmedContent) {
-      showStatusMessage("Écris une réponse avant d'ajouter.");
+      showStatusToast("Écris une réponse avant d'ajouter.", "error");
       return;
     }
 
     if (!trimmedDescription) {
-      showStatusMessage("Ajoute une description avant d'ajouter.");
+      showStatusToast("Ajoute une description avant d'ajouter.", "error");
       return;
     }
 
@@ -317,10 +278,11 @@ export function TodayPage() {
 
       resetComposer();
       setIsComposerOpen(false);
-      showStatusMessage("Réponse ajoutée.");
+      showStatusToast("Réponse ajoutée.", "success");
     } catch (error) {
-      showStatusMessage(
+      showStatusToast(
         error instanceof Error ? error.message : "Ajout impossible.",
+        "error",
       );
     } finally {
       setIsSubmitting(false);
@@ -330,10 +292,11 @@ export function TodayPage() {
   async function handleDelete(entryId: string) {
     try {
       await deleteEntry(entryId);
-      showStatusMessage("Entrée supprimée.");
+      showStatusToast("Entrée supprimée.", "success");
     } catch (error) {
-      showStatusMessage(
+      showStatusToast(
         error instanceof Error ? error.message : "Suppression impossible.",
+        "error",
       );
     }
   }
@@ -350,21 +313,22 @@ export function TodayPage() {
       const result = await createPresetFromCustomEntry(entry);
 
       if (result.status === "created") {
-        showStatusMessage("Ajouté aux choix rapides.");
+        showStatusToast("Ajouté aux choix rapides.", "success");
         return;
       }
 
       if (result.status === "restored") {
-        showStatusMessage("Choix rapide réactivé.");
+        showStatusToast("Choix rapide réactivé.", "success");
         return;
       }
 
-      showStatusMessage("Ce choix rapide existe déjà.");
+      showStatusToast("Ce choix rapide existe déjà.", "error");
     } catch (error) {
-      showStatusMessage(
+      showStatusToast(
         error instanceof Error
           ? error.message
           : "Création du choix rapide impossible.",
+        "error",
       );
     } finally {
       setIsSubmitting(false);
@@ -375,6 +339,11 @@ export function TodayPage() {
     <section className="relative mx-auto min-h-[135vh] max-w-5xl pb-20">
       <TimelinePath />
 
+      <StatusToastBanner
+        isVisible={isStatusToastVisible}
+        toast={statusToast}
+      />
+
       <div className="fixed left-1/2 top-4 z-30 w-[min(92vw,34rem)] -translate-x-1/2 text-center">
         <div className="flex items-center justify-center gap-2">
           <StatusPill tone="mint">Aujourd'hui</StatusPill>
@@ -383,20 +352,6 @@ export function TodayPage() {
             {learningEntriesCount > 1 ? "s" : ""}
           </StatusPill>
         </div>
-        {statusToast ? (
-          <p
-            aria-live="polite"
-            className={[
-              "mt-3 rounded-full bg-white/85 px-4 py-2 text-sm font-bold text-slate-500 shadow-lg shadow-slate-900/10 backdrop-blur-xl transition duration-300 ease-out",
-              isStatusToastVisible
-                ? "translate-y-0 opacity-100"
-                : "-translate-y-1 opacity-0",
-            ].join(" ")}
-            role="status"
-          >
-            {statusToast.message}
-          </p>
-        ) : null}
       </div>
 
       <header className="relative z-10 mx-auto mb-28 max-w-2xl pt-24 text-center">

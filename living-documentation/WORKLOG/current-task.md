@@ -1,8 +1,8 @@
 ---
 **date:** 2026-05-14
-**status:** In progress
+**status:** Idle
 **description:** Point de reprise partagé entre assistants IA pour suivre la tâche courante, son statut, les fichiers touchés, les vérifications et la prochaine action.
-**tags:** worklog, handoff, progression, reprise, agents-ia, ticket-07, cover-image, microlink, local-first, today-page
+**tags:** worklog, handoff, progression, reprise, agents-ia, ticket-08, weekly-review, navigation, dexie
 ---
 
 # Current task
@@ -11,50 +11,64 @@ Ce document est le point de reprise entre assistants IA. Tout agent doit le lire
 
 ## Statut courant
 
-In progress — amélioration du Ticket 07 : couvertures d'entrée locales.
+Idle
 
 ## Tâche courante
 
-Ajouter aux entrées avec URL une couverture résolue en arrière-plan et stockée localement comme `Blob` dans IndexedDB, pour étendre l'affichage de miniature au-delà des URLs YouTube tout en restant local-first.
-
-Stratégie : YouTube → Microlink (`api.microlink.io`) → favicon DuckDuckGo en fallback. Redimensionnement canvas en JPEG ≤720px qualité 0.8. Téléchargement déclenché depuis `entryStorage.ts` après création, fire-and-forget. Exclusion de `coverImage` à l'export JSON. Pas de migration rétroactive.
+Aucune tâche d'implémentation en cours.
 
 ## Dernière action réalisée
 
-- Création de `src/features/entries/coverImage.ts` (résolution + redimensionnement + stockage).
-- Ajout du champ `coverImage?: Blob` à `LearningEntry` dans `src/lib/db/types.ts`.
-- Câblage du déclenchement de fond dans `entryStorage.ts` (`createEntryFromPreset`, `createCustomEntry`, `createEmptyEntry`).
-- `TodayPage.tsx` : nouveau composant `EntryCoverImage` avec hook `useEntryCoverImageUrl` qui gère `URL.createObjectURL`/`revokeObjectURL` ; fallback YouTube conservé tant que le blob n'est pas encore stocké.
-- Exclusion de `coverImage` à l'export JSON dans `src/lib/db/localData.ts`.
-- ADR `Miniatures locales et résolution des couvertures d'entrée` créé.
-- `PROJECT-STACK.md` mis à jour (vue d'ensemble, intégrations, concepts, conventions).
+Ajustement Ticket 08 suite retour utilisateur (2026-05-15) :
+
+- À la validation comme à la mise à jour de la revue, les entrées jetées sont maintenant **supprimées définitivement** de la base (`bulkDelete` dans la même transaction Dexie). Elles ne réapparaissent plus dans la timeline Today, dans la revue ni dans les insights.
+- Le toast de confirmation a été remplacé par un toast fixe coloré (vert succès, rouge erreur) en haut du viewport, avec icône `CheckCircle2` ou `AlertCircle`, message explicite avec compteurs (« Revue validée : 3 gardés, 2 jetés et supprimés. ») et durée d'affichage 2,8 s avec fondu.
+- ADR `Revue hebdomadaire et invariants kept discarded rating` mis à jour : suppression hard documentée, `LearningEntry.discarded` ne porte plus jamais `true` en base, `WeeklyReview.discardedEntryIds` devient un marqueur historique.
+- `PROJECT-STACK.md` ajusté en conséquence.
+
+Avant cet ajustement, Ticket 08 (Revue hebdomadaire) livré :
+
+- Helpers de date `src/lib/dates/week.ts` (`getCurrentWeekRange`, `shiftWeekRange`, `formatWeekRangeLabel`, etc.) ; export depuis `src/lib/dates/index.ts`.
+- Module `src/features/reviews/reviewStorage.ts` : transaction atomique qui écrit `kept`/`discarded`/`rating` sur chaque entrée plus upsert d'une `WeeklyReview` indexée par `id = weeklyReview_<weekStart>`.
+- Hooks `useWeekReviewData(range)` et `useWeekStartSetting()` dans `src/features/reviews/useWeekReviewData.ts`.
+- Remplacement complet de `src/features/reviews/WeekPage.tsx` : navigation libre semaine à semaine, cards des entrées avec note 5 étoiles et boutons Garder/Jeter, validation atomique avec bouton désactivé tant qu'une entrée reste « à décider ».
+- ADR `Revue hebdomadaire et invariants kept discarded rating` créé via MCP, 4 fichiers source attachés (accuracy = 1).
+- WORKLOG dédié `2026_05_14_22_40_[WORKLOG]_ticket_08_revue_hebdomadaire.md` créé.
+- ROADMAP : décalage de numérotation Ticket 08/09 résolu (corps détaillé aligné sur l'ordre recommandé) ; case du Ticket 08 cochée.
+- `PROJECT-STACK.md` : section WeeklyReview mise à jour.
 
 ## Prochaine action recommandée
 
-1. Lancer `npm run lint` et `npm run build`.
-2. Tester manuellement dans le navigateur : ajouter une entrée avec une URL non-YouTube (article, blog) et vérifier que la couverture apparaît après quelques secondes ; couper le réseau pour vérifier le fallback favicon.
-3. Attacher les fichiers source au nouvel ADR avec `add_metadata` puis `refresh_metadata`.
-4. Ensuite seulement : clarifier la numérotation Ticket 08/09 dans `ROADMAP.md` et démarrer le ticket suivant.
+Vérifications manuelles navigateur recommandées avant de démarrer le ticket suivant :
+
+1. Aller sur `/week`, naviguer en arrière/avant entre semaines, vérifier que les entrées de chaque semaine sont bien filtrées.
+2. Sur une semaine avec entrées : noter, garder/jeter chacune, valider, recharger, rouvrir et vérifier que l'état est conservé.
+3. Ajouter une nouvelle entrée sur une semaine déjà validée, retourner à la revue, vérifier qu'elle apparaît « à décider » et bloque la revalidation tant qu'elle n'a pas reçu de décision.
+4. Vérifier que les entrées `Pause` (empty) n'apparaissent pas dans la revue.
+
+Puis démarrer le **Ticket 09 — Courbe d'apprentissage** : calculer les métriques locales à partir des entrées `kept` (exclure `discarded` et `à décider`), afficher des courbes 7j / 30j, et les cards `jours actifs` / `apprentissages gardés` / `score moyen` / `meilleure journée`.
 
 ## Fichiers ou zones concernés
 
-- `src/features/entries/coverImage.ts` (nouveau)
-- `src/features/entries/entryStorage.ts`
-- `src/features/entries/TodayPage.tsx`
-- `src/lib/db/types.ts`
-- `src/lib/db/localData.ts`
-- `living-documentation/ADRS/2026_05_14_22_18_[ADR]_miniatures_locales_et_resolution_des_couvertures_dentree.md`
+- `src/features/reviews/WeekPage.tsx` (réécrit)
+- `src/features/reviews/reviewStorage.ts` (nouveau)
+- `src/features/reviews/useWeekReviewData.ts` (nouveau)
+- `src/lib/dates/week.ts` (nouveau)
+- `src/lib/dates/index.ts`
+- `living-documentation/ADRS/2026_05_14_22_40_[ADR]_revue_hebdomadaire_et_invariants_kept_discarded_rating.md`
+- `living-documentation/WORKLOG/2026_05_14_22_40_[WORKLOG]_ticket_08_revue_hebdomadaire.md`
+- `living-documentation/ROADMAP/2026_05_14_09_48_[ROADMAP]_tickets_mvp.md`
 - `living-documentation/AI/PROJECT-STACK.md`
 
 ## Vérifications récentes
 
-- Modifications terminées côté code et documentation.
-- `npm run lint` et `npm run build` à exécuter.
-- MCP Living Documentation disponible ; ADR créé via `create_document`.
+- `npm run lint` : OK.
+- `npm run build` : OK.
+- MCP Living Documentation disponible ; ADR et WORKLOG créés ; métadonnées ciblées attachées avec accuracy = 1.
 
 ## Notes de reprise
 
-- Ne pas charger la couverture pendant la requête utilisateur : `entryStorage` doit rester `fire-and-forget` pour ne pas allonger la latence de la popup.
-- Microlink est un service tiers ; à remplacer par un endpoint Worker propre au Ticket 12. Garder l'URL de l'API dans `coverImage.ts` isolée pour faciliter ce switch.
-- `coverImage` est un cache local reconstructible : ne pas le persister dans l'export JSON ni l'attendre dans l'import.
-- Les anciennes entrées (avant cette amélioration) ne sont pas rétrocompatibles automatiquement : la card affiche la miniature YouTube si applicable, sinon le placeholder.
+- Les insights et la courbe d'apprentissage doivent s'appuyer sur les champs `kept` / `discarded` / `rating` directement sur les entrées, pas sur les listes `selectedEntryIds` / `discardedEntryIds` de la `WeeklyReview` (qui peuvent se désynchroniser si une entrée est ajoutée après validation).
+- Les entrées `source === "empty"` doivent rester exclues des stats principales comme elles le sont déjà de la revue.
+- Le bouton de validation est désactivé tant qu'une entrée reste « à décider » : c'est volontaire, ne pas l'assouplir sans réflexion produit.
+- `weekStartsOn` n'est pas encore exposé dans les réglages utilisateur (Ticket 10 à venir) ; il est lu en lecture seule depuis `UserSettings` créé à l'onboarding.

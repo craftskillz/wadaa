@@ -28,3 +28,9 @@ export class LearningDatabase extends Dexie {
 }
 
 export const db = new LearningDatabase();
+
+if (import.meta.env.DEV) {
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
+  window.db = db;
+}
