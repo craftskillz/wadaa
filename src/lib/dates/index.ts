@@ -1,4 +1,9 @@
-export { formatTimeLabel, getTodayDateKey } from "./today";
+export {
+  formatDayLabel,
+  formatTimeLabel,
+  getLastDaysKeys,
+  getTodayDateKey,
+} from "./today";
 export {
   formatWeekRangeLabel,
   getCurrentWeekRange,

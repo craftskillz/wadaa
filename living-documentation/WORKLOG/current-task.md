@@ -19,6 +19,16 @@ Aucune tâche d'implémentation en cours.
 
 ## Dernière action réalisée
 
+Amélioration de la page Today suite à demande utilisateur (2026-05-15) — extension de la timeline aux 7 derniers jours :
+
+- Nouveau hook `src/features/entries/useTimelineData.ts` (remplace `useTodayData`) : `liveQuery` Dexie sur `between(oldestKey, todayKey)`, regroupement par jour, jours vides toujours présents.
+- Nouveau hook `src/features/entries/useActiveDay.ts` : détecte la section de jour la plus haute encore au-dessus de l'offset `ACTIVE_DAY_OFFSET_PX = 120` via scroll listener throttlé `requestAnimationFrame`.
+- Helpers `src/lib/dates/today.ts` : `getLastDaysKeys(daysCount)` et `formatDayLabel(dateKey, todayKey)` (Aujourd'hui / Hier / date complète).
+- `TodayPage.tsx` réécrit : sections par jour (oldest → today, du haut vers le bas), `TimelinePath` rendu par section, `EntryArticle` extrait pour la card, `DaySection` extrait pour la section. `useLayoutEffect` scroll vers la section Aujourd'hui au chargement. Pastilles haut affichent le jour actif avec compteur ; bouton « Revenir à aujourd'hui » quand activeDay ≠ todayKey. Popup composer renommé « Nouvelle idée pour aujourd'hui ».
+- ADR `Timeline Today multi-jours scroll-up et day-anchored pills` créé via MCP, 4 fichiers source attachés.
+- Ancien `useTodayData.ts` supprimé.
+- `PROJECT-STACK.md` mis à jour (vue concept Timeline + convention).
+
 Ajustement Ticket 08 suite retour utilisateur (2026-05-15) :
 
 - À la validation comme à la mise à jour de la revue, les entrées jetées sont maintenant **supprimées définitivement** de la base (`bulkDelete` dans la même transaction Dexie). Elles ne réapparaissent plus dans la timeline Today, dans la revue ni dans les insights.
