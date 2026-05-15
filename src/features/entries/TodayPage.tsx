@@ -2,6 +2,7 @@ import {
   type FormEvent,
   type SyntheticEvent,
   useEffect,
+  useId,
   useLayoutEffect,
   useMemo,
   useRef,
@@ -14,16 +15,20 @@ import {
   ExternalLink,
   ImageIcon,
   Plus,
-  Sparkles,
   Trash2,
   X,
 } from "lucide-react";
 
+import blossomTreeUrl from "../../assets/river-sprites/blossom-tree.png";
+import denseShrubUrl from "../../assets/river-sprites/dense-shrub.png";
+import doublePalmsUrl from "../../assets/river-sprites/double-palms.png";
+import gentleTreeUrl from "../../assets/river-sprites/gentle-tree.png";
+import leafPlantUrl from "../../assets/river-sprites/leaf-plant.png";
+import roundBushUrl from "../../assets/river-sprites/round-bush.png";
 import {
   Button,
   Card,
   EmptyState,
-  EmojiBadge,
   Input,
   StatusPill,
   StatusToastBanner,
@@ -31,6 +36,7 @@ import {
   useStatusToast,
 } from "../../components/ui";
 import { formatDayLabel, formatTimeLabel } from "../../lib/dates";
+import { classNames } from "../../lib/styles/classNames";
 import {
   createCustomEntry,
   createEntryFromPreset,
@@ -44,14 +50,321 @@ import { useActiveDay } from "./useActiveDay";
 import type { LearningEntry, LearningPreset } from "../../lib/db";
 
 const TIMELINE_DAYS_VISIBLE = 7;
-const TIMELINE_VIEWBOX_WIDTH = 120;
+const TIMELINE_VIEWBOX_WIDTH = 140;
 const TIMELINE_VIEWBOX_HEIGHT = 1200;
 const TIMELINE_PATH =
-  "M60 0 C20 100 20 200 60 300 C100 400 100 500 60 600 C20 700 20 800 60 900 C100 1000 100 1100 60 1200";
-const ACTIVE_DAY_STORAGE_KEY = "today-page-active-day-v1";
+  "M70 0 C28 100 28 200 70 300 C112 400 112 500 70 600 C28 700 28 800 70 900 C112 1000 112 1100 70 1200";
+const TIMELINE_RIVER_BANK_WIDTH = 84;
+const TIMELINE_RIVER_BODY_WIDTH = 60;
+const TIMELINE_RIVER_SHORE_WIDTH = 68;
+const TIMELINE_RIVER_SECTION_CAP = "butt";
 const AUTO_SCROLL_GRACE_PERIOD_MS = 2500;
 const COVER_MIN_FILL_RATIO = 1.2;
 const COVER_MAX_FILL_RATIO = 2.0;
+const VIEWPORT_TOP_PX = 0;
+const RIVER_SURFACE_STROKE_WIDTH = 1.6;
+const RIVER_SURFACE_SOFT_STROKE_WIDTH = 4;
+const RIVER_SURFACE_HALF_DIVISOR = 2;
+const RIVER_SURFACE_CONTROL_DIVISOR = 3;
+const RIVER_POSITION_PERCENT = 100;
+const TIMELINE_PATH_SEGMENT_HEIGHT = 300;
+const TIMELINE_PATH_SEGMENT_COUNT = 4;
+const TIMELINE_PATH_CENTER_X = 70;
+const TIMELINE_PATH_LEFT_CONTROL_X = 28;
+const TIMELINE_PATH_RIGHT_CONTROL_X = 112;
+const TIMELINE_PATH_ALTERNATION_DIVISOR = 2;
+const CUBIC_BEZIER_CONTROL_WEIGHT = 3;
+const RIVER_SPRITE_SCALE_MULTIPLIER = 2;
+const WATER_PLANT_DISTANCE_PX = 52;
+const TREE_GROUP_DISTANCE_PX = 144;
+const RIVER_SPRITE_CLUSTER_SAME_SIDE_MULTIPLIER = 1;
+const RIVER_SPRITE_CLUSTER_OPPOSITE_SIDE_MULTIPLIER = -1;
+const RIVER_WATER_PLANT_PAIR_OFFSET_TIGHT = 14;
+const RIVER_WATER_PLANT_PAIR_OFFSET_DIAGONAL = 22;
+const RIVER_WATER_PLANT_PAIR_SCALE_SECONDARY = 0.92;
+const RIVER_TREE_GROUP_CLUSTER_OFFSET_TIGHT = 16;
+const RIVER_TREE_GROUP_CLUSTER_OFFSET_WIDE = 28;
+const RIVER_TREE_GROUP_CLUSTER_SCALE_SMALL = 0.82;
+const RIVER_TREE_GROUP_CLUSTER_SCALE_MEDIUM = 0.9;
+const RIVER_TREE_GROUP_CLUSTER_SCALE_FULL = 1;
+
+type RiverAtlasSpriteId =
+  | "blossomTree"
+  | "denseShrub"
+  | "doublePalms"
+  | "gentleTree"
+  | "leafPlant"
+  | "roundBush";
+
+type RiverSpriteAffinity = "waterPlant" | "treeGroup";
+type RiverSpriteSide = "left" | "right";
+type RiverTreeGroupClusterPatternId = "three" | "four" | "five";
+type RiverWaterPlantClusterPatternId =
+  | "single"
+  | "sideBySide"
+  | "oppositeDiagonal";
+type RiverSpriteClusterPatternId =
+  | RiverTreeGroupClusterPatternId
+  | RiverWaterPlantClusterPatternId;
+
+type RiverSurfaceRipple = {
+  x: number;
+  y: number;
+  width: number;
+  curve: number;
+  rotation: number;
+  opacity: number;
+};
+
+type RiverAtlasSprite = {
+  url: string;
+  width: number;
+  height: number;
+};
+
+type RiverAtlasSpritePlacement = {
+  affinity: RiverSpriteAffinity;
+  side: RiverSpriteSide;
+  spriteId: RiverAtlasSpriteId;
+  y: number;
+  scale: number;
+  opacity?: number;
+  clusterPattern?: RiverSpriteClusterPatternId;
+};
+
+type RiverSpriteClusterItem = {
+  offsetX: number;
+  offsetY: number;
+  scale: number;
+  sideMultiplier?: number;
+};
+
+const RIVER_SPRITE_DISTANCE_BY_AFFINITY: Record<RiverSpriteAffinity, number> = {
+  waterPlant: WATER_PLANT_DISTANCE_PX,
+  treeGroup: TREE_GROUP_DISTANCE_PX,
+};
+
+const RIVER_SPRITE_SIDE_MULTIPLIER: Record<RiverSpriteSide, number> = {
+  left: -1,
+  right: 1,
+};
+
+const RIVER_SINGLE_SPRITE_CLUSTER: RiverSpriteClusterItem[] = [
+  {
+    offsetX: 0,
+    offsetY: 0,
+    scale: RIVER_TREE_GROUP_CLUSTER_SCALE_FULL,
+    sideMultiplier: RIVER_SPRITE_CLUSTER_SAME_SIDE_MULTIPLIER,
+  },
+];
+
+const RIVER_WATER_PLANT_CLUSTER_PATTERNS: Record<
+  RiverWaterPlantClusterPatternId,
+  RiverSpriteClusterItem[]
+> = {
+  single: RIVER_SINGLE_SPRITE_CLUSTER,
+  sideBySide: [
+    {
+      offsetX: -RIVER_WATER_PLANT_PAIR_OFFSET_TIGHT,
+      offsetY: -RIVER_WATER_PLANT_PAIR_OFFSET_TIGHT,
+      scale: RIVER_TREE_GROUP_CLUSTER_SCALE_FULL,
+      sideMultiplier: RIVER_SPRITE_CLUSTER_SAME_SIDE_MULTIPLIER,
+    },
+    {
+      offsetX: RIVER_WATER_PLANT_PAIR_OFFSET_TIGHT,
+      offsetY: RIVER_WATER_PLANT_PAIR_OFFSET_TIGHT,
+      scale: RIVER_WATER_PLANT_PAIR_SCALE_SECONDARY,
+      sideMultiplier: RIVER_SPRITE_CLUSTER_SAME_SIDE_MULTIPLIER,
+    },
+  ],
+  oppositeDiagonal: [
+    {
+      offsetX: 0,
+      offsetY: -RIVER_WATER_PLANT_PAIR_OFFSET_DIAGONAL,
+      scale: RIVER_TREE_GROUP_CLUSTER_SCALE_FULL,
+      sideMultiplier: RIVER_SPRITE_CLUSTER_SAME_SIDE_MULTIPLIER,
+    },
+    {
+      offsetX: 0,
+      offsetY: RIVER_WATER_PLANT_PAIR_OFFSET_DIAGONAL,
+      scale: RIVER_WATER_PLANT_PAIR_SCALE_SECONDARY,
+      sideMultiplier: RIVER_SPRITE_CLUSTER_OPPOSITE_SIDE_MULTIPLIER,
+    },
+  ],
+};
+
+const RIVER_TREE_GROUP_CLUSTER_PATTERNS: Record<
+  RiverTreeGroupClusterPatternId,
+  RiverSpriteClusterItem[]
+> = {
+  three: [
+    {
+      offsetX: -RIVER_TREE_GROUP_CLUSTER_OFFSET_TIGHT,
+      offsetY: RIVER_TREE_GROUP_CLUSTER_OFFSET_TIGHT,
+      scale: RIVER_TREE_GROUP_CLUSTER_SCALE_MEDIUM,
+    },
+    {
+      offsetX: 0,
+      offsetY: -RIVER_TREE_GROUP_CLUSTER_OFFSET_TIGHT,
+      scale: RIVER_TREE_GROUP_CLUSTER_SCALE_FULL,
+    },
+    {
+      offsetX: RIVER_TREE_GROUP_CLUSTER_OFFSET_TIGHT,
+      offsetY: RIVER_TREE_GROUP_CLUSTER_OFFSET_TIGHT,
+      scale: RIVER_TREE_GROUP_CLUSTER_SCALE_SMALL,
+    },
+  ],
+  four: [
+    {
+      offsetX: -RIVER_TREE_GROUP_CLUSTER_OFFSET_TIGHT,
+      offsetY: -RIVER_TREE_GROUP_CLUSTER_OFFSET_TIGHT,
+      scale: RIVER_TREE_GROUP_CLUSTER_SCALE_MEDIUM,
+    },
+    {
+      offsetX: RIVER_TREE_GROUP_CLUSTER_OFFSET_TIGHT,
+      offsetY: -RIVER_TREE_GROUP_CLUSTER_OFFSET_TIGHT,
+      scale: RIVER_TREE_GROUP_CLUSTER_SCALE_FULL,
+    },
+    {
+      offsetX: -RIVER_TREE_GROUP_CLUSTER_OFFSET_TIGHT,
+      offsetY: RIVER_TREE_GROUP_CLUSTER_OFFSET_TIGHT,
+      scale: RIVER_TREE_GROUP_CLUSTER_SCALE_SMALL,
+    },
+    {
+      offsetX: RIVER_TREE_GROUP_CLUSTER_OFFSET_TIGHT,
+      offsetY: RIVER_TREE_GROUP_CLUSTER_OFFSET_TIGHT,
+      scale: RIVER_TREE_GROUP_CLUSTER_SCALE_MEDIUM,
+    },
+  ],
+  five: [
+    {
+      offsetX: -RIVER_TREE_GROUP_CLUSTER_OFFSET_WIDE,
+      offsetY: 0,
+      scale: RIVER_TREE_GROUP_CLUSTER_SCALE_SMALL,
+    },
+    {
+      offsetX: -RIVER_TREE_GROUP_CLUSTER_OFFSET_TIGHT,
+      offsetY: -RIVER_TREE_GROUP_CLUSTER_OFFSET_TIGHT,
+      scale: RIVER_TREE_GROUP_CLUSTER_SCALE_MEDIUM,
+    },
+    {
+      offsetX: RIVER_TREE_GROUP_CLUSTER_OFFSET_TIGHT,
+      offsetY: -RIVER_TREE_GROUP_CLUSTER_OFFSET_TIGHT,
+      scale: RIVER_TREE_GROUP_CLUSTER_SCALE_FULL,
+    },
+    {
+      offsetX: RIVER_TREE_GROUP_CLUSTER_OFFSET_TIGHT,
+      offsetY: RIVER_TREE_GROUP_CLUSTER_OFFSET_TIGHT,
+      scale: RIVER_TREE_GROUP_CLUSTER_SCALE_MEDIUM,
+    },
+    {
+      offsetX: RIVER_TREE_GROUP_CLUSTER_OFFSET_WIDE,
+      offsetY: RIVER_TREE_GROUP_CLUSTER_OFFSET_TIGHT,
+      scale: RIVER_TREE_GROUP_CLUSTER_SCALE_SMALL,
+    },
+  ],
+};
+
+const RIVER_SURFACE_RIPPLES: RiverSurfaceRipple[] = [
+  { x: 62, y: 115, width: 14, curve: 3, rotation: -9, opacity: 0.16 },
+  { x: 80, y: 238, width: 18, curve: -4, rotation: 7, opacity: 0.12 },
+  { x: 57, y: 378, width: 11, curve: 2, rotation: -13, opacity: 0.1 },
+  { x: 84, y: 526, width: 16, curve: 4, rotation: 10, opacity: 0.14 },
+  { x: 63, y: 690, width: 20, curve: -3, rotation: -5, opacity: 0.12 },
+  { x: 78, y: 848, width: 13, curve: 3, rotation: 14, opacity: 0.11 },
+  { x: 59, y: 1006, width: 17, curve: -4, rotation: -8, opacity: 0.13 },
+  { x: 82, y: 1132, width: 12, curve: 2, rotation: 11, opacity: 0.1 },
+];
+
+const RIVER_ATLAS_SPRITES: Record<RiverAtlasSpriteId, RiverAtlasSprite> = {
+  blossomTree: {
+    url: blossomTreeUrl,
+    width: 265,
+    height: 265,
+  },
+  denseShrub: {
+    url: denseShrubUrl,
+    width: 265,
+    height: 265,
+  },
+  doublePalms: {
+    url: doublePalmsUrl,
+    width: 265,
+    height: 265,
+  },
+  gentleTree: {
+    url: gentleTreeUrl,
+    width: 265,
+    height: 265,
+  },
+  leafPlant: {
+    url: leafPlantUrl,
+    width: 265,
+    height: 265,
+  },
+  roundBush: {
+    url: roundBushUrl,
+    width: 265,
+    height: 265,
+  },
+};
+
+const RIVER_ATLAS_PLACEMENTS: RiverAtlasSpritePlacement[] = [
+  {
+    affinity: "waterPlant",
+    side: "left",
+    spriteId: "doublePalms",
+    y: 92,
+    scale: 0.12,
+    opacity: 0.86,
+    clusterPattern: "sideBySide",
+  },
+  {
+    affinity: "waterPlant",
+    side: "left",
+    spriteId: "leafPlant",
+    y: 398,
+    scale: 0.12,
+    opacity: 0.88,
+    clusterPattern: "oppositeDiagonal",
+  },
+  {
+    affinity: "treeGroup",
+    side: "right",
+    spriteId: "roundBush",
+    y: 542,
+    scale: 0.12,
+    opacity: 0.84,
+    clusterPattern: "four",
+  },
+  {
+    affinity: "treeGroup",
+    side: "left",
+    spriteId: "denseShrub",
+    y: 705,
+    scale: 0.12,
+    opacity: 0.84,
+    clusterPattern: "five",
+  },
+  {
+    affinity: "treeGroup",
+    side: "right",
+    spriteId: "gentleTree",
+    y: 840,
+    scale: 0.12,
+    opacity: 0.84,
+    clusterPattern: "three",
+  },
+  {
+    affinity: "treeGroup",
+    side: "right",
+    spriteId: "blossomTree",
+    y: 1110,
+    scale: 0.11,
+    opacity: 0.82,
+    clusterPattern: "four",
+  },
+];
 
 type DayTheme = {
   primaryColor: string;
@@ -154,28 +467,6 @@ const NEUTRAL_PILL = {
 
 const DAY_BACKGROUND_FADE_MASK =
   "linear-gradient(to bottom, transparent 0%, black 18%, black 82%, transparent 100%)";
-
-function readStoredActiveDay(): string | null {
-  if (typeof window === "undefined") {
-    return null;
-  }
-  try {
-    return window.localStorage.getItem(ACTIVE_DAY_STORAGE_KEY);
-  } catch {
-    return null;
-  }
-}
-
-function writeStoredActiveDay(dateKey: string) {
-  if (typeof window === "undefined") {
-    return;
-  }
-  try {
-    window.localStorage.setItem(ACTIVE_DAY_STORAGE_KEY, dateKey);
-  } catch {
-    // ignore quota / disabled storage
-  }
-}
 
 function hasVisiblePresetForEntry(
   entryContent: string,
@@ -312,33 +603,256 @@ function normalizeEntryUrl(value: string) {
   }
 }
 
+function scrollSectionToMainStart(
+  section: HTMLElement,
+  behavior: ScrollBehavior = "auto",
+) {
+  const scrollContainer = document.querySelector("main");
+
+  if (!scrollContainer) {
+    section.scrollIntoView({ block: "start", behavior });
+    return;
+  }
+
+  const containerRect = scrollContainer.getBoundingClientRect();
+  const sectionRect = section.getBoundingClientRect();
+
+  scrollContainer.scrollTo({
+    behavior,
+    top: scrollContainer.scrollTop + sectionRect.top - containerRect.top,
+  });
+}
+
+function getCubicBezierX(progress: number, controlX: number) {
+  const remainingProgress = 1 - progress;
+  const firstControlWeight =
+    CUBIC_BEZIER_CONTROL_WEIGHT *
+    remainingProgress *
+    remainingProgress *
+    progress;
+  const secondControlWeight =
+    CUBIC_BEZIER_CONTROL_WEIGHT *
+    remainingProgress *
+    progress *
+    progress;
+  const endpointWeight =
+    remainingProgress * remainingProgress * remainingProgress +
+    progress * progress * progress;
+
+  return (
+    endpointWeight * TIMELINE_PATH_CENTER_X +
+    (firstControlWeight + secondControlWeight) * controlX
+  );
+}
+
+function getRiverCenterXAtY(y: number) {
+  const clampedY = Math.min(Math.max(y, 0), TIMELINE_VIEWBOX_HEIGHT);
+  const segmentIndex = Math.min(
+    Math.floor(clampedY / TIMELINE_PATH_SEGMENT_HEIGHT),
+    TIMELINE_PATH_SEGMENT_COUNT - 1,
+  );
+  const segmentStartY = segmentIndex * TIMELINE_PATH_SEGMENT_HEIGHT;
+  const segmentProgress =
+    (clampedY - segmentStartY) / TIMELINE_PATH_SEGMENT_HEIGHT;
+  const bendsLeft = segmentIndex % TIMELINE_PATH_ALTERNATION_DIVISOR === 0;
+  const controlX = bendsLeft
+    ? TIMELINE_PATH_LEFT_CONTROL_X
+    : TIMELINE_PATH_RIGHT_CONTROL_X;
+
+  return getCubicBezierX(segmentProgress, controlX);
+}
+
+function getRiverSpriteClusterItems(placement: RiverAtlasSpritePlacement) {
+  if (placement.affinity === "waterPlant") {
+    switch (placement.clusterPattern) {
+      case "single":
+      case "oppositeDiagonal":
+      case "sideBySide":
+        return RIVER_WATER_PLANT_CLUSTER_PATTERNS[placement.clusterPattern];
+      default:
+        return RIVER_WATER_PLANT_CLUSTER_PATTERNS.sideBySide;
+    }
+  }
+
+  if (placement.affinity === "treeGroup") {
+    switch (placement.clusterPattern) {
+      case "four":
+      case "five":
+      case "three":
+        return RIVER_TREE_GROUP_CLUSTER_PATTERNS[placement.clusterPattern];
+      default:
+        return RIVER_TREE_GROUP_CLUSTER_PATTERNS.three;
+    }
+  }
+
+  return RIVER_SINGLE_SPRITE_CLUSTER;
+}
+
+function RiverAtlasSprites() {
+  return (
+    <div className="absolute inset-0 z-10 overflow-visible">
+      {RIVER_ATLAS_PLACEMENTS.flatMap((placement, placementIndex) => {
+        const sprite = RIVER_ATLAS_SPRITES[placement.spriteId];
+        const riverCenterX = getRiverCenterXAtY(placement.y);
+        const distanceFromRiver =
+          RIVER_SPRITE_DISTANCE_BY_AFFINITY[placement.affinity];
+        const sideOffset =
+          RIVER_SPRITE_SIDE_MULTIPLIER[placement.side] * distanceFromRiver;
+
+        return getRiverSpriteClusterItems(placement).map(
+          (clusterItem, clusterIndex) => {
+            const width =
+              sprite.width *
+              placement.scale *
+              clusterItem.scale *
+              RIVER_SPRITE_SCALE_MULTIPLIER;
+            const height =
+              sprite.height *
+              placement.scale *
+              clusterItem.scale *
+              RIVER_SPRITE_SCALE_MULTIPLIER;
+            const clusterSideOffset =
+              sideOffset *
+              (clusterItem.sideMultiplier ??
+                RIVER_SPRITE_CLUSTER_SAME_SIDE_MULTIPLIER);
+
+            return (
+              <img
+                alt=""
+                className="absolute max-w-none select-none"
+                key={`${placement.spriteId}-${placementIndex}-${clusterIndex}`}
+                src={sprite.url}
+                style={{
+                  height,
+                  left: `${(riverCenterX / TIMELINE_VIEWBOX_WIDTH) * RIVER_POSITION_PERCENT}%`,
+                  opacity: placement.opacity ?? 1,
+                  top: `${(placement.y / TIMELINE_VIEWBOX_HEIGHT) * RIVER_POSITION_PERCENT}%`,
+                  transform: `translate(${
+                    clusterSideOffset + clusterItem.offsetX - width / 2
+                  }px, ${clusterItem.offsetY - height / 2}px)`,
+                  width,
+                }}
+              />
+            );
+          },
+        );
+      })}
+    </div>
+  );
+}
+
+function RiverSurfaceTexture() {
+  return (
+    <g fill="none">
+      {RIVER_SURFACE_RIPPLES.map((ripple, index) => {
+        const halfWidth = ripple.width / RIVER_SURFACE_HALF_DIVISOR;
+        const controlWidth = ripple.width / RIVER_SURFACE_CONTROL_DIVISOR;
+        const ripplePath = `M-${halfWidth} 0 C-${controlWidth} ${-ripple.curve} ${controlWidth} ${ripple.curve} ${halfWidth} 0`;
+
+        return (
+          <g
+            key={`ripple-${index}`}
+            opacity={ripple.opacity}
+            transform={`translate(${ripple.x} ${ripple.y}) rotate(${ripple.rotation})`}
+          >
+            <path
+              d={ripplePath}
+              stroke="rgba(255, 255, 255, 0.9)"
+              strokeLinecap="round"
+              strokeWidth={RIVER_SURFACE_SOFT_STROKE_WIDTH}
+            />
+            <path
+              d={ripplePath}
+              stroke="rgba(15, 118, 110, 0.6)"
+              strokeLinecap="round"
+              strokeWidth={RIVER_SURFACE_STROKE_WIDTH}
+            />
+          </g>
+        );
+      })}
+    </g>
+  );
+}
+
 function TimelinePath() {
+  const rawId = useId().replace(/:/g, "");
+  const riverGradientId = `river-gradient-${rawId}`;
+  const bankGradientId = `river-bank-${rawId}`;
+  const glowFilterId = `river-glow-${rawId}`;
+
   return (
     <div
       aria-hidden="true"
-      className="pointer-events-none absolute inset-y-0 left-1/2 w-24 -translate-x-1/2 overflow-visible"
+      className="pointer-events-none absolute inset-y-0 left-1/2 w-32 -translate-x-1/2 overflow-visible"
     >
       <svg
         className="h-full w-full overflow-visible"
         preserveAspectRatio="none"
         viewBox={`0 0 ${TIMELINE_VIEWBOX_WIDTH} ${TIMELINE_VIEWBOX_HEIGHT}`}
       >
+        <defs>
+          <linearGradient
+            gradientUnits="userSpaceOnUse"
+            id={riverGradientId}
+            x1="0"
+            x2={TIMELINE_VIEWBOX_WIDTH}
+            y1="0"
+            y2={TIMELINE_VIEWBOX_HEIGHT}
+          >
+            <stop offset="0%" stopColor="rgba(14, 165, 233, 0.2)" />
+            <stop offset="38%" stopColor="rgba(45, 212, 191, 0.5)" />
+            <stop offset="70%" stopColor="rgba(59, 130, 246, 0.4)" />
+            <stop offset="100%" stopColor="rgba(99, 102, 241, 0.28)" />
+          </linearGradient>
+          <linearGradient
+            gradientUnits="userSpaceOnUse"
+            id={bankGradientId}
+            x1={TIMELINE_VIEWBOX_WIDTH}
+            x2="0"
+            y1="0"
+            y2={TIMELINE_VIEWBOX_HEIGHT}
+          >
+            <stop offset="0%" stopColor="rgba(255, 255, 255, 0.65)" />
+            <stop offset="45%" stopColor="rgba(240, 253, 250, 0.55)" />
+            <stop offset="100%" stopColor="rgba(226, 232, 240, 0.35)" />
+          </linearGradient>
+          <filter
+            colorInterpolationFilters="sRGB"
+            filterUnits="userSpaceOnUse"
+            height={TIMELINE_VIEWBOX_HEIGHT}
+            id={glowFilterId}
+            width={TIMELINE_VIEWBOX_WIDTH}
+            x="0"
+            y="0"
+          >
+            <feGaussianBlur stdDeviation="4" />
+          </filter>
+        </defs>
         <path
           d={TIMELINE_PATH}
           fill="none"
-          stroke="rgba(99, 102, 241, 0.26)"
-          strokeLinecap="round"
-          strokeWidth="10"
+          filter={`url(#${glowFilterId})`}
+          stroke={`url(#${bankGradientId})`}
+          strokeLinecap={TIMELINE_RIVER_SECTION_CAP}
+          strokeWidth={TIMELINE_RIVER_BANK_WIDTH}
         />
         <path
           d={TIMELINE_PATH}
           fill="none"
-          stroke="rgba(20, 184, 166, 0.45)"
-          strokeDasharray="3 24"
-          strokeLinecap="round"
-          strokeWidth="5"
+          stroke="rgba(255, 255, 255, 0.7)"
+          strokeLinecap={TIMELINE_RIVER_SECTION_CAP}
+          strokeWidth={TIMELINE_RIVER_SHORE_WIDTH}
         />
+        <path
+          d={TIMELINE_PATH}
+          fill="none"
+          stroke={`url(#${riverGradientId})`}
+          strokeLinecap={TIMELINE_RIVER_SECTION_CAP}
+          strokeWidth={TIMELINE_RIVER_BODY_WIDTH}
+        />
+        <RiverSurfaceTexture />
       </svg>
+      <RiverAtlasSprites />
     </div>
   );
 }
@@ -362,10 +876,10 @@ function EntryArticle({
 }: EntryCardProps) {
   return (
     <article
-      className="grid min-h-44 grid-cols-[minmax(0,1fr)_3rem_minmax(0,1fr)] items-center gap-1 sm:grid-cols-[minmax(0,1fr)_4rem_minmax(0,1fr)] sm:gap-4"
+      className="grid min-h-44 grid-cols-[minmax(0,1fr)_5rem_minmax(0,1fr)] items-center gap-2 sm:grid-cols-[minmax(0,1fr)_8rem_minmax(0,1fr)] sm:gap-6"
       data-entry-id={entry.id}
     >
-      <div className={isLeft ? "col-start-1" : "col-start-3"}>
+      <div className={isLeft ? "col-start-1 pr-2 sm:pr-4" : "col-start-3 pl-2 sm:pl-4"}>
         <Card className="p-3 shadow-xl sm:p-4" tone="solid">
           <div className="mb-2 flex flex-wrap items-center gap-2">
             <StatusPill tone={entry.source === "empty" ? "slate" : "blue"}>
@@ -433,22 +947,6 @@ function EntryArticle({
         </Card>
       </div>
 
-      <div className="col-start-2 row-start-1 flex h-full items-center justify-center">
-        <div className="flex size-12 items-center justify-center rounded-full border border-white/80 bg-white/90 shadow-lg shadow-slate-900/10">
-          <EmojiBadge
-            className="size-9 text-base"
-            emoji={entry.source === "empty" ? "🌙" : "✨"}
-          />
-        </div>
-      </div>
-
-      <div
-        aria-hidden="true"
-        className={[
-          "col-start-2 row-start-1 h-px border-t border-dashed border-slate-300",
-          isLeft ? "-ml-[50%]" : "-mr-[50%]",
-        ].join(" ")}
-      />
     </article>
   );
 }
@@ -459,11 +957,11 @@ type DaySectionProps = {
   presets: LearningPreset[];
   isSubmitting: boolean;
   todayRef: React.RefObject<HTMLElement | null>;
+  isLastDay: boolean;
   startIndex: number;
   background: string;
   onDelete: (entryId: string) => void;
   onCreatePreset: (entryId: string) => void;
-  onOpenComposer: () => void;
 };
 
 function DaySection({
@@ -472,18 +970,21 @@ function DaySection({
   presets,
   isSubmitting,
   todayRef,
+  isLastDay,
   startIndex,
   background,
   onDelete,
   onCreatePreset,
-  onOpenComposer,
 }: DaySectionProps) {
   const { dateKey, entries } = day;
   const isToday = dateKey === todayKey;
 
   return (
     <section
-      className="relative min-h-[80vh] py-10"
+      className={classNames(
+        "relative pt-10",
+        isLastDay ? "min-h-[calc(100vh+12rem)] pb-32" : "min-h-[80vh] pb-10",
+      )}
       data-day-section={dateKey}
       ref={isToday ? todayRef : undefined}
     >
@@ -519,25 +1020,6 @@ function DaySection({
               presets={presets}
             />
           ))}
-        </div>
-      ) : isToday ? (
-        <div className="relative z-10 mx-auto w-[min(92vw,32rem)]">
-          <EmptyState
-            description="Choisis une réponse rapide ou écris une note libre. Elle restera disponible après refresh."
-            icon={
-              <Sparkles aria-hidden="true" className="size-6 text-violet-500" />
-            }
-            title="Aucune entrée pour le moment"
-          />
-          <div className="mt-4 flex justify-center">
-            <Button
-              icon={<Plus aria-hidden="true" className="size-5" />}
-              onClick={onOpenComposer}
-              size="lg"
-            >
-              Ajouter ta première idée
-            </Button>
-          </div>
         </div>
       ) : null}
     </section>
@@ -590,6 +1072,7 @@ export function TodayPage() {
   const { statusToast, isStatusToastVisible, showStatusToast } = useStatusToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isComposerOpen, setIsComposerOpen] = useState(false);
+  const [isTodayActionVisible, setIsTodayActionVisible] = useState(true);
 
   const visiblePresets = useMemo(
     () => presets.filter((preset) => !isEmptyPreset(preset)),
@@ -623,6 +1106,19 @@ export function TodayPage() {
   }, [activeDayEntry, dayThemesByDateKey]);
 
   useLayoutEffect(() => {
+    if (typeof window === "undefined") {
+      return;
+    }
+
+    const previousScrollRestoration = window.history.scrollRestoration;
+    window.history.scrollRestoration = "manual";
+
+    return () => {
+      window.history.scrollRestoration = previousScrollRestoration;
+    };
+  }, []);
+
+  useLayoutEffect(() => {
     if (userInteractedRef.current) {
       return;
     }
@@ -633,16 +1129,24 @@ export function TodayPage() {
       return;
     }
 
-    const stored = readStoredActiveDay();
-    const desiredDateKey =
-      stored && renderedDays.some((day) => day.dateKey === stored)
-        ? stored
-        : todayKey;
-
     const targetSection = document.querySelector<HTMLElement>(
-      `[data-day-section="${desiredDateKey}"]`,
+      `[data-day-section="${todayKey}"]`,
     );
-    targetSection?.scrollIntoView({ block: "start" });
+    if (!targetSection) {
+      return;
+    }
+
+    scrollSectionToMainStart(targetSection);
+
+    const frameId = window.requestAnimationFrame(() => {
+      if (!userInteractedRef.current) {
+        scrollSectionToMainStart(targetSection);
+      }
+    });
+
+    return () => {
+      window.cancelAnimationFrame(frameId);
+    };
   }, [renderedDays, todayKey, mountTime]);
 
   useLayoutEffect(() => {
@@ -685,18 +1189,55 @@ export function TodayPage() {
     };
   }, []);
 
-  useEffect(() => {
-    if (!activeDay) {
-      return;
+  useLayoutEffect(() => {
+    let frameId: number | null = null;
+
+    function computeTodayActionVisibility() {
+      frameId = null;
+      const todaySection = todaySectionRef.current;
+
+      if (!todaySection) {
+        setIsTodayActionVisible(true);
+        return;
+      }
+
+      const rect = todaySection.getBoundingClientRect();
+      setIsTodayActionVisible(
+        rect.top < window.innerHeight && rect.bottom > VIEWPORT_TOP_PX,
+      );
     }
-    writeStoredActiveDay(activeDay);
-  }, [activeDay]);
+
+    function scheduleCompute() {
+      if (frameId !== null) {
+        return;
+      }
+      frameId = window.requestAnimationFrame(computeTodayActionVisibility);
+    }
+
+    const scrollContainer = document.querySelector("main");
+    const scrollTarget: HTMLElement | Window = scrollContainer ?? window;
+
+    scrollTarget.addEventListener("scroll", scheduleCompute, {
+      passive: true,
+    });
+    window.addEventListener("resize", scheduleCompute, { passive: true });
+    computeTodayActionVisibility();
+
+    return () => {
+      scrollTarget.removeEventListener("scroll", scheduleCompute);
+      window.removeEventListener("resize", scheduleCompute);
+      if (frameId !== null) {
+        window.cancelAnimationFrame(frameId);
+      }
+    };
+  }, [renderedDays, todayKey]);
 
   function scrollToToday() {
-    todaySectionRef.current?.scrollIntoView({
-      block: "start",
-      behavior: "smooth",
-    });
+    if (!todaySectionRef.current) {
+      return;
+    }
+
+    scrollSectionToMainStart(todaySectionRef.current, "smooth");
   }
 
   function resetComposer() {
@@ -835,7 +1376,7 @@ export function TodayPage() {
   }
 
   return (
-    <section className="relative -mx-4 pb-20 sm:-mx-6 lg:-mx-8">
+    <section className="relative -mx-4 sm:-mx-6 lg:-mx-8">
       <StatusToastBanner
         isVisible={isStatusToastVisible}
         toast={statusToast}
@@ -870,12 +1411,12 @@ export function TodayPage() {
         ) : null}
       </div>
 
-      {isOnToday ? (
+      {isTodayActionVisible ? (
         <Button
           aria-expanded={isComposerOpen}
           aria-label="Ajouter une entrée pour aujourd'hui"
-          className="fixed left-1/2 top-1/2 z-30 size-16 -translate-x-1/2 -translate-y-1/2 rounded-full p-0 shadow-2xl shadow-violet-500/30"
-          icon={<Plus aria-hidden="true" className="size-7" />}
+          className="fixed -bottom-8 -right-8 z-30 size-48 min-h-0 rounded-full bg-violet-600 p-0 text-white shadow-2xl shadow-violet-500/30 hover:bg-violet-700 sm:-bottom-10 sm:-right-10 sm:size-56"
+          icon={<Plus aria-hidden="true" className="size-20 sm:size-24" />}
           motion="none"
           onClick={() => setIsComposerOpen((value) => !value)}
         />
@@ -975,11 +1516,11 @@ export function TodayPage() {
             <DaySection
               background={background}
               day={day}
+              isLastDay={index === renderedDays.length - 1}
               isSubmitting={isSubmitting}
               key={day.dateKey}
               onCreatePreset={handleCreatePreset}
               onDelete={handleDelete}
-              onOpenComposer={() => setIsComposerOpen(true)}
               presets={presets}
               startIndex={dayStartIndices[index] ?? 0}
               todayKey={todayKey}

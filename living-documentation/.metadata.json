@@ -810,7 +810,7 @@
   "ADRS/2026_05_15_08_55_[ADR]_timeline_today_multijours_scrollup_et_dayanchored_pills": [
     {
       "path": "src/features/entries/TodayPage.tsx",
-      "hash": "06b7a2cc828c80a830f7bb576d8964daca544f56b95b5adfc098359a90bbc507"
+      "hash": "6ee976df2f766aa803ea57d02652feade45b8f18f3c5e29afc8b1eb5960ba931"
     },
     {
       "path": "src/features/entries/useTimelineData.ts",
@@ -839,6 +839,40 @@
     {
       "path": "src/features/entries/entryStorage.ts",
       "hash": "032f11a0840ff26975c5833cc5c5c5e931de5400e778cd65dec4e78720ee3832"
+    }
+  ],
+  "ADRS/2026_05_15_19_01_[ADR]_chemin_today_rendu_comme_fleuve_svg": [
+    {
+      "path": "src/features/entries/TodayPage.tsx",
+      "hash": "6ee976df2f766aa803ea57d02652feade45b8f18f3c5e29afc8b1eb5960ba931"
+    },
+    {
+      "path": "src/assets/river-sprites/leaf-plant.png",
+      "hash": "376bf904bc4fe6bdffc53b45b62fbce5966b667e80298d904026222fc392c282"
+    },
+    {
+      "path": "src/assets/river-sprites/round-bush.png",
+      "hash": "04a9a891b9ef29d204d5ac9acfb64e685828d59adc03bed39e7912da0c775de0"
+    },
+    {
+      "path": "src/assets/river-sprites/dense-shrub.png",
+      "hash": "e3cd6f3d060d4d13b005328995c0a2800551956288aa7a1e7668a00af5e4da17"
+    },
+    {
+      "path": "src/assets/river-sprites/blossom-tree.png",
+      "hash": "ea9157e28ae7020c20c6c296e4e5aeb2219f16989c0757ba8be29a10707141a9"
+    },
+    {
+      "path": "src/assets/river-sprites/double-palms.png",
+      "hash": "b9ecf068efb76779010fd317f93dac015ea6a9e323c9a72fc3f2308733f7bf46"
+    },
+    {
+      "path": "src/assets/river-sprites/gentle-tree.png",
+      "hash": "c93f5a0a2680f8a3b38105933d487be85253154a84c6dfd770bba5e2df5215ee"
+    },
+    {
+      "path": "src/components/layout/AppShell.tsx",
+      "hash": "f89104c9272aacbaf522ba8d28ffe9bc395ef0af1978af1c1688b7a1f5f64c56"
     }
   ]
 }

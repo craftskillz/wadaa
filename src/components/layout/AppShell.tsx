@@ -1,12 +1,14 @@
 import { Navigate, Outlet, useLocation } from "react-router-dom";
 
 import { useOnboardingStatus } from "../../features/onboarding/useOnboardingStatus";
+import { classNames } from "../../lib/styles/classNames";
 import { BottomNav } from "./BottomNav";
 
 export function AppShell() {
   const location = useLocation();
   const onboardingStatus = useOnboardingStatus();
   const isOnboardingRoute = location.pathname === "/onboarding";
+  const isTodayRoute = location.pathname === "/";
 
   if (onboardingStatus === "loading") {
     return (
@@ -32,7 +34,12 @@ export function AppShell() {
   return (
     <div className="h-screen overflow-hidden bg-[linear-gradient(135deg,_#fbfaf7_0%,_#eef6ff_48%,_#f3fff8_100%)] text-slate-950">
       <div className="flex h-full w-full flex-col">
-        <main className="min-h-0 flex-1 overflow-y-auto px-4 pb-28 pt-5 sm:px-6 lg:px-8">
+        <main
+          className={classNames(
+            "min-h-0 flex-1 overflow-y-auto px-4 pt-5 sm:px-6 lg:px-8",
+            isTodayRoute ? "pb-0" : "pb-28",
+          )}
+        >
           <Outlet />
         </main>
         {isOnboardingRoute ? null : <BottomNav />}
