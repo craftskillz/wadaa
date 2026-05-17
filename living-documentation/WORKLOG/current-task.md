@@ -1,8 +1,8 @@
 ---
 **date:** 2026-05-16
 **status:** Idle
-**description:** Point de reprise après repositionnement du bouton d'ajout Today en bas à droite et masquage dans le passé.
-**tags:** worklog, handoff, progression, ticket-09, today-page, add-button, scroll-anchor
+**description:** Point de reprise après correction de la régression F5 sur les images de couverture Today.
+**tags:** worklog, handoff, progression, ticket-10, cover-image, indexeddb, object-url, today-page
 ---
 
 # Current task
@@ -11,7 +11,7 @@ Ce document est le point de reprise entre assistants IA. Tout agent doit le lire
 
 ## Statut courant
 
-Idle — Today se ré-ancre sur Aujourd'hui au chargement, et le bouton `+` n'apparaît que quand Aujourd'hui est le jour actif.
+Idle — régression corrigée : les images de couverture Today stockées en `Blob` restent affichables après F5.
 
 ## Tâche courante
 
@@ -19,30 +19,41 @@ Aucune tâche d'implémentation en cours.
 
 ## Dernière action réalisée
 
-Polish comportemental Today (2026-05-16) :
+Correctif régression couvertures Today (2026-05-16) :
 
-- Le scroll initial ne restaure plus un ancien jour actif depuis `localStorage`; il cible toujours la section Aujourd'hui (`todayKey`).
-- La persistance `today-page-active-day-v1`, `readStoredActiveDay` et `writeStoredActiveDay` restent retirés pour éviter le retour de cette régression.
-- Le bouton flottant `+` est à nouveau conditionné par `isOnToday` : il n'apparaît pas lors de la consultation du passé.
-- Le bouton `+` est désormais positionné en bas à droite (`fixed bottom/right`) au-dessus de la navigation basse.
-- Les sprites rochers restent supprimés (`rock-plant.png`, `tree-cluster.png`) et non remplacés.
+- `EntryCoverImage` ne crée plus d'`objectURL` pendant le rendu React.
+- `useEntryCoverImageUrl` crée l'URL locale après montage et la révoque au démontage.
+- La valeur `coverImage` relue depuis IndexedDB est validée avec `instanceof Blob` et `size > 0`.
+- En cas d'image stockée invalide ou impossible à charger, la card retombe sur le fallback YouTube quand disponible.
 - `npm run lint` : OK.
 - `npm run build` : OK.
-- ADR `Timeline Today multi-jours scroll-up et day-anchored pills` mise à jour ; métadonnées rafraîchies avec accuracy = 1.
+
+Ticket 11 — Courbe d'apprentissage (2026-05-16) :
+
+- Remplacement du placeholder `/insights` par une page calculée depuis IndexedDB.
+- Abonnement `liveQuery` aux entrées gardées (`source !== "empty"`, `kept === true`, `discarded === false`).
+- Calcul des séries 7 jours et 30 jours avec `dailyScore = sum(rating of kept entries)`.
+- Ajout des cards `jours actifs`, `apprentissages gardés`, `score moyen`, `meilleure journée`.
+- Ajout de deux courbes SVG React maison avec surface, ligne, points et labels HTML.
+- Ajout d'un empty state quand aucune entrée gardée n'existe.
+- ADR `Courbe Insights locale en SVG sans dépendance chart` créée et liée au fichier source.
+- Worklog Ticket 11 créé et lié au fichier source.
+- `PROJECT-STACK.md` mis à jour : Recharts n'est plus la cible effective du MVP, les courbes Insights sont en SVG React maison.
+- ROADMAP `Tickets MVP` : Ticket 11 coché.
+- `npm run lint` : OK.
+- `npm run build` : OK.
 
 ## Prochaine action recommandée
 
-Attendre le retour visuel utilisateur sur la position bas-droite du bouton `+` et son masquage dans le passé. Si le rendu est validé, démarrer le **Ticket 10 — Correctifs divers** : permettre à l'utilisateur de modifier l'image d'une card via un petit pinceau dans le coin.
+Démarrer le **Ticket 12 — Réglages** : heures de rappel, premier jour de semaine, export/import JSON, réinitialisation locale, gestion des presets.
 
 ## Fichiers ou zones concernés
 
+- `src/features/insights/InsightsPage.tsx`
 - `src/features/entries/TodayPage.tsx`
-- `src/components/layout/AppShell.tsx`
-- `src/assets/river-sprites/*.png`
-- `collection-objets-elements-vegetaux-theme-nature-plein-air.png` (source utilisateur à la racine, non importé)
-- `living-documentation/ADRS/2026_05_15_08_55_[ADR]_timeline_today_multijours_scrollup_et_dayanchored_pills.md`
-- `living-documentation/ADRS/2026_05_15_19_01_[ADR]_chemin_today_rendu_comme_fleuve_svg.md`
-- `living-documentation/WORKLOG/2026_05_15_19_01_[WORKLOG]_ticket_09_chemin_svg.md`
+- `living-documentation/ADRS/2026_05_16_03_16_[ADR]_courbe_insights_locale_en_svg_sans_dependance_chart.md`
+- `living-documentation/WORKLOG/2026_05_16_03_16_[WORKLOG]_ticket_11_courbe_apprentissage_insights.md`
+- `living-documentation/AI/PROJECT-STACK.md`
 - `living-documentation/ROADMAP/2026_05_14_09_48_[ROADMAP]_tickets_mvp.md`
 - `living-documentation/WORKLOG/current-task.md`
 - `living-documentation/.metadata.json`
@@ -51,13 +62,14 @@ Attendre le retour visuel utilisateur sur la position bas-droite du bouton `+` e
 
 - `npm run lint` : OK.
 - `npm run build` : OK.
-- MCP Living Documentation disponible ; ADR timeline mise à jour et métadonnées rafraîchies avec accuracy = 1.
+- MCP Living Documentation disponible ; ADR miniatures, ADR Insights et worklogs liés ont des métadonnées rafraîchies.
 
 ## Vérifications restantes
 
-- Validation visuelle dans le navigateur par l'utilisateur, conformément à sa préférence.
+- Validation visuelle par l'utilisateur, conformément à sa préférence.
 
 ## Notes de reprise
 
-- Le changement reste comportemental/layout : il ne modifie ni Dexie, ni `useTimelineData`, ni la création des entrées.
+- Le ticket 11 n'ajoute aucune dépendance chart et ne modifie pas `package.json`.
+- Les entrées gardées sans rating comptent dans `apprentissages gardés` mais ajoutent `0` au score, conformément au calcul `dailyScore = sum(rating)`.
 - Ne pas lancer de navigateur local pour une simple vérification de fonctionnement si l'utilisateur préfère s'en charger ; ne le faire que si une appréciation visuelle de rendu est réellement nécessaire.

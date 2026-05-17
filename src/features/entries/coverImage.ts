@@ -97,6 +97,10 @@ async function resizeImageBlob(blob: Blob): Promise<Blob> {
   }
 }
 
+export function prepareCoverImageBlob(blob: Blob): Promise<Blob> {
+  return resizeImageBlob(blob);
+}
+
 async function resolveCoverBlob(entryUrl: string): Promise<Blob | undefined> {
   let parsedUrl: URL;
   try {

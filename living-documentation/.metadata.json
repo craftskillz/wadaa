@@ -32,11 +32,11 @@
     },
     {
       "path": "living-documentation/ROADMAP/2026_05_14_09_48_[ROADMAP]_tickets_mvp.md",
-      "hash": "350bec062200ec69c1cbb86377451f4e64c143fb5322358ec7a6f0e4b1081164"
+      "hash": "cb131f7220ea1eced1cd9b8c7ab5ff5281d8d4e0735c93cc261d6105cdfd3297"
     },
     {
       "path": "living-documentation/AI/PROJECT-STACK.md",
-      "hash": "05550b95e3dfef7747edb264a389ccce2688cf2d4bf5fbf4a03c12bbd0605ad6"
+      "hash": "e78e272219f4bdbd84d9c2bb20b11b2154c845d4703addcf5dc9af8dc7e73ac8"
     },
     {
       "path": "package.json",
@@ -52,11 +52,11 @@
     },
     {
       "path": "src/components/layout/AppShell.tsx",
-      "hash": "94a5e5730f65e22a6cdfc07dbc9592909bd7778bb61659b9a515b7930537706a"
+      "hash": "f89104c9272aacbaf522ba8d28ffe9bc395ef0af1978af1c1688b7a1f5f64c56"
     },
     {
       "path": "src/lib/db/database.ts",
-      "hash": "f3474af27956fd1608cccddf8e3fdb78fcadf926c8517373486cc4d1c2e0d0a0"
+      "hash": "d78503b2300c32cd256f5f9abb0dda844646b54bb74e6f2b2988b78d9bbad0f2"
     }
   ],
   "ADRS/2026_05_14_09_49_[ADR]_reporter_embeddings_et_llm_apres_validation_produit": [
@@ -770,15 +770,15 @@
   "ADRS/2026_05_14_22_18_[ADR]_miniatures_locales_et_resolution_des_couvertures_dentree": [
     {
       "path": "src/features/entries/coverImage.ts",
-      "hash": "07da1257b1a5979a84a54dd1112d2b98bbce3f4140979a8d19a4d861628c3796"
+      "hash": "661d27e52c21ba6c43e379bc91fd8ed0f73f5c184ddf0e99a0389433c31f7b4b"
     },
     {
       "path": "src/features/entries/entryStorage.ts",
-      "hash": "5edea2dc1c2c624f1c0eb4ea431296151edee10eb469c5a0c1b744c4e7d161f2"
+      "hash": "2d90f10c4172cee73c4124bd0efe879376b19221f749abe17df0ba784d74daad"
     },
     {
       "path": "src/features/entries/TodayPage.tsx",
-      "hash": "338bbaee840f9dc43fcf6ea0e1d792587f41f8fc77bc2ab36bef20c6dc1c1a86"
+      "hash": "369d0f7056056c5a467d10e16d1b11b253c956a56eea89da3feedbeece716a92"
     },
     {
       "path": "src/lib/db/types.ts",
@@ -873,6 +873,38 @@
     {
       "path": "src/components/layout/AppShell.tsx",
       "hash": "f89104c9272aacbaf522ba8d28ffe9bc395ef0af1978af1c1688b7a1f5f64c56"
+    }
+  ],
+  "WORKLOG/2026_05_16_03_08_[WORKLOG]_ticket_10_modification_manuelle_des_images_de_card": [
+    {
+      "path": "src/features/entries/TodayPage.tsx",
+      "hash": "369d0f7056056c5a467d10e16d1b11b253c956a56eea89da3feedbeece716a92"
+    },
+    {
+      "path": "src/features/entries/entryStorage.ts",
+      "hash": "2d90f10c4172cee73c4124bd0efe879376b19221f749abe17df0ba784d74daad"
+    },
+    {
+      "path": "src/features/entries/coverImage.ts",
+      "hash": "661d27e52c21ba6c43e379bc91fd8ed0f73f5c184ddf0e99a0389433c31f7b4b"
+    }
+  ],
+  "ADRS/2026_05_16_03_16_[ADR]_courbe_insights_locale_en_svg_sans_dependance_chart": [
+    {
+      "path": "src/features/insights/InsightsPage.tsx",
+      "hash": "31e83160fab59d3f38aeeb9224477abe3f1dda76869c0a48abd39cc712032c7a"
+    }
+  ],
+  "WORKLOG/2026_05_16_03_16_[WORKLOG]_ticket_11_courbe_apprentissage_insights": [
+    {
+      "path": "src/features/insights/InsightsPage.tsx",
+      "hash": "31e83160fab59d3f38aeeb9224477abe3f1dda76869c0a48abd39cc712032c7a"
+    }
+  ],
+  "WORKLOG/2026_05_16_03_31_[WORKLOG]_correctif_f5_images_couverture_today": [
+    {
+      "path": "src/features/entries/TodayPage.tsx",
+      "hash": "369d0f7056056c5a467d10e16d1b11b253c956a56eea89da3feedbeece716a92"
     }
   ]
 }

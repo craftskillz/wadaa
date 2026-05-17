@@ -20,9 +20,9 @@ Ne pas documenter ici les détails volatils, les TODO temporaires ou les informa
 
 `Qu'as-tu appris aujourd'hui ?` est une application web personnelle de journaling d'apprentissage.
 
-Le produit permet maintenant d'initialiser l'expérience localement via onboarding, puis de capturer les apprentissages du jour depuis l'écran Aujourd'hui. Les entrées sont persistées dans IndexedDB avec idée courte, description obligatoire et URL facultative. Quand une URL est présente, une couverture est résolue en arrière-plan (YouTube → Microlink → favicon) et stockée localement sous forme de `Blob`. Les réponses libres peuvent devenir des choix rapides réutilisables, et l'écran Today utilise une timeline visuelle avec éléments de capture fixes et navigation principale en drawer inférieur.
+Le produit permet maintenant d'initialiser l'expérience localement via onboarding, puis de capturer les apprentissages du jour depuis l'écran Aujourd'hui. Les entrées sont persistées dans IndexedDB avec idée courte, description obligatoire et URL facultative. Quand une URL est présente, une couverture est résolue en arrière-plan (YouTube → Microlink → favicon) et stockée localement sous forme de `Blob`, puis peut être remplacée manuellement depuis la card. Les réponses libres peuvent devenir des choix rapides réutilisables, et l'écran Today utilise une timeline visuelle avec éléments de capture fixes et navigation principale en drawer inférieur.
 
-Le projet contient une base frontend MVP, un design system minimal, une couche de stockage local-first IndexedDB via Dexie, un onboarding local qui initialise settings + presets, un écran Aujourd'hui qui crée les `LearningEntry` du jour, la transformation des réponses `custom` en `LearningPreset`, et une direction visuelle basée sur un chemin chronologique. La revue, les insights et le calendrier restent à implémenter.
+Le projet contient une base frontend MVP, un design system minimal, une couche de stockage local-first IndexedDB via Dexie, un onboarding local qui initialise settings + presets, un écran Aujourd'hui qui crée les `LearningEntry` du jour, la transformation des réponses `custom` en `LearningPreset`, une revue hebdomadaire, des insights locaux avec courbes SVG, et une direction visuelle basée sur un chemin chronologique. Le calendrier et les réglages avancés restent à implémenter.
 
 ## Stack cible MVP
 
@@ -34,7 +34,7 @@ Le projet contient une base frontend MVP, un design system minimal, une couche d
 - **API externes / intégrations** : Microlink (`https://api.microlink.io/`) pour résoudre les couvertures d'entrée pendant le MVP ; Google OAuth plus tard pour isoler les backups ; Web Push plus tard pour les notifications
 - **Authentification / autorisation** : aucune obligatoire au coeur MVP ; Google OAuth prévu post-coeur local-first
 - **Styles / design system** : Tailwind CSS ; composants maison inspirés shadcn/ui
-- **Charts** : Recharts
+- **Charts** : SVG React maison pour les courbes MVP ; Recharts n'est pas installé
 - **Build / bundler** : Vite
 - **Package manager** : npm
 - **Tests** : non installé pour l'instant
@@ -56,7 +56,6 @@ Versions installées après le Ticket 07 :
 
 Dépendances non encore installées mais prévues par la roadmap :
 
-- Recharts pour les courbes ;
 - outils Cloudflare / Workers ;
 - auth Google ;
 - Web Push.
@@ -130,13 +129,13 @@ Les dossiers `presets` et `lib/dates` restent à enrichir pour les tickets suiva
 - **Local-first** : IndexedDB est la source principale de vérité pendant le MVP. Voir l'ADR `MVP local-first avec IndexedDB comme source principale`.
 - **Onboarding** : le premier lancement est déterminé par l'absence de `UserSettings("local")`; l'onboarding crée settings et presets initiaux. Voir l'ADR `Onboarding déterminé par settings local`.
 - **LearningEntry** : apprentissage utilisateur pour un jour donné, composé d'une idée courte (`content`), d'une description optionnelle dans les anciennes données mais obligatoire dans la popup Today actuelle, et d'une URL facultative. Voir l'ADR `Création des entrées du jour local-first`.
-- **Couverture d'entrée** : `LearningEntry.coverImage?: Blob` est résolu en arrière-plan via `src/features/entries/coverImage.ts` (YouTube → Microlink → favicon DuckDuckGo), redimensionné en JPEG ≤720px et stocké dans IndexedDB. Exclu de l'export JSON. Voir l'ADR `Miniatures locales et résolution des couvertures d'entrée`.
+- **Couverture d'entrée** : `LearningEntry.coverImage?: Blob` est résolu en arrière-plan via `src/features/entries/coverImage.ts` (YouTube → Microlink → favicon DuckDuckGo), redimensionné en JPEG ≤720px et stocké dans IndexedDB. Une card peut aussi remplacer manuellement cette couverture via un upload local. Exclu de l'export JSON. Voir l'ADR `Miniatures locales et résolution des couvertures d'entrée`.
 - **LearningPreset** : choix rapide réutilisable, y compris depuis une idée libre transformée en preset. Voir l'ADR `Transformation des réponses libres en presets réutilisables`.
 - **Timeline Today** : l'écran Aujourd'hui s'étend sur les 7 derniers jours, du plus ancien en haut au jour courant en bas. Au chargement, la page se positionne sur la section Aujourd'hui ; scroll-up révèle les jours passés. Les pastilles fixes affichent le jour actuellement visible (`Aujourd'hui` / `Hier` / date) avec son compteur, et un bouton « Revenir à aujourd'hui » s'affiche quand on n'est pas sur le jour courant. Les nouvelles entrées vont toujours vers la date du jour réel. Voir les ADR `Timeline visuelle Today et navigation drawer` et `Timeline Today multi-jours scroll-up et day-anchored pills`.
 - **Navigation drawer** : `BottomNav` est un drawer inférieur fixe avec poignée violette visible, ouvert au survol, au focus ou au tap.
 - **WeeklyReview** : moment de curation hebdomadaire implémenté dans `src/features/reviews/WeekPage.tsx`. L'utilisateur navigue librement entre semaines, note ses apprentissages sur 5 étoiles, choisit garder ou jeter, et valide. À la validation, les entrées gardées sont mises à jour (`kept = true, rating`) et les entrées jetées sont **supprimées définitivement** de la base. La `WeeklyReview` est upsert avec `id = weeklyReview_<weekStart>` et conserve les IDs jetés en historique. Voir l'ADR `Revue hebdomadaire et invariants kept discarded rating`.
 - **Export/import local** : `src/lib/db/localData.ts` exporte et restaure un snapshot JSON complet avec validation minimale.
-- **Insights** : courbes et métriques locales calculées depuis les entrées gardées.
+- **Insights** : courbes SVG 7/30 jours et métriques locales calculées depuis les entrées gardées (`dailyScore = sum(rating)`), avec les entrées jetées exclues.
 - **Design system minimal** : composants UI maison Tailwind dans `src/components/ui/`, partagés par les pages pour garder une identité cohérente.
 - **Backup R2** : snapshot JSON manuel prévu après le coeur local-first, sans logique métier dans le Worker.
 - **Recherche sémantique** : option post-MVP explicitement exclue du MVP. Voir l'ADR `Reporter embeddings et LLM après validation produit`.

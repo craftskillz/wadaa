@@ -2,7 +2,7 @@ import { db, entriesRepository, presetsRepository } from "../../lib/db";
 import type { LearningEntry, LearningPreset } from "../../lib/db";
 import { getTodayDateKey } from "../../lib/dates";
 import { createId } from "../../lib/ids";
-import { resolveAndStoreCoverImage } from "./coverImage";
+import { prepareCoverImageBlob, resolveAndStoreCoverImage } from "./coverImage";
 
 const ENTRY_ID_PREFIX = "entry";
 const PRESET_ID_PREFIX = "preset";
@@ -166,4 +166,20 @@ export async function createPresetFromCustomEntry(
 
 export function deleteEntry(entryId: string) {
   return entriesRepository.delete(entryId);
+}
+
+export async function updateEntryCoverImage(entryId: string, image: Blob) {
+  const entry = await entriesRepository.getById(entryId);
+
+  if (!entry) {
+    throw new Error("Entrée introuvable.");
+  }
+
+  const coverImage = await prepareCoverImageBlob(image);
+
+  await entriesRepository.put({
+    ...entry,
+    coverImage,
+    updatedAt: new Date().toISOString(),
+  });
 }

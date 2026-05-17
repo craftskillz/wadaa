@@ -18,8 +18,8 @@
 7. [x] ~~Ticket 07 - Améliorations visuelles~~
 8. [x] ~~Ticket 08 - Revue hebdomadaire~~
 9. [x] ~~Ticket 09 - Chemin SVG~~
-10. [ ] Ticket 10 - Correctifs divers
-11. [ ] Ticket 11 - Courbe d'apprentissage
+10. [x] ~~Ticket 10 - Correctifs divers~~
+11. [x] ~~Ticket 11 - Courbe d'apprentissage~~
 12. [ ] Ticket 12 - Réglages
 13. [ ] Ticket 13 - Calendrier d'apprentissage
 14. [ ] Ticket 14 - Worker R2

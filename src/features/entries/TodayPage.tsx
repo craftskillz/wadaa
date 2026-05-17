@@ -1,4 +1,5 @@
 import {
+  type ChangeEvent,
   type FormEvent,
   type SyntheticEvent,
   useEffect,
@@ -44,6 +45,7 @@ import {
   deleteEntry,
   isEmptyPreset,
   normalizePresetLabel,
+  updateEntryCoverImage,
 } from "./entryStorage";
 import { useTimelineData, type TimelineDay } from "./useTimelineData";
 import { useActiveDay } from "./useActiveDay";
@@ -491,32 +493,84 @@ function getEntrySourceLabel(source: LearningEntry["source"]) {
   return "Pause";
 }
 
+function isStoredCoverImageUsable(
+  coverImage: LearningEntry["coverImage"],
+): coverImage is Blob {
+  return coverImage instanceof Blob && coverImage.size > 0;
+}
+
 function useEntryCoverImageUrl(coverImage: Blob | undefined) {
-  const objectUrl = useMemo(
-    () => (coverImage ? URL.createObjectURL(coverImage) : undefined),
-    [coverImage],
-  );
+  const [objectUrl, setObjectUrl] = useState<string | undefined>();
 
   useEffect(() => {
-    if (!objectUrl) {
-      return;
+    let isCurrent = true;
+
+    if (!isStoredCoverImageUsable(coverImage)) {
+      queueMicrotask(() => {
+        if (isCurrent) {
+          setObjectUrl(undefined);
+        }
+      });
+
+      return () => {
+        isCurrent = false;
+      };
     }
 
+    const nextObjectUrl = URL.createObjectURL(coverImage);
+    queueMicrotask(() => {
+      if (isCurrent) {
+        setObjectUrl(nextObjectUrl);
+      }
+    });
+
     return () => {
-      URL.revokeObjectURL(objectUrl);
+      isCurrent = false;
+      URL.revokeObjectURL(nextObjectUrl);
     };
-  }, [objectUrl]);
+  }, [coverImage]);
 
   return objectUrl;
 }
 
+type CoverFitState = {
+  key: string;
+  value: "cover" | "contain";
+};
+
+type CoverErrorState = {
+  hasError: boolean;
+  key: string;
+};
+
+function getCoverRenderKey(entry: LearningEntry) {
+  return `${entry.id}:${entry.updatedAt}:${entry.url ?? ""}`;
+}
+
 function EntryCoverImage({ entry }: { entry: LearningEntry }) {
+  const coverRenderKey = getCoverRenderKey(entry);
+  const hasUsableStoredCover = isStoredCoverImageUsable(entry.coverImage);
   const storedCoverUrl = useEntryCoverImageUrl(entry.coverImage);
-  const youtubeFallback = entry.coverImage
-    ? undefined
-    : getYouTubeThumbnailUrl(entry.url);
-  const previewUrl = storedCoverUrl ?? youtubeFallback;
-  const [objectFit, setObjectFit] = useState<"cover" | "contain">("cover");
+  const [coverErrorState, setCoverErrorState] = useState<CoverErrorState>({
+    hasError: false,
+    key: coverRenderKey,
+  });
+  const [coverFitState, setCoverFitState] = useState<CoverFitState>({
+    key: coverRenderKey,
+    value: "cover",
+  });
+  const hasStoredCoverError =
+    coverErrorState.key === coverRenderKey ? coverErrorState.hasError : false;
+  const objectFit =
+    coverFitState.key === coverRenderKey ? coverFitState.value : "cover";
+  const youtubeFallback =
+    hasUsableStoredCover && !hasStoredCoverError
+      ? undefined
+      : getYouTubeThumbnailUrl(entry.url);
+  const previewUrl =
+    hasUsableStoredCover && !hasStoredCoverError
+      ? storedCoverUrl
+      : youtubeFallback;
 
   function handleImageLoad(event: SyntheticEvent<HTMLImageElement>) {
     const img = event.currentTarget;
@@ -526,7 +580,16 @@ function EntryCoverImage({ entry }: { entry: LearningEntry }) {
     const ratio = img.naturalWidth / img.naturalHeight;
     const fillsContainerNicely =
       ratio >= COVER_MIN_FILL_RATIO && ratio <= COVER_MAX_FILL_RATIO;
-    setObjectFit(fillsContainerNicely ? "cover" : "contain");
+    setCoverFitState({
+      key: coverRenderKey,
+      value: fillsContainerNicely ? "cover" : "contain",
+    });
+  }
+
+  function handleImageError() {
+    if (hasUsableStoredCover && !hasStoredCoverError) {
+      setCoverErrorState({ hasError: true, key: coverRenderKey });
+    }
   }
 
   if (previewUrl) {
@@ -538,6 +601,7 @@ function EntryCoverImage({ entry }: { entry: LearningEntry }) {
             "block h-full w-full",
             objectFit === "cover" ? "object-cover" : "object-contain",
           ].join(" ")}
+          onError={handleImageError}
           onLoad={handleImageLoad}
           src={previewUrl}
         />
@@ -862,8 +926,10 @@ type EntryCardProps = {
   isLeft: boolean;
   presets: LearningPreset[];
   isSubmitting: boolean;
+  isCoverUpdating: boolean;
   onDelete: (entryId: string) => void;
   onCreatePreset: (entryId: string) => void;
+  onUpdateCoverImage: (entryId: string, file: File) => Promise<void>;
 };
 
 function EntryArticle({
@@ -871,17 +937,54 @@ function EntryArticle({
   isLeft,
   presets,
   isSubmitting,
+  isCoverUpdating,
   onDelete,
   onCreatePreset,
+  onUpdateCoverImage,
 }: EntryCardProps) {
+  const coverInputRef = useRef<HTMLInputElement | null>(null);
+  const hasCoverFrame = Boolean(entry.url || entry.coverImage);
+
+  async function handleCoverInputChange(event: ChangeEvent<HTMLInputElement>) {
+    const input = event.currentTarget;
+    const file = input.files?.[0];
+
+    if (!file) {
+      return;
+    }
+
+    try {
+      await onUpdateCoverImage(entry.id, file);
+    } finally {
+      input.value = "";
+    }
+  }
+
   return (
     <article
       className="grid min-h-44 grid-cols-[minmax(0,1fr)_5rem_minmax(0,1fr)] items-center gap-2 sm:grid-cols-[minmax(0,1fr)_8rem_minmax(0,1fr)] sm:gap-6"
       data-entry-id={entry.id}
     >
       <div className={isLeft ? "col-start-1 pr-2 sm:pr-4" : "col-start-3 pl-2 sm:pl-4"}>
-        <Card className="p-3 shadow-xl sm:p-4" tone="solid">
-          <div className="mb-2 flex flex-wrap items-center gap-2">
+        <Card className="relative p-3 shadow-xl sm:p-4" tone="solid">
+          <input
+            accept="image/*"
+            className="sr-only"
+            onChange={handleCoverInputChange}
+            ref={coverInputRef}
+            type="file"
+          />
+          <Button
+            aria-label="Modifier l'image de cette carte"
+            className="absolute right-3 top-3 z-20 min-h-0 bg-transparent px-0 py-0 text-2xl leading-none shadow-none hover:bg-transparent hover:text-slate-950 focus:ring-2"
+            disabled={isCoverUpdating}
+            motion="none"
+            onClick={() => coverInputRef.current?.click()}
+            variant="ghost"
+          >
+            <span aria-hidden="true">🖌️</span>
+          </Button>
+          <div className="mb-2 flex flex-wrap items-center gap-2 pr-12">
             <StatusPill tone={entry.source === "empty" ? "slate" : "blue"}>
               {getEntrySourceLabel(entry.source)}
             </StatusPill>
@@ -898,21 +1001,23 @@ function EntryArticle({
               {entry.description}
             </p>
           ) : null}
-          {entry.url ? (
+          {hasCoverFrame ? (
             <div className="mt-3 overflow-hidden rounded-2xl border border-slate-200 bg-white/80">
               <EntryCoverImage entry={entry} />
-              <a
-                className="flex items-center gap-2 px-3 py-2 text-xs font-bold text-violet-700 hover:text-violet-900"
-                href={entry.url}
-                rel="noreferrer"
-                target="_blank"
-              >
-                <ExternalLink
-                  aria-hidden="true"
-                  className="size-4 shrink-0"
-                />
-                <span className="truncate">{entry.url}</span>
-              </a>
+              {entry.url ? (
+                <a
+                  className="flex items-center gap-2 px-3 py-2 text-xs font-bold text-violet-700 hover:text-violet-900"
+                  href={entry.url}
+                  rel="noreferrer"
+                  target="_blank"
+                >
+                  <ExternalLink
+                    aria-hidden="true"
+                    className="size-4 shrink-0"
+                  />
+                  <span className="truncate">{entry.url}</span>
+                </a>
+              ) : null}
             </div>
           ) : null}
           <div className="mt-3 flex flex-wrap items-center gap-2">
@@ -956,12 +1061,14 @@ type DaySectionProps = {
   todayKey: string;
   presets: LearningPreset[];
   isSubmitting: boolean;
+  coverUpdatingEntryId: string | null;
   todayRef: React.RefObject<HTMLElement | null>;
   isLastDay: boolean;
   startIndex: number;
   background: string;
   onDelete: (entryId: string) => void;
   onCreatePreset: (entryId: string) => void;
+  onUpdateCoverImage: (entryId: string, file: File) => Promise<void>;
 };
 
 function DaySection({
@@ -969,12 +1076,14 @@ function DaySection({
   todayKey,
   presets,
   isSubmitting,
+  coverUpdatingEntryId,
   todayRef,
   isLastDay,
   startIndex,
   background,
   onDelete,
   onCreatePreset,
+  onUpdateCoverImage,
 }: DaySectionProps) {
   const { dateKey, entries } = day;
   const isToday = dateKey === todayKey;
@@ -1013,10 +1122,12 @@ function DaySection({
             <EntryArticle
               entry={entry}
               isLeft={(startIndex + index) % 2 === 0}
+              isCoverUpdating={coverUpdatingEntryId === entry.id}
               isSubmitting={isSubmitting}
               key={entry.id}
               onCreatePreset={onCreatePreset}
               onDelete={onDelete}
+              onUpdateCoverImage={onUpdateCoverImage}
               presets={presets}
             />
           ))}
@@ -1073,6 +1184,9 @@ export function TodayPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isComposerOpen, setIsComposerOpen] = useState(false);
   const [isTodayActionVisible, setIsTodayActionVisible] = useState(true);
+  const [coverUpdatingEntryId, setCoverUpdatingEntryId] = useState<
+    string | null
+  >(null);
 
   const visiblePresets = useMemo(
     () => presets.filter((preset) => !isEmptyPreset(preset)),
@@ -1339,6 +1453,28 @@ export function TodayPage() {
     }
   }
 
+  async function handleUpdateCoverImage(entryId: string, file: File) {
+    if (!file.type.startsWith("image/")) {
+      showStatusToast("Choisis un fichier image.", "error");
+      return;
+    }
+
+    setCoverUpdatingEntryId(entryId);
+    try {
+      await updateEntryCoverImage(entryId, file);
+      showStatusToast("Image mise à jour.", "success");
+    } catch (error) {
+      showStatusToast(
+        error instanceof Error
+          ? error.message
+          : "Modification de l'image impossible.",
+        "error",
+      );
+    } finally {
+      setCoverUpdatingEntryId(null);
+    }
+  }
+
   async function handleCreatePreset(entryId: string) {
     const targetEntry = renderedDays
       .flatMap((day) => day.entries)
@@ -1515,12 +1651,14 @@ export function TodayPage() {
           return (
             <DaySection
               background={background}
+              coverUpdatingEntryId={coverUpdatingEntryId}
               day={day}
               isLastDay={index === renderedDays.length - 1}
               isSubmitting={isSubmitting}
               key={day.dateKey}
               onCreatePreset={handleCreatePreset}
               onDelete={handleDelete}
+              onUpdateCoverImage={handleUpdateCoverImage}
               presets={presets}
               startIndex={dayStartIndices[index] ?? 0}
               todayKey={todayKey}
