@@ -1,8 +1,8 @@
 ---
-**date:** 2026-05-16
+**date:** 2026-05-23
 **status:** Idle
-**description:** Point de reprise après correction de la régression F5 sur les images de couverture Today.
-**tags:** worklog, handoff, progression, ticket-10, cover-image, indexeddb, object-url, today-page
+**description:** Point de reprise après livraison du Ticket 12 — page Réglages complète (rappels, semaine, CRUD presets, réinitialisation locale).
+**tags:** worklog, handoff, progression, ticket-12, settings, presets, reset
 ---
 
 # Current task
@@ -11,7 +11,7 @@ Ce document est le point de reprise entre assistants IA. Tout agent doit le lire
 
 ## Statut courant
 
-Idle — régression corrigée : les images de couverture Today stockées en `Blob` restent affichables après F5.
+Idle — Ticket 12 livré et lint + build OK. En attente de validation visuelle utilisateur.
 
 ## Tâche courante
 
@@ -19,42 +19,40 @@ Aucune tâche d'implémentation en cours.
 
 ## Dernière action réalisée
 
-Correctif régression couvertures Today (2026-05-16) :
+Ticket 12 — Réglages (2026-05-23) :
 
-- `EntryCoverImage` ne crée plus d'`objectURL` pendant le rendu React.
-- `useEntryCoverImageUrl` crée l'URL locale après montage et la révoque au démontage.
-- La valeur `coverImage` relue depuis IndexedDB est validée avec `instanceof Blob` et `size > 0`.
-- En cas d'image stockée invalide ou impossible à charger, la card retombe sur le fallback YouTube quand disponible.
-- `npm run lint` : OK.
-- `npm run build` : OK.
-
-Ticket 11 — Courbe d'apprentissage (2026-05-16) :
-
-- Remplacement du placeholder `/insights` par une page calculée depuis IndexedDB.
-- Abonnement `liveQuery` aux entrées gardées (`source !== "empty"`, `kept === true`, `discarded === false`).
-- Calcul des séries 7 jours et 30 jours avec `dailyScore = sum(rating of kept entries)`.
-- Ajout des cards `jours actifs`, `apprentissages gardés`, `score moyen`, `meilleure journée`.
-- Ajout de deux courbes SVG React maison avec surface, ligne, points et labels HTML.
-- Ajout d'un empty state quand aucune entrée gardée n'existe.
-- ADR `Courbe Insights locale en SVG sans dépendance chart` créée et liée au fichier source.
-- Worklog Ticket 11 créé et lié au fichier source.
-- `PROJECT-STACK.md` mis à jour : Recharts n'est plus la cible effective du MVP, les courbes Insights sont en SVG React maison.
-- ROADMAP `Tickets MVP` : Ticket 11 coché.
+- Édition des heures de rappel et du premier jour de semaine directement sur `UserSettings('local')` via `src/features/settings/settingsStorage.ts` et le hook `useUserSettings`.
+- CRUD presets (renommer/archiver/supprimer) via `presetsManagement.ts` et `usePresets`, avec contrôle d'unicité par `normalizePresetLabel`.
+- Réinitialisation des données locales via une modale `ConfirmResetModal` exigeant de taper `RESET` ; après reset, l'utilisateur est redirigé vers `/onboarding` grâce à l'invariant existant `useOnboardingStatus`.
+- Refactor de `SettingsPage.tsx` en orchestrateur de sections empilées : `RemindersSection`, `WeekStartSection`, `PresetsSection`, `LocalDataSection`.
+- `Input` du design system accepte désormais une prop `ref` (React 19) pour le focus auto dans la modale RESET.
+- ADR `Gestion des reglages locaux et CRUD presets via la page Reglages` créée et liée aux fichiers source.
+- WORKLOG `Ticket 12 — Réglages` créé et lié aux fichiers source.
+- ROADMAP `Tickets MVP` : Ticket 12 coché.
 - `npm run lint` : OK.
 - `npm run build` : OK.
 
 ## Prochaine action recommandée
 
-Démarrer le **Ticket 12 — Réglages** : heures de rappel, premier jour de semaine, export/import JSON, réinitialisation locale, gestion des presets.
+Démarrer le **Ticket 13 — Calendrier d'apprentissage** : vue mensuelle simple, indication des jours actifs, intensité selon le nombre d'entrées ou les étoiles, ouverture du détail d'une journée passée.
 
 ## Fichiers ou zones concernés
 
-- `src/features/insights/InsightsPage.tsx`
-- `src/features/entries/TodayPage.tsx`
-- `living-documentation/ADRS/2026_05_16_03_16_[ADR]_courbe_insights_locale_en_svg_sans_dependance_chart.md`
-- `living-documentation/WORKLOG/2026_05_16_03_16_[WORKLOG]_ticket_11_courbe_apprentissage_insights.md`
-- `living-documentation/AI/PROJECT-STACK.md`
+- `src/features/settings/SettingsPage.tsx`
+- `src/features/settings/settingsStorage.ts`
+- `src/features/settings/presetsManagement.ts`
+- `src/features/settings/useUserSettings.ts`
+- `src/features/settings/usePresets.ts`
+- `src/features/settings/RemindersSection.tsx`
+- `src/features/settings/WeekStartSection.tsx`
+- `src/features/settings/PresetsSection.tsx`
+- `src/features/settings/LocalDataSection.tsx`
+- `src/features/settings/ConfirmResetModal.tsx`
+- `src/components/ui/Input.tsx`
+- `living-documentation/ADRS/2026_05_23_13_52_[ADR]_gestion_des_reglages_locaux_et_crud_presets_via_la_page_reglages.md`
+- `living-documentation/WORKLOG/2026_05_23_13_52_[WORKLOG]_ticket_12_reglages.md`
 - `living-documentation/ROADMAP/2026_05_14_09_48_[ROADMAP]_tickets_mvp.md`
+- `living-documentation/AI/PROJECT-STACK.md`
 - `living-documentation/WORKLOG/current-task.md`
 - `living-documentation/.metadata.json`
 
@@ -62,7 +60,7 @@ Démarrer le **Ticket 12 — Réglages** : heures de rappel, premier jour de sem
 
 - `npm run lint` : OK.
 - `npm run build` : OK.
-- MCP Living Documentation disponible ; ADR miniatures, ADR Insights et worklogs liés ont des métadonnées rafraîchies.
+- MCP Living Documentation disponible ; ADR et worklog Ticket 12 liés aux fichiers source.
 
 ## Vérifications restantes
 
@@ -70,6 +68,8 @@ Démarrer le **Ticket 12 — Réglages** : heures de rappel, premier jour de sem
 
 ## Notes de reprise
 
-- Le ticket 11 n'ajoute aucune dépendance chart et ne modifie pas `package.json`.
-- Les entrées gardées sans rating comptent dans `apprentissages gardés` mais ajoutent `0` au score, conformément au calcul `dailyScore = sum(rating)`.
+- La page Réglages est désormais auto-suffisante : l'utilisateur peut tout réinitialiser et revenir à l'onboarding sans dev tools.
+- Le filtre `!preset.archived` dans `useTimelineData` retire automatiquement les presets archivés des choix rapides de Today ; aucun nouveau filtre à propager.
+- La suppression d'un preset ne cascade pas vers les entries : le `presetId` orphelin est toléré, `entry.content` reste affichable.
+- Le toast (`useStatusToast`) est partagé par toutes les sections via les callbacks `onError`/`onSuccess` passés en props.
 - Ne pas lancer de navigateur local pour une simple vérification de fonctionnement si l'utilisateur préfère s'en charger ; ne le faire que si une appréciation visuelle de rendu est réellement nécessaire.

@@ -20,7 +20,7 @@
 9. [x] ~~Ticket 09 - Chemin SVG~~
 10. [x] ~~Ticket 10 - Correctifs divers~~
 11. [x] ~~Ticket 11 - Courbe d'apprentissage~~
-12. [ ] Ticket 12 - Réglages
+12. [x] ~~Ticket 12 - Réglages~~
 13. [ ] Ticket 13 - Calendrier d'apprentissage
 14. [ ] Ticket 14 - Worker R2
 15. [ ] Ticket 15 - Backup/restore

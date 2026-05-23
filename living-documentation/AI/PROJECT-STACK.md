@@ -22,7 +22,7 @@ Ne pas documenter ici les détails volatils, les TODO temporaires ou les informa
 
 Le produit permet maintenant d'initialiser l'expérience localement via onboarding, puis de capturer les apprentissages du jour depuis l'écran Aujourd'hui. Les entrées sont persistées dans IndexedDB avec idée courte, description obligatoire et URL facultative. Quand une URL est présente, une couverture est résolue en arrière-plan (YouTube → Microlink → favicon) et stockée localement sous forme de `Blob`, puis peut être remplacée manuellement depuis la card. Les réponses libres peuvent devenir des choix rapides réutilisables, et l'écran Today utilise une timeline visuelle avec éléments de capture fixes et navigation principale en drawer inférieur.
 
-Le projet contient une base frontend MVP, un design system minimal, une couche de stockage local-first IndexedDB via Dexie, un onboarding local qui initialise settings + presets, un écran Aujourd'hui qui crée les `LearningEntry` du jour, la transformation des réponses `custom` en `LearningPreset`, une revue hebdomadaire, des insights locaux avec courbes SVG, et une direction visuelle basée sur un chemin chronologique. Le calendrier et les réglages avancés restent à implémenter.
+Le projet contient une base frontend MVP, un design system minimal, une couche de stockage local-first IndexedDB via Dexie, un onboarding local qui initialise settings + presets, un écran Aujourd'hui qui crée les `LearningEntry` du jour, la transformation des réponses `custom` en `LearningPreset`, une revue hebdomadaire, des insights locaux avec courbes SVG, une direction visuelle basée sur un chemin chronologique, et une page Réglages complète qui édite rappels et semaine, gère le CRUD presets et la réinitialisation locale. Le calendrier reste à implémenter.
 
 ## Stack cible MVP
 
@@ -78,7 +78,7 @@ src/components/ui/                <- design system minimal : Button, Card, Input
 src/features/entries/             <- écran Aujourd'hui, timeline, création/suppression d'entrées, custom vers preset, calendrier
 src/features/reviews/             <- revue hebdomadaire
 src/features/insights/            <- courbes et stats
-src/features/settings/            <- réglages et vérification export/import local
+src/features/settings/            <- page Réglages : rappels, semaine, CRUD presets, export/import et réinitialisation locale
 src/features/onboarding/          <- onboarding, options initiales, sauvegarde settings + presets
 src/lib/db/                       <- Dexie, types, repositories CRUD, export/import JSON local
 src/lib/dates/                    <- helpers de date locale pour les entrées du jour
@@ -135,6 +135,7 @@ Les dossiers `presets` et `lib/dates` restent à enrichir pour les tickets suiva
 - **Navigation drawer** : `BottomNav` est un drawer inférieur fixe avec poignée violette visible, ouvert au survol, au focus ou au tap.
 - **WeeklyReview** : moment de curation hebdomadaire implémenté dans `src/features/reviews/WeekPage.tsx`. L'utilisateur navigue librement entre semaines, note ses apprentissages sur 5 étoiles, choisit garder ou jeter, et valide. À la validation, les entrées gardées sont mises à jour (`kept = true, rating`) et les entrées jetées sont **supprimées définitivement** de la base. La `WeeklyReview` est upsert avec `id = weeklyReview_<weekStart>` et conserve les IDs jetés en historique. Voir l'ADR `Revue hebdomadaire et invariants kept discarded rating`.
 - **Export/import local** : `src/lib/db/localData.ts` exporte et restaure un snapshot JSON complet avec validation minimale.
+- **Réglages** : la page `/settings` édite `UserSettings('local')` (rappels, premier jour de semaine), gère le CRUD des presets (renommer/archiver/supprimer) et propose une réinitialisation locale gardée par une modale qui exige de taper `RESET` puis renvoie vers `/onboarding`. Voir l'ADR `Gestion des réglages locaux et CRUD presets via la page Réglages`.
 - **Insights** : courbes SVG 7/30 jours et métriques locales calculées depuis les entrées gardées (`dailyScore = sum(rating)`), avec les entrées jetées exclues.
 - **Design system minimal** : composants UI maison Tailwind dans `src/components/ui/`, partagés par les pages pour garder une identité cohérente.
 - **Backup R2** : snapshot JSON manuel prévu après le coeur local-first, sans logique métier dans le Worker.
@@ -151,6 +152,7 @@ Les dossiers `presets` et `lib/dates` restent à enrichir pour les tickets suiva
 - **Entrées du jour** : créer les entrées via `src/features/entries/entryStorage.ts`; la popup Today exige une idée et une description ; garder `kept` et `discarded` à `false` jusqu'à la revue hebdomadaire.
 - **Couvertures locales** : ne pas charger la couverture pendant la requête utilisateur ; `entryStorage` déclenche `resolveAndStoreCoverImage` en arrière-plan après création, et Dexie `liveQuery` rafraîchit la card quand le `Blob` est stocké ; exclure le champ `coverImage` de l'export JSON dans `localData.ts`.
 - **Custom vers preset** : transformer une entrée libre via `createPresetFromCustomEntry`; éviter les doublons par `normalizePresetLabel` et réactiver un preset archivé équivalent plutôt que créer un doublon.
+- **Réglages** : mutations directes sur `UserSettings('local')` via `src/features/settings/settingsStorage.ts` (jamais en dehors). Renommage d'un preset via `renamePreset` qui réutilise `normalizePresetLabel` pour bloquer les doublons. Réinitialisation = `resetLocalData` qui vide les quatre tables Dexie ; le retour à l'onboarding est piloté par l'absence de `UserSettings('local')`, ne pas réintroduire de flag dédié.
 - **Timeline Today** : la page rend `TIMELINE_DAYS_VISIBLE = 7` sections de jour via `useTimelineData`, du plus ancien en haut au jour courant en bas. Toujours créer les nouvelles entrées via `entryStorage.ts` (date = jour réel via `getTodayDateKey()`) ; ne pas backfiller depuis l'UI sans nouvelle décision produit. Le hook `useActiveDay` détecte le jour visible via `data-day-section` et un offset `120px`.
 - **Navigation** : les routes MVP sont centralisées dans `src/app/router.tsx` et la navigation principale dans `src/app/navigation.ts`; `BottomNav` est le drawer partagé.
 - **Layout** : `AppShell` porte le fond, la zone scrollable pleine largeur, le padding bas pour le drawer et la navigation ; ne pas réintroduire de `max-width` global qui déplacerait la scrollbar vers l'intérieur.

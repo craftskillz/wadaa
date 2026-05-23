@@ -906,5 +906,69 @@
       "path": "src/features/entries/TodayPage.tsx",
       "hash": "369d0f7056056c5a467d10e16d1b11b253c956a56eea89da3feedbeece716a92"
     }
+  ],
+  "ADRS/2026_05_23_13_52_[ADR]_gestion_des_reglages_locaux_et_crud_presets_via_la_page_reglages": [
+    {
+      "path": "src/features/settings/SettingsPage.tsx",
+      "hash": "e7c8e27eb9dc3c5a0bbbd1dd8d82bcbe4133adb4de98118b5578b004d8ff0668"
+    },
+    {
+      "path": "src/features/settings/settingsStorage.ts",
+      "hash": "4fa95d1ab008477220982a7d3f243b539aa5a67a002cb829dfd039bf1a639de3"
+    },
+    {
+      "path": "src/features/settings/presetsManagement.ts",
+      "hash": "eae44af4fadb5c00ad09d5bb43d3155660f65fa4230b908ce5ff52c2729343d2"
+    },
+    {
+      "path": "src/features/settings/ConfirmResetModal.tsx",
+      "hash": "cb5a85fe5ee21c2a16be674f7f0429c1dc04b34bc547a70bc7b1a239e17d886b"
+    },
+    {
+      "path": "src/features/settings/PresetsSection.tsx",
+      "hash": "f53e12e99c24436481cda00a89b5b2ce3099024e6ba93703348c4bc2014e8895"
+    },
+    {
+      "path": "src/features/settings/RemindersSection.tsx",
+      "hash": "dc1987a806221596222c6fe7a0e45f24196d21aba155d2eadf1276a50e024ec8"
+    },
+    {
+      "path": "src/features/settings/WeekStartSection.tsx",
+      "hash": "2e8c1f9417630ec2eb727b6677bd2e3821896d40849c3410dd5c75a4bec2ca1a"
+    },
+    {
+      "path": "src/features/settings/LocalDataSection.tsx",
+      "hash": "94cbf4eb30378eb5d99c2e84e06125a3181091fc87c92530ec28acbe3dba95fc"
+    },
+    {
+      "path": "src/features/settings/useUserSettings.ts",
+      "hash": "2b9d0d593d856f889dbd1410c4eca685c29af1c86127e968d10cf76795cd1508"
+    },
+    {
+      "path": "src/features/settings/usePresets.ts",
+      "hash": "66651235c9856d8ed393ff2eb26848b02837422e6e18ae44d94e3222f97d4d90"
+    }
+  ],
+  "WORKLOG/2026_05_23_13_52_[WORKLOG]_ticket_12_reglages": [
+    {
+      "path": "src/features/settings/SettingsPage.tsx",
+      "hash": "e7c8e27eb9dc3c5a0bbbd1dd8d82bcbe4133adb4de98118b5578b004d8ff0668"
+    },
+    {
+      "path": "src/features/settings/settingsStorage.ts",
+      "hash": "4fa95d1ab008477220982a7d3f243b539aa5a67a002cb829dfd039bf1a639de3"
+    },
+    {
+      "path": "src/features/settings/presetsManagement.ts",
+      "hash": "eae44af4fadb5c00ad09d5bb43d3155660f65fa4230b908ce5ff52c2729343d2"
+    },
+    {
+      "path": "src/features/settings/ConfirmResetModal.tsx",
+      "hash": "cb5a85fe5ee21c2a16be674f7f0429c1dc04b34bc547a70bc7b1a239e17d886b"
+    },
+    {
+      "path": "src/components/ui/Input.tsx",
+      "hash": "58ef986082e6da035b6a770cccd4d493f59662cf7520d7401f055cb1f04fa980"
+    }
   ]
 }
