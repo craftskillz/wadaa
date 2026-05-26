@@ -10,6 +10,7 @@ import {
   getTodayDateKey,
 } from "../../lib/dates";
 import { db, type LearningEntry } from "../../lib/db";
+import { useEntryCoverThumbnail } from "./useEntryCoverThumbnail";
 
 const DATE_KEY_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
 const MAX_STARS = 5;
@@ -121,42 +122,59 @@ export function DayDetailPage() {
 
 function DayEntryCard({ entry }: { entry: LearningEntry }) {
   const rating = entry.rating ?? 0;
+  const coverUrl = useEntryCoverThumbnail(entry.coverImage);
 
   return (
-    <Card>
-      <div className="flex items-start justify-between gap-3">
-        <div className="flex-1">
-          <p className="text-base font-black text-slate-950">{entry.content}</p>
-          {entry.description ? (
-            <p className="mt-1 text-sm text-slate-600">{entry.description}</p>
-          ) : null}
-          {entry.url ? (
-            <a
-              className="mt-2 inline-flex items-center gap-1.5 text-sm font-bold text-violet-600 hover:text-violet-800"
-              href={entry.url}
-              rel="noreferrer"
-              target="_blank"
+    <Card className="p-4 sm:p-5" tone="solid">
+      <div className="flex flex-col gap-3 sm:flex-row">
+        {coverUrl ? (
+          <img
+            alt=""
+            className="h-28 w-full shrink-0 rounded-2xl object-cover sm:h-28 sm:w-40"
+            src={coverUrl}
+          />
+        ) : null}
+
+        <div className="min-w-0 flex-1">
+          <div className="flex items-start justify-between gap-3">
+            <div className="min-w-0 flex-1">
+              <p className="break-words text-base font-black text-slate-950">
+                {entry.content}
+              </p>
+              {entry.description ? (
+                <p className="mt-1 whitespace-pre-wrap break-words text-sm text-slate-600">
+                  {entry.description}
+                </p>
+              ) : null}
+              {entry.url ? (
+                <a
+                  className="mt-2 inline-flex max-w-full items-center gap-1.5 text-sm font-bold text-violet-600 hover:text-violet-800"
+                  href={entry.url}
+                  rel="noreferrer"
+                  target="_blank"
+                >
+                  <ExternalLink aria-hidden="true" className="size-4 shrink-0" />
+                  <span className="truncate">Ouvrir le lien</span>
+                </a>
+              ) : null}
+            </div>
+            <div
+              aria-label={`Note ${rating} sur ${MAX_STARS}`}
+              className="flex shrink-0 items-center gap-0.5"
             >
-              <ExternalLink aria-hidden="true" className="size-4" />
-              Ouvrir le lien
-            </a>
-          ) : null}
-        </div>
-        <div
-          aria-label={`Note ${rating} sur ${MAX_STARS}`}
-          className="flex shrink-0 items-center gap-0.5"
-        >
-          {Array.from({ length: MAX_STARS }, (_, index) => (
-            <Star
-              aria-hidden="true"
-              className={
-                index < rating
-                  ? "size-4 fill-amber-400 text-amber-400"
-                  : "size-4 text-slate-300"
-              }
-              key={index}
-            />
-          ))}
+              {Array.from({ length: MAX_STARS }, (_, index) => (
+                <Star
+                  aria-hidden="true"
+                  className={
+                    index < rating
+                      ? "size-4 fill-amber-400 text-amber-400"
+                      : "size-4 text-slate-300"
+                  }
+                  key={index}
+                />
+              ))}
+            </div>
+          </div>
         </div>
       </div>
     </Card>

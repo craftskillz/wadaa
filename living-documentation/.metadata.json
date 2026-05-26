@@ -986,11 +986,15 @@
     },
     {
       "path": "src/features/entries/DayDetailPage.tsx",
-      "hash": "b2ae769c2cddd1f0a5658f457c29d41068210bbc991924b1ee5fc353af656c90"
+      "hash": "669ff43671ada11302b28f495d4eacb7a31892cb476a7a61d6aa25d7831fab0e"
     },
     {
       "path": "src/lib/dates/month.ts",
       "hash": "7513a0a30ddc1545c4bf11360751a12e76286e208b7971beab035f7a94ae3b2f"
+    },
+    {
+      "path": "src/features/entries/useEntryCoverThumbnail.ts",
+      "hash": "19d8f24d5c260408190b05cb9b265230f241393f92bb613daffe3de6d7256c07"
     }
   ],
   "WORKLOG/2026_05_23_15_23_[WORKLOG]_ticket_13_calendrier_dapprentissage": [
@@ -1046,7 +1050,7 @@
   "ADRS/2026_05_26_13_35_[ADR]_timeline_today_six_mois_en_chargement_progressif": [
     {
       "path": "src/features/entries/TodayPage.tsx",
-      "hash": "ac667c1a3cc6f01cda631f0a0d5bb347b8fb4babe4c2be8a9b55409da0b59c22"
+      "hash": "a9d94323713bb99d93b390dfe373e45f73201fb9e29549f96cdde4525602a55a"
     },
     {
       "path": "src/features/entries/useTimelineData.ts",

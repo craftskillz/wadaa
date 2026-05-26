@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import {
   CalendarRange,
   ChevronLeft,
@@ -36,6 +36,7 @@ import {
   useWeekReviewData,
   useWeekStartSetting,
 } from "./useWeekReviewData";
+import { useEntryCoverThumbnail } from "../entries/useEntryCoverThumbnail";
 
 const STARS_MAX_RATING: EntryRating = 5;
 const RATING_OPTIONS: EntryRating[] = [1, 2, 3, 4, 5];
@@ -70,25 +71,6 @@ function getDiscardedCount(drafts: WeekReviewDrafts) {
   return Object.values(drafts).filter(
     (draft) => draft.decision === "discarded",
   ).length;
-}
-
-function useEntryCoverThumbnail(coverImage: Blob | undefined) {
-  const objectUrl = useMemo(
-    () => (coverImage ? URL.createObjectURL(coverImage) : undefined),
-    [coverImage],
-  );
-
-  useEffect(() => {
-    if (!objectUrl) {
-      return;
-    }
-
-    return () => {
-      URL.revokeObjectURL(objectUrl);
-    };
-  }, [objectUrl]);
-
-  return objectUrl;
 }
 
 type EntryReviewCardProps = {

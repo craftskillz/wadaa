@@ -990,7 +990,7 @@ function EntryArticle({
     >
       <div
         className={classNames(
-          "relative z-10 col-span-3 px-4 sm:col-span-1 sm:px-0",
+          "relative z-10 col-span-3 px-6 sm:col-span-1 sm:px-0",
           isLeft ? "sm:col-start-1 sm:pr-4" : "sm:col-start-3 sm:pl-4",
         )}
       >

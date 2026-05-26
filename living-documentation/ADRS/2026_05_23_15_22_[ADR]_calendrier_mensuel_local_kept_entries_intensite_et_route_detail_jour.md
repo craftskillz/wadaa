@@ -2,7 +2,7 @@
 **date:** 2026-05-23
 **status:** To be validated
 **description:** Le calendrier rend des grilles mensuelles empilées en scroll infini, où l'intensité d'un jour reflète la somme des ratings des entrées gardées (kept), et le détail d'une journée s'ouvre via la sous-route /calendar/:date.
-**tags:** calendar, calendrier, intensite, scroll-infini, route, indexeddb, dexie, kept-entries, ticket-13
+**tags:** calendar, calendrier, intensite, scroll-infini, route, indexeddb, dexie, kept-entries, ticket-13, cover-image
 ---
 
 # Calendrier mensuel local : intensité par score et route détail jour
@@ -35,7 +35,8 @@ Plusieurs décisions structurantes étaient en jeu : quelle métrique afficher (
 - La route `/calendar/:date` rend `DayDetailPage` qui :
   - valide le format `YYYY-MM-DD` via regex (les URL invalides affichent un EmptyState « Date invalide ») ;
   - `liveQuery` les entries de ce jour, filtre kept/!discarded/!empty ;
-  - affiche pour chaque entry : `content`, `description`, lien `url` si présent, et la note en étoiles 1..5 ;
+  - affiche pour chaque entry : `coverImage` locale si présente, `content`, `description`, lien `url` si présent, et la note en étoiles 1..5 ;
+  - réutilise `useEntryCoverThumbnail` pour créer et révoquer proprement l'Object URL du blob, comme la vue semaine ;
   - propose un retour explicite vers `/calendar`.
 - Une journée sans entry gardée affiche un EmptyState (cas accessible uniquement si l'utilisateur arrive via URL directe ou si l'entrée a été supprimée entre-temps — `MonthGrid` ne rend les cases comme cliquables qu'avec `keptCount > 0`).
 - Choix de la sous-route plutôt qu'une modale : permet de partager une URL, supporte le bouton retour natif du navigateur, et garde la `CalendarPage` simple.
@@ -50,11 +51,13 @@ Plusieurs décisions structurantes étaient en jeu : quelle métrique afficher (
 
 - `useWeekStartSetting` (déjà défini dans `src/features/reviews/useWeekReviewData.ts`) sert à connaître le premier jour de semaine ; le calendrier respecte donc le choix de l'utilisateur.
 - `getWeekdayLabels` utilise `Intl.DateTimeFormat('fr-FR', { weekday: 'short' })` pour générer les labels « LUN MAR MER … » alignés sur le `weekStartsOn`.
+- `useEntryCoverThumbnail` mutualise la création/révocation des Object URLs de couverture entre la revue hebdomadaire et le détail calendrier.
 - Aucun nouveau modèle Dexie ni champ de schéma n'est introduit.
 
 ## Conséquences
 
 - **Cohérence Insights ⇄ Calendrier** : les deux écrans s'appuient sur la même définition du score, ce qui évite des chiffres divergents entre vues.
+- **Cohérence Semaine ⇄ Mois** : les cards de détail calendrier affichent les mêmes couvertures locales que les cards de revue hebdomadaire quand `coverImage` est disponible.
 - **Visibilité différée** : un utilisateur qui vient juste de saisir des entrées ne les verra pas dans le calendrier tant qu'il n'a pas fait la `WeeklyReview` correspondante. C'est un choix produit assumé : le calendrier est une vue de mémoire à long terme, pas un compteur d'activité brute.
 - **Coût mémoire borné mais croissant** : le scroll infini agrandit indéfiniment la liste de `MonthGrid`. Au-delà de plusieurs années, on devrait virtualiser ; ce sera un sujet post-MVP.
 - **Sous-route partageable** : `/calendar/:date` peut servir de point d'entrée direct, utile pour de futurs liens depuis un email de rappel ou un widget.
@@ -63,5 +66,6 @@ Plusieurs décisions structurantes étaient en jeu : quelle métrique afficher (
 
 - ADR `Revue hebdomadaire et invariants kept discarded rating`
 - ADR `Courbe Insights locale en SVG sans dependance chart`
+- ADR `Miniatures locales et résolution des couvertures d'entrée`
 - ROADMAP `Tickets Mvp`
 - WORKLOG `Ticket 13 — Calendrier d'apprentissage`
