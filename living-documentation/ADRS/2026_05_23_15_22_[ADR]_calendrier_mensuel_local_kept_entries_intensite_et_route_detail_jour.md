@@ -1,66 +1,71 @@
 ---
 **date:** 2026-05-23
 **status:** To be validated
-**description:** Le calendrier rend des grilles mensuelles empilées en scroll infini, où l'intensité d'un jour reflète la somme des ratings des entrées gardées (kept), et le détail d'une journée s'ouvre via la sous-route /calendar/:date.
-**tags:** calendar, calendrier, intensite, scroll-infini, route, indexeddb, dexie, kept-entries, ticket-13, cover-image
+**description:** La page Mois affiche les apprentissages gardés du mois courant ou sélectionné, triés par note décroissante, avec navigation mensuelle et suppression définitive confirmée.
+**tags:** calendar, calendrier, mois, navigation-mensuelle, rating-sort, indexeddb, dexie, kept-entries, hard-delete, confirmation-modal, cover-image
 ---
 
-# Calendrier mensuel local : intensité par score et route détail jour
+# Page Mois : liste mensuelle des apprentissages gardés
 
 ## Contexte
 
-Le Ticket 13 ajoute la page `/calendar` au MVP. Elle doit montrer rapidement les jours où l'utilisateur a appris quelque chose, permettre de naviguer dans le passé sans contrôle explicite, et ouvrir le détail d'une journée.
+Le Ticket 13 avait introduit `/calendar` comme grille mensuelle empilée en scroll infini. Cette grille indiquait les jours actifs et ouvrait un détail de journée via `/calendar/:date`.
 
-Plusieurs décisions structurantes étaient en jeu : quelle métrique afficher (entrées brutes vs entrées gardées), quelle navigation (flèches mois vs scroll infini), et quel mécanisme d'ouverture du détail (popup vs sous-route vs drawer).
+Le retour produit est que cette page Mois ne sert pas assez en l'état. L'utilisateur attend une expérience plus proche de la page Semaine : un mois courant, une navigation par mois, et des cartes d'apprentissage directement consultables.
 
 ## Décision
 
-### Métrique d'intensité = score des entrées gardées
+### Vue principale = liste mensuelle
 
-- Chaque case du calendrier est colorisée selon `totalScore = sum(rating)` des `LearningEntry` du jour qui satisfont `kept === true && discarded === false && source !== "empty"`.
-- Les entrées non encore curatées par la `WeeklyReview` n'apparaissent pas dans le calendrier — c'est cohérent avec l'ADR `Revue hebdomadaire et invariants kept discarded rating` et avec les Insights (`dailyScore = sum(rating)`).
-- Une entrée gardée sans rating compte pour `+0` (constante `FALLBACK_RATING = 0` réutilisée du module Insights via `useMonthlyEntries`). Elle reste visible côté détail du jour mais n'augmente pas l'intensité.
-- 5 niveaux d'intensité visuelle (seuils `[1, 4, 8, 12]` pour `level 1..4`) avec la palette violet de l'app. `level 0` = case neutre grise.
+`CalendarPage` rend désormais une vue de mois sélectionné, centrée sur les `LearningEntry` gardées qui satisfont `kept === true && discarded === false && source !== "empty"`.
 
-### Navigation = scroll infini vertical, mois courant en haut
+La page affiche :
 
-- `CalendarPage` rend une pile verticale de `MonthGrid`. Le mois courant est en haut ; les mois précédents apparaissent en descendant.
-- Un `IntersectionObserver` sur un sentinel placé en bas de la pile ajoute `MONTHS_PER_BATCH = 3` mois supplémentaires dès qu'il devient visible (avec `rootMargin = 400px` pour anticiper le scroll).
-- Aucun bouton de navigation entre mois ; le scroll suffit. Le sens « passé en bas » se distingue volontairement de la Timeline Today (« ancien en haut, courant en bas ») parce que le calendrier est une exploration de l'historique, alors que Today est une chronologie qui converge vers le moment présent.
-- L'utilisateur ne peut pas naviguer vers le futur — aucun mois après le courant n'est généré.
+- le mois courant au chargement ;
+- une barre de navigation avec mois précédent / mois suivant ;
+- une pastille `Mois en cours` quand le mois affiché est le mois local courant ;
+- un bouton `Revenir à ce mois` quand l'utilisateur consulte un mois passé ;
+- un résumé du nombre d'apprentissages et du total d'étoiles ;
+- une liste de cartes au lieu d'une grille.
 
-### Détail d'une journée = sous-route `/calendar/:date`
+Le bouton mois suivant est désactivé sur le mois courant afin de ne pas naviguer vers le futur.
 
-- Cliquer sur une case avec entrées gardées appelle `navigate('/calendar/' + dateKey)`.
-- La route `/calendar/:date` rend `DayDetailPage` qui :
-  - valide le format `YYYY-MM-DD` via regex (les URL invalides affichent un EmptyState « Date invalide ») ;
-  - `liveQuery` les entries de ce jour, filtre kept/!discarded/!empty ;
-  - affiche pour chaque entry : `coverImage` locale si présente, `content`, `description`, lien `url` si présent, et la note en étoiles 1..5 ;
-  - réutilise `useEntryCoverThumbnail` pour créer et révoquer proprement l'Object URL du blob, comme la vue semaine ;
-  - propose un retour explicite vers `/calendar`.
-- Une journée sans entry gardée affiche un EmptyState (cas accessible uniquement si l'utilisateur arrive via URL directe ou si l'entrée a été supprimée entre-temps — `MonthGrid` ne rend les cases comme cliquables qu'avec `keptCount > 0`).
-- Choix de la sous-route plutôt qu'une modale : permet de partager une URL, supporte le bouton retour natif du navigateur, et garde la `CalendarPage` simple.
+### Tri = nombre d'étoiles décroissant
 
-### UX et accessibilité
+Les cartes du mois sont triées par note décroissante (`rating`, fallback `0`). En cas d'égalité, les entrées les plus récentes apparaissent en premier via `createdAt` décroissant.
 
-- Le jour courant est mis en évidence par un ring `slate-950` même quand il n'a pas encore d'entrées gardées.
-- Chaque case porte un `aria-label` décrivant le jour, le nombre d'apprentissages et le score, pour les lecteurs d'écran.
-- Le composant `MonthGrid` utilise `buildMonthGrid` qui produit 4 à 6 semaines max (les semaines sans aucun jour du mois sont coupées).
+Chaque carte affiche la date du jour, les étoiles, la couverture locale ou fallback, le contenu, la description, le lien éventuel et un bouton `Jeter`.
 
-### Réutilisation
+### Suppression depuis la page Mois
 
-- `useWeekStartSetting` (déjà défini dans `src/features/reviews/useWeekReviewData.ts`) sert à connaître le premier jour de semaine ; le calendrier respecte donc le choix de l'utilisateur.
-- `getWeekdayLabels` utilise `Intl.DateTimeFormat('fr-FR', { weekday: 'short' })` pour générer les labels « LUN MAR MER … » alignés sur le `weekStartsOn`.
-- `useEntryCoverThumbnail` mutualise la création/révocation des Object URLs de couverture entre la revue hebdomadaire et le détail calendrier.
-- Aucun nouveau modèle Dexie ni champ de schéma n'est introduit.
+La page Mois ne propose plus de bouton `Garder` : les entrées visibles sont déjà gardées par la revue hebdomadaire.
+
+Elle propose en revanche `Jeter` sur chaque carte. Cette action :
+
+1. ouvre une modale de confirmation destructive ;
+2. liste l'entrée avec sa miniature ;
+3. annonce explicitement la suppression définitive ;
+4. supprime physiquement l'entrée via `db.entries.delete(entry.id)` uniquement après confirmation.
+
+Cette suppression peut laisser une `WeeklyReview.selectedEntryIds` référencer un ID disparu ; c'est cohérent avec l'ADR de revue hebdomadaire, qui demande déjà aux écrans aval de tolérer les IDs orphelins.
+
+### Couvertures et miniatures
+
+`useEntryCoverThumbnail` mutualise la création/révocation d'Object URLs pour les blobs locaux. Le rendu utilise une image locale quand `coverImage` est un `Blob` non vide, un fallback YouTube quand l'URL le permet, puis un placeholder si aucune image exploitable n'existe.
+
+### Données
+
+`useMonthlyEntries` reste la source de données pour la page Mois. Il regroupe les entrées gardées par date et conserve le score quotidien, mais `CalendarPage` aplatit maintenant les jours du mois sélectionné pour construire la liste de cards.
+
+Aucun nouveau modèle Dexie ni champ de schéma n'est introduit.
 
 ## Conséquences
 
-- **Cohérence Insights ⇄ Calendrier** : les deux écrans s'appuient sur la même définition du score, ce qui évite des chiffres divergents entre vues.
-- **Cohérence Semaine ⇄ Mois** : les cards de détail calendrier affichent les mêmes couvertures locales que les cards de revue hebdomadaire quand `coverImage` est disponible.
-- **Visibilité différée** : un utilisateur qui vient juste de saisir des entrées ne les verra pas dans le calendrier tant qu'il n'a pas fait la `WeeklyReview` correspondante. C'est un choix produit assumé : le calendrier est une vue de mémoire à long terme, pas un compteur d'activité brute.
-- **Coût mémoire borné mais croissant** : le scroll infini agrandit indéfiniment la liste de `MonthGrid`. Au-delà de plusieurs années, on devrait virtualiser ; ce sera un sujet post-MVP.
-- **Sous-route partageable** : `/calendar/:date` peut servir de point d'entrée direct, utile pour de futurs liens depuis un email de rappel ou un widget.
+- **Utilité immédiate** : l'utilisateur voit directement les apprentissages gardés du mois, sans devoir cliquer sur une case de calendrier.
+- **Hiérarchie claire** : les cartes les mieux notées remontent en premier.
+- **Cohérence avec Semaine** : la page Mois devient une vue de curation consultable, avec navigation temporelle explicite.
+- **Suppression protégée** : jeter depuis le mois reste possible mais passe par une confirmation destructive.
+- **Ancienne grille non utilisée** : `MonthGrid` et `/calendar/:date` peuvent rester dans le code pour compatibilité ou suppression ultérieure, mais ils ne sont plus l'expérience principale de `/calendar`.
 
 ## Documents liés
 
