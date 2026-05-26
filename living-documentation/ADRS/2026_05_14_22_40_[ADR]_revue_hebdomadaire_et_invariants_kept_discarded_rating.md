@@ -1,8 +1,8 @@
 ---
 **date:** 2026-05-15
 **status:** Accepted
-**description:** La revue hebdomadaire navigue librement entre semaines, encode trois états transitoires par entrée pendant la revue, supprime définitivement les entrées jetées à la validation, et écrit atomiquement les champs kept/rating plus une WeeklyReview indexée par semaine.
-**tags:** adr, weekly-review, revue-hebdomadaire, kept, discarded, rating, dexie, transaction, navigation-libre, week-range, hard-delete
+**description:** La revue hebdomadaire navigue librement entre semaines, confirme explicitement toute suppression définitive, supprime les entrées jetées à la validation, et écrit atomiquement les champs kept/rating plus une WeeklyReview indexée par semaine.
+**tags:** adr, weekly-review, revue-hebdomadaire, kept, discarded, rating, dexie, transaction, navigation-libre, week-range, hard-delete, confirmation-modal
 
 ---
 
@@ -31,15 +31,29 @@ Pendant la revue, chaque `LearningEntry` non-`empty` est dans un de ces trois é
 |---|---|---|
 | À décider | `false` | aucune écriture |
 | Gardée | `true` | `bulkPut` avec `kept = true, discarded = false, rating` |
-| Jetée | n/a | **supprimée définitivement** (`bulkDelete`) |
+| Jetée | n/a | confirmation utilisateur puis **suppression définitive** (`bulkDelete`) |
 
 À la création d'une entrée, `kept` et `discarded` valent tous deux `false` : l'entrée est « à décider » par défaut. Le champ `rating` est `undefined` tant que l'utilisateur n'a pas noté.
 
 Les entrées `source === "empty"` ("Rien pour le moment", "Pause") sont exclues de la revue : elles ne sont jamais listées et ne reçoivent ni décision ni note.
 
+### Confirmation avant suppression définitive
+
+Quand l'utilisateur clique sur « Valider la revue » ou « Mettre à jour la revue » avec une ou plusieurs entrées marquées `Jeter`, `WeekPage` n'appelle pas directement `saveWeeklyReview`. La page ouvre d'abord une modale de confirmation.
+
+La modale :
+
+- annonce explicitement : « Attention, vous vous apprêtez à jeter définitivement ... » ;
+- liste toutes les entrées concernées en miniatures compactes ;
+- affiche la couverture locale (`coverImage`) quand elle existe via `useEntryCoverThumbnail`, sinon un placeholder rose ;
+- propose `Annuler` et `Jeter définitivement N` ;
+- ne déclenche `saveWeeklyReview` qu'après confirmation.
+
+Si aucune entrée n'est jetée, la validation reste directe.
+
 ### Suppression définitive des entrées jetées
 
-À la validation (création ou mise à jour de la revue), la transaction Dexie :
+À la validation confirmée (création ou mise à jour de la revue), la transaction Dexie :
 
 1. Met à jour les entrées gardées avec `kept = true, discarded = false, rating, updatedAt`.
 2. **Supprime de la base** les entrées jetées via `bulkDelete(discardedEntryIds)`.
@@ -55,7 +69,7 @@ Conséquence directe : aucune entrée persistée ne porte `discarded = true`. Le
 
 Après une validation réussie, la page affiche un toast fixe coloré (vert pour succès, rouge pour erreur) en haut du viewport, avec une icône `CheckCircle2` ou `AlertCircle`, et un message explicite indiquant le nombre d'entrées gardées et le nombre d'entrées supprimées (par exemple « Revue mise à jour : 3 gardés, 2 jetés et supprimés. »). Le toast reste visible 2,8 s puis s'estompe.
 
-La disparition immédiate des cards jetées via `liveQuery` Dexie sert aussi de signal visuel.
+La disparition immédiate des cards jetées via `liveQuery` Dexie sert aussi de signal visuel après confirmation.
 
 ### Navigation libre entre semaines
 
@@ -88,6 +102,7 @@ Les helpers `getCurrentWeekRange`, `getWeekRange`, `shiftWeekRange`, `isCurrentW
 ### PROS
 
 - Les entrées jetées disparaissent réellement et définitivement : la curation est nette, l'utilisateur a un signal visuel clair.
+- La confirmation réduit le risque de suppression définitive accidentelle et rend visible la liste exacte des éléments concernés.
 - Sémantique simple en base : seules existent les entrées « à décider » et « gardées ». Les écrans en aval n'ont pas à filtrer les jetées.
 - La validation est atomique : une coupure pendant l'écriture laisse les entrées dans leur état précédent, jamais à moitié.
 - L'identifiant déterministe par `weekStart` évite la création de revues parallèles si l'utilisateur clique « Valider » plusieurs fois.
@@ -97,7 +112,8 @@ Les helpers `getCurrentWeekRange`, `getWeekRange`, `shiftWeekRange`, `isCurrentW
 
 ### CONS
 
-- La suppression est destructive et définitive : pas de mécanisme d'undo ni de corbeille au MVP.
+- La suppression reste destructive et définitive : pas de mécanisme d'undo ni de corbeille au MVP.
+- Une validation avec éléments jetés ajoute une étape modale, volontairement plus lente pour une action destructrice.
 - Le champ `LearningEntry.discarded` devient inutile en base après cette décision : il subsiste pour la compatibilité d'export du schéma version 1 mais peut induire en erreur un futur lecteur. Une migration de schéma pour le retirer pourra être envisagée plus tard.
 - `WeeklyReview.discardedEntryIds` contient des IDs qui ne référencent plus d'entrées : à utiliser comme marqueur historique uniquement, pas comme source pour récupérer le contenu jeté.
 - Une `WeeklyReview` peut rester partiellement désynchronisée si l'utilisateur supprime manuellement une entrée gardée sans revalider : `selectedEntryIds` peut alors référencer un ID disparu. Les écrans aval doivent traiter les `bulkGet` retournant `undefined` comme du bruit, pas comme une erreur.
@@ -108,4 +124,5 @@ Les helpers `getCurrentWeekRange`, `getWeekRange`, `shiftWeekRange`, `isCurrentW
 
 - ADR `Schema Dexie v1 et snapshot JSON local`
 - ADR `Création des entrées du jour local-first`
+- ADR `Miniatures locales et résolution des couvertures d'entrée`
 - ROADMAP `Tickets MVP` — Ticket 08 (revue) et Ticket 09 (courbe d'apprentissage, consommateur de `kept`/`rating`)

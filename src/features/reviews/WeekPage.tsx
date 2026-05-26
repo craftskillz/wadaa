@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
 import {
+  AlertTriangle,
   CalendarRange,
   ChevronLeft,
   ChevronRight,
@@ -36,7 +37,10 @@ import {
   useWeekReviewData,
   useWeekStartSetting,
 } from "./useWeekReviewData";
-import { useEntryCoverThumbnail } from "../entries/useEntryCoverThumbnail";
+import {
+  getYouTubeThumbnailUrl,
+  useEntryCoverThumbnail,
+} from "../entries/useEntryCoverThumbnail";
 
 const STARS_MAX_RATING: EntryRating = 5;
 const RATING_OPTIONS: EntryRating[] = [1, 2, 3, 4, 5];
@@ -198,6 +202,109 @@ function EntryReviewCard({
   );
 }
 
+type DiscardConfirmationModalProps = {
+  entries: LearningEntry[];
+  isBusy: boolean;
+  onCancel: () => void;
+  onConfirm: () => void;
+};
+
+function DiscardedEntryPreview({ entry }: { entry: LearningEntry }) {
+  const coverUrl = useEntryCoverThumbnail(entry.coverImage);
+  const [hasImageError, setHasImageError] = useState(false);
+  const youtubeFallbackUrl = getYouTubeThumbnailUrl(entry.url);
+  const previewUrl = !hasImageError && coverUrl ? coverUrl : youtubeFallbackUrl;
+
+  return (
+    <li className="flex gap-3 rounded-2xl bg-white/80 p-2 shadow-sm shadow-slate-900/5">
+      {previewUrl ? (
+        <img
+          alt=""
+          className="size-16 shrink-0 rounded-xl object-cover"
+          onError={() => setHasImageError(true)}
+          src={previewUrl}
+        />
+      ) : (
+        <span className="inline-flex size-16 shrink-0 items-center justify-center rounded-xl bg-rose-500/10 text-rose-600">
+          <ThumbsDown aria-hidden="true" className="size-6" />
+        </span>
+      )}
+      <div className="min-w-0 flex-1">
+        <p className="line-clamp-2 break-words text-sm font-black leading-5 text-slate-950">
+          {entry.content}
+        </p>
+        {entry.description ? (
+          <p className="mt-1 line-clamp-2 break-words text-xs font-semibold leading-5 text-slate-500">
+            {entry.description}
+          </p>
+        ) : null}
+      </div>
+    </li>
+  );
+}
+
+function DiscardConfirmationModal({
+  entries,
+  isBusy,
+  onCancel,
+  onConfirm,
+}: DiscardConfirmationModalProps) {
+  const discardedCount = entries.length;
+  const pluralSuffix = discardedCount > 1 ? "s" : "";
+
+  return (
+    <div
+      aria-labelledby="confirm-discard-title"
+      aria-modal="true"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/50 px-4 backdrop-blur-sm"
+      role="dialog"
+    >
+      <div className="max-h-[min(86vh,42rem)] w-full max-w-lg overflow-y-auto rounded-3xl border border-white/70 bg-white/95 p-5 shadow-2xl shadow-slate-950/20 sm:p-6">
+        <div className="flex items-start gap-3">
+          <span className="inline-flex size-12 shrink-0 items-center justify-center rounded-2xl bg-rose-500/10 text-rose-600">
+            <AlertTriangle aria-hidden="true" className="size-6" />
+          </span>
+          <div className="min-w-0 flex-1">
+            <h2
+              className="text-lg font-black text-slate-950"
+              id="confirm-discard-title"
+            >
+              Jeter définitivement {discardedCount} élément{pluralSuffix}
+            </h2>
+            <p className="mt-1 text-sm font-semibold leading-6 text-slate-600">
+              Attention, vous vous apprêtez à jeter définitivement{" "}
+              {discardedCount} élément{pluralSuffix}. Cette action supprimera{" "}
+              {discardedCount > 1 ? "ces apprentissages" : "cet apprentissage"}{" "}
+              de la base locale.
+            </p>
+          </div>
+        </div>
+
+        <ul className="mt-4 max-h-72 space-y-2 overflow-y-auto pr-1">
+          {entries.map((entry) => (
+            <DiscardedEntryPreview entry={entry} key={entry.id} />
+          ))}
+        </ul>
+
+        <div className="mt-5 grid gap-2 sm:grid-cols-2">
+          <Button disabled={isBusy} onClick={onCancel} variant="secondary">
+            Annuler
+          </Button>
+          <Button
+            className="bg-rose-600 text-white shadow-rose-500/30 hover:bg-rose-700"
+            disabled={isBusy}
+            onClick={onConfirm}
+          >
+            {isBusy
+              ? "Suppression…"
+              : `Jeter définitivement ${discardedCount}`}
+          </Button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export function WeekPage() {
   const { weekStartsOn, isLoading: isWeekStartLoading } = useWeekStartSetting();
   const [range, setRange] = useState<WeekRange>(() =>
@@ -235,6 +342,8 @@ export function WeekPage() {
 
   const { statusToast, isStatusToastVisible, showStatusToast } = useStatusToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isDiscardConfirmationOpen, setIsDiscardConfirmationOpen] =
+    useState(false);
 
   const totalEntries = entries.length;
   const decidedEntries = Object.values(drafts).filter((draft) =>
@@ -243,6 +352,11 @@ export function WeekPage() {
   const allDecided = totalEntries > 0 && decidedEntries === totalEntries;
   const showCurrent = isCurrentWeek(range, weekStartsOn);
   const reviewSubmittedAt = review?.updatedAt;
+  const discardedEntries = useMemo(
+    () =>
+      entries.filter((entry) => drafts[entry.id]?.decision === "discarded"),
+    [drafts, entries],
+  );
 
   function shiftWeek(weeks: number) {
     setRange((current) => shiftWeekRange(current, weeks));
@@ -279,7 +393,22 @@ export function WeekPage() {
     }));
   }
 
-  async function handleValidate() {
+  function buildCompleteDrafts() {
+    return Object.entries(drafts).reduce<WeekReviewDrafts>(
+      (accumulator, [entryId, draft]) => {
+        if (draft.decision) {
+          accumulator[entryId] = {
+            decision: draft.decision,
+            rating: draft.rating,
+          };
+        }
+        return accumulator;
+      },
+      {},
+    );
+  }
+
+  function requestValidation() {
     if (!allDecided) {
       showStatusToast(
         "Décide de chaque entrée avant de valider.",
@@ -288,25 +417,24 @@ export function WeekPage() {
       return;
     }
 
+    if (discardedEntries.length > 0) {
+      setIsDiscardConfirmationOpen(true);
+      return;
+    }
+
+    void handleValidate();
+  }
+
+  async function handleValidate() {
     const isUpdate = Boolean(review);
     setIsSubmitting(true);
 
     try {
-      const completeDrafts = Object.entries(drafts).reduce<WeekReviewDrafts>(
-        (accumulator, [entryId, draft]) => {
-          if (draft.decision) {
-            accumulator[entryId] = {
-              decision: draft.decision,
-              rating: draft.rating,
-            };
-          }
-          return accumulator;
-        },
-        {},
-      );
+      const completeDrafts = buildCompleteDrafts();
 
       const result = await saveWeeklyReview(range, completeDrafts);
       setOverrides({});
+      setIsDiscardConfirmationOpen(false);
 
       const keptLabel = `${result.keptCount} gardé${result.keptCount > 1 ? "s" : ""}`;
       const discardedLabel =
@@ -428,7 +556,7 @@ export function WeekPage() {
             <Button
               className="w-full"
               disabled={!allDecided || isSubmitting}
-              onClick={handleValidate}
+              onClick={requestValidation}
               size="lg"
               variant="primary"
             >
@@ -442,6 +570,15 @@ export function WeekPage() {
           </div>
         </>
       )}
+
+      {isDiscardConfirmationOpen ? (
+        <DiscardConfirmationModal
+          entries={discardedEntries}
+          isBusy={isSubmitting}
+          onCancel={() => setIsDiscardConfirmationOpen(false)}
+          onConfirm={() => void handleValidate()}
+        />
+      ) : null}
     </section>
   );
 }

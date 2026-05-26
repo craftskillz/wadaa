@@ -792,7 +792,7 @@
   "ADRS/2026_05_14_22_40_[ADR]_revue_hebdomadaire_et_invariants_kept_discarded_rating": [
     {
       "path": "src/features/reviews/WeekPage.tsx",
-      "hash": "bad67bafd362c60b718c7121b1d8412dc908f35b0890cb3637966028f252ab69"
+      "hash": "e406a3598785c94760c5e08e921937ae7d90b8f697980d7828e4a873ee936d58"
     },
     {
       "path": "src/features/reviews/reviewStorage.ts",
@@ -994,7 +994,7 @@
     },
     {
       "path": "src/features/entries/useEntryCoverThumbnail.ts",
-      "hash": "19d8f24d5c260408190b05cb9b265230f241393f92bb613daffe3de6d7256c07"
+      "hash": "66f3dd531d0c1df709b8cc3187bfccf561475010f769819eaddcca0d04f8d8ab"
     }
   ],
   "WORKLOG/2026_05_23_15_23_[WORKLOG]_ticket_13_calendrier_dapprentissage": [

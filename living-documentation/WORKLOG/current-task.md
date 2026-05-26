@@ -1,8 +1,8 @@
 ---
 **date:** 2026-05-26
 **status:** Idle
-**description:** Point de reprise après extension de la timeline Today à six mois en chargement progressif au scroll-up.
-**tags:** worklog, handoff, progression, today-page, timeline, infinite-scroll, six-months
+**description:** Point de reprise après correction du fallback de miniature dans la confirmation destructive de revue hebdomadaire.
+**tags:** worklog, handoff, progression, weekly-review, confirmation-modal, thumbnails, cover-image, fallback
 ---
 
 # Current task
@@ -11,7 +11,7 @@ Ce document est le point de reprise entre assistants IA. Tout agent doit le lire
 
 ## Statut courant
 
-Idle — Timeline Today étendue à six mois avec chargement progressif. Lint + build OK.
+Idle — La popup de confirmation des éléments jetés ne doit plus afficher d'image cassée : elle utilise le blob valide, puis une miniature YouTube si possible, puis un placeholder. Lint + build OK.
 
 ## Tâche courante
 
@@ -19,16 +19,12 @@ Aucune implémentation en cours.
 
 ## Dernière action réalisée
 
-Extension de la page principale Aujourd'hui (2026-05-26) :
+Correction miniature dans la confirmation destructive (2026-05-26) :
 
-- `TodayPage.tsx` charge maintenant 7 jours au montage (`INITIAL_TIMELINE_DAYS_VISIBLE = 7`).
-- Le scroll-up près du haut du `<main>` augmente la fenêtre par paliers de 14 jours (`TIMELINE_DAYS_LOAD_STEP = 14`).
-- La profondeur maximale est de six mois calendaires (`TIMELINE_MAX_MONTHS_VISIBLE = 6`), calculée depuis la date locale courante.
-- Les jours passés sans entrée restent masqués ; Aujourd'hui reste toujours rendu.
-- Lorsqu'une tranche plus ancienne ajoute du contenu au-dessus du viewport, la page compense le delta de `scrollHeight` pour conserver la position visuelle.
-- L'ancien ADR `Timeline Today multi-jours scroll-up et day-anchored pills` est marqué `Partially SuperSeeded` sur la fenêtre fixe de 7 jours.
-- Nouvel ADR créé : `Timeline Today six mois en chargement progressif`, lié à `src/features/entries/TodayPage.tsx` et `src/features/entries/useTimelineData.ts`.
-- `PROJECT-STACK.md` mis à jour pour remplacer la règle obsolète des 7 derniers jours.
+- `useEntryCoverThumbnail.ts` vérifie maintenant que `coverImage` est bien un `Blob` non vide avant de créer une Object URL.
+- `getYouTubeThumbnailUrl` a été extrait dans le hook partagé pour servir de fallback commun.
+- `DiscardedEntryPreview` dans `WeekPage.tsx` gère `onError` sur l'image : si le blob échoue, fallback YouTube ; si aucun fallback n'existe, placeholder rose.
+- Les métadonnées des ADR revue hebdomadaire et calendrier ont été rafraîchies.
 
 ## Prochaine action recommandée
 
@@ -42,11 +38,8 @@ Avant de coder ce ticket, valider avec l'utilisateur :
 
 ## Fichiers ou zones concernés
 
-- `src/features/entries/TodayPage.tsx`
-- `src/features/entries/useTimelineData.ts`
-- `living-documentation/ADRS/2026_05_15_08_55_[ADR]_timeline_today_multijours_scrollup_et_dayanchored_pills.md`
-- `living-documentation/ADRS/2026_05_26_13_35_[ADR]_timeline_today_six_mois_en_chargement_progressif.md`
-- `living-documentation/AI/PROJECT-STACK.md`
+- `src/features/entries/useEntryCoverThumbnail.ts`
+- `src/features/reviews/WeekPage.tsx`
 - `living-documentation/WORKLOG/current-task.md`
 - `living-documentation/.metadata.json`
 
@@ -54,14 +47,13 @@ Avant de coder ce ticket, valider avec l'utilisateur :
 
 - `npm run lint` : OK.
 - `npm run build` : OK.
-- MCP Living Documentation disponible ; nouvel ADR créé et lié aux fichiers source.
+- MCP Living Documentation disponible ; métadonnées ADR rafraîchies.
 
 ## Vérifications restantes
 
-- Vérification navigateur manuelle recommandée avec des données historiques réelles : depuis Today, remonter jusqu'au haut de la timeline et vérifier que les anciennes entrées apparaissent progressivement jusqu'à six mois.
+- Vérification visuelle avec les données utilisateur : ouvrir la popup de confirmation et confirmer que l'entrée “J'ai fait du stretching” n'affiche plus l'icône d'image cassée.
 
 ## Notes de reprise
 
-- Le chargement progressif ne requête pas les six mois au montage : `useTimelineData` ne reçoit que le nombre de jours actuellement ouverts.
-- Les jours vides étant masqués, une tranche chargée sans entrée peut ne pas produire de changement visuel immédiat.
-- Si la densité d'entrées devient très élevée sur six mois, envisager une virtualisation DOM ou une requête paginée par dates non vides.
+- La popup ne tente plus d'afficher un objet non-Blob comme image.
+- Si le blob est présent mais invalide et que l'URL n'est pas une URL YouTube, le placeholder rose est attendu.
