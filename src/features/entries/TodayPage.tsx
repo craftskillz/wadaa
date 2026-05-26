@@ -988,7 +988,12 @@ function EntryArticle({
       className="grid min-h-44 grid-cols-[minmax(0,1fr)_5rem_minmax(0,1fr)] items-center gap-2 sm:grid-cols-[minmax(0,1fr)_8rem_minmax(0,1fr)] sm:gap-6"
       data-entry-id={entry.id}
     >
-      <div className={isLeft ? "col-start-1 pr-2 sm:pr-4" : "col-start-3 pl-2 sm:pl-4"}>
+      <div
+        className={classNames(
+          "relative z-10 col-span-3 px-4 sm:col-span-1 sm:px-0",
+          isLeft ? "sm:col-start-1 sm:pr-4" : "sm:col-start-3 sm:pl-4",
+        )}
+      >
         <Card className="relative p-3 shadow-xl sm:p-4" tone="solid">
           <input
             accept="image/*"
