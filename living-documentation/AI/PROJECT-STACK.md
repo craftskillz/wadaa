@@ -22,15 +22,15 @@ Ne pas documenter ici les détails volatils, les TODO temporaires ou les informa
 
 Le produit permet maintenant d'initialiser l'expérience localement via onboarding, puis de capturer les apprentissages du jour depuis l'écran Aujourd'hui. Les entrées sont persistées dans IndexedDB avec idée courte, description obligatoire et URL facultative. Quand une URL est présente, une couverture est résolue en arrière-plan (YouTube → Microlink → favicon) et stockée localement sous forme de `Blob`, puis peut être remplacée manuellement depuis la card. Les réponses libres peuvent devenir des choix rapides réutilisables, et l'écran Today utilise une timeline visuelle avec éléments de capture fixes et navigation principale en drawer inférieur.
 
-Le projet contient une base frontend MVP, un design system minimal, une couche de stockage local-first IndexedDB via Dexie, un onboarding local qui initialise settings + presets, un écran Aujourd'hui qui crée les `LearningEntry` du jour, la transformation des réponses `custom` en `LearningPreset`, une revue hebdomadaire, des insights locaux avec courbes SVG, une direction visuelle basée sur un chemin chronologique, et une page Réglages complète qui édite rappels et semaine, gère le CRUD presets et la réinitialisation locale. Le calendrier reste à implémenter.
+Le projet contient une base frontend MVP, un design system minimal, une couche de stockage local-first IndexedDB via Dexie, un onboarding local qui initialise settings + presets, un écran Aujourd'hui qui crée les `LearningEntry` du jour, la transformation des réponses `custom` en `LearningPreset`, une revue hebdomadaire, des insights locaux avec courbes SVG, une direction visuelle basée sur un chemin chronologique, une page Réglages complète qui édite rappels et semaine, gère le CRUD presets et la réinitialisation locale, et un calendrier mensuel à scroll infini avec détail de journée. Les fonctionnalités cloud (backup R2, auth Google, notifications) restent à implémenter.
 
 ## Stack cible MVP
 
 - **Langage principal** : TypeScript
 - **Runtime** : navigateur, Node.js pour les commandes de développement
 - **Framework frontend** : React
-- **Framework backend / serveur** : Cloudflare Workers pour backup/restore après le coeur local-first
-- **Base de données / stockage** : IndexedDB via Dexie dans le navigateur ; Cloudflare R2 pour snapshot JSON de backup plus tard
+- **Framework backend / serveur** : Netlify Functions pour backup/restore et endpoints serverless après le coeur local-first (voir l'ADR `Backup et fonctions serverless via Netlify Functions et Netlify Blobs`)
+- **Base de données / stockage** : IndexedDB via Dexie dans le navigateur ; Netlify Blobs (store `user-backups`, clé `users/{userId}/backup.json`) pour snapshot JSON de backup plus tard
 - **API externes / intégrations** : Microlink (`https://api.microlink.io/`) pour résoudre les couvertures d'entrée pendant le MVP ; Google OAuth plus tard pour isoler les backups ; Web Push plus tard pour les notifications
 - **Authentification / autorisation** : aucune obligatoire au coeur MVP ; Google OAuth prévu post-coeur local-first
 - **Styles / design system** : Tailwind CSS ; composants maison inspirés shadcn/ui
@@ -39,11 +39,11 @@ Le projet contient une base frontend MVP, un design system minimal, une couche d
 - **Package manager** : npm
 - **Tests** : non installé pour l'instant
 - **Lint / formatage** : ESLint installé ; pas de formateur dédié installé
-- **Déploiement / hébergement** : Cloudflare Pages ou Workers avec assets statiques
+- **Déploiement / hébergement** : Netlify (site statique servi depuis `dist/`, Netlify Functions pour les futurs endpoints)
 
 ## Stack réellement installée
 
-Versions installées après le Ticket 07 :
+Versions installées (mise à jour Ticket 14) :
 
 - **React** : `react` 19.2.6, `react-dom` 19.2.6
 - **Routing** : `react-router-dom` 7.15.0
@@ -52,11 +52,11 @@ Versions installées après le Ticket 07 :
 - **Styles** : `tailwindcss` 4.3.0, `@tailwindcss/vite` 4.3.0
 - **Icons** : `lucide-react` 1.16.0
 - **Stockage local** : `dexie` pour IndexedDB
+- **Backup serverless** : `@netlify/blobs` 10.7.8 (runtime), `@netlify/functions` 5.2.2 (types), `netlify-cli` 26.0.2 (dev local)
 - **Lint** : `eslint` 10.3.0, `typescript-eslint`, `eslint-plugin-react-hooks`, `eslint-plugin-react-refresh`
 
 Dépendances non encore installées mais prévues par la roadmap :
 
-- outils Cloudflare / Workers ;
 - auth Google ;
 - Web Push.
 
@@ -66,22 +66,24 @@ Dépendances non encore installées mais prévues par la roadmap :
 README.md                         <- presentation humaine du projet et demarrage local
 AGENTS.md                         <- point d'entrée Codex et agents compatibles
 CLAUDE.md                         <- point d'entrée Claude
-package.json                      <- scripts npm et dépendances frontend
+package.json                      <- scripts npm et dépendances frontend + Functions
 package-lock.json                 <- lockfile npm
 index.html                        <- entrée HTML Vite
 vite.config.ts                    <- configuration Vite + React + Tailwind
 eslint.config.js                  <- configuration ESLint flat config
-tsconfig*.json                    <- configuration TypeScript
+tsconfig*.json                    <- configuration TypeScript (app, node, functions)
+netlify.toml                      <- config Netlify : publish dir, functions dir, redirects /api/* et SPA fallback
+netlify/functions/                <- Netlify Functions (backup.ts pour le moment)
 src/app/                          <- App, router et navigation
 src/components/layout/            <- AppShell, BottomNav drawer, PageHeader
 src/components/ui/                <- design system minimal : Button, Card, Input, Textarea, EmojiBadge, EmptyState, StatusPill
-src/features/entries/             <- écran Aujourd'hui, timeline, création/suppression d'entrées, custom vers preset, calendrier
+src/features/entries/             <- écran Aujourd'hui, timeline, création/suppression d'entrées, custom vers preset, calendrier mensuel et détail jour
 src/features/reviews/             <- revue hebdomadaire
 src/features/insights/            <- courbes et stats
 src/features/settings/            <- page Réglages : rappels, semaine, CRUD presets, export/import et réinitialisation locale
 src/features/onboarding/          <- onboarding, options initiales, sauvegarde settings + presets
 src/lib/db/                       <- Dexie, types, repositories CRUD, export/import JSON local
-src/lib/dates/                    <- helpers de date locale pour les entrées du jour
+src/lib/dates/                    <- helpers de date locale (today, week, month) pour entrées, revue hebdomadaire et calendrier
 src/lib/ids/                      <- génération d'identifiants applicatifs
 src/lib/styles/                   <- helpers de classes CSS
 src/styles/                       <- CSS global Tailwind
@@ -131,14 +133,15 @@ Les dossiers `presets` et `lib/dates` restent à enrichir pour les tickets suiva
 - **LearningEntry** : apprentissage utilisateur pour un jour donné, composé d'une idée courte (`content`), d'une description optionnelle dans les anciennes données mais obligatoire dans la popup Today actuelle, et d'une URL facultative. Voir l'ADR `Création des entrées du jour local-first`.
 - **Couverture d'entrée** : `LearningEntry.coverImage?: Blob` est résolu en arrière-plan via `src/features/entries/coverImage.ts` (YouTube → Microlink → favicon DuckDuckGo), redimensionné en JPEG ≤720px et stocké dans IndexedDB. Une card peut aussi remplacer manuellement cette couverture via un upload local. Exclu de l'export JSON. Voir l'ADR `Miniatures locales et résolution des couvertures d'entrée`.
 - **LearningPreset** : choix rapide réutilisable, y compris depuis une idée libre transformée en preset. Voir l'ADR `Transformation des réponses libres en presets réutilisables`.
-- **Timeline Today** : l'écran Aujourd'hui s'étend sur les 7 derniers jours, du plus ancien en haut au jour courant en bas. Au chargement, la page se positionne sur la section Aujourd'hui ; scroll-up révèle les jours passés. Les pastilles fixes affichent le jour actuellement visible (`Aujourd'hui` / `Hier` / date) avec son compteur, et un bouton « Revenir à aujourd'hui » s'affiche quand on n'est pas sur le jour courant. Les nouvelles entrées vont toujours vers la date du jour réel. Voir les ADR `Timeline visuelle Today et navigation drawer` et `Timeline Today multi-jours scroll-up et day-anchored pills`.
+- **Timeline Today** : l'écran Aujourd'hui charge 7 jours au montage, puis étend l'historique par paliers au scroll-up jusqu'à six mois calendaires. Les jours sont ordonnés du plus ancien en haut au jour courant en bas, mais seuls les jours passés contenant au moins une entrée sont rendus ; Aujourd'hui reste toujours visible. Les pastilles fixes affichent le jour actuellement visible (`Aujourd'hui` / `Hier` / date) avec son compteur, et un bouton « Revenir à aujourd'hui » s'affiche quand on n'est pas sur le jour courant. Les nouvelles entrées vont toujours vers la date du jour réel. Voir les ADR `Timeline visuelle Today et navigation drawer`, `Timeline Today multi-jours scroll-up et day-anchored pills` et `Timeline Today six mois en chargement progressif`.
 - **Navigation drawer** : `BottomNav` est un drawer inférieur fixe avec poignée violette visible, ouvert au survol, au focus ou au tap.
 - **WeeklyReview** : moment de curation hebdomadaire implémenté dans `src/features/reviews/WeekPage.tsx`. L'utilisateur navigue librement entre semaines, note ses apprentissages sur 5 étoiles, choisit garder ou jeter, et valide. À la validation, les entrées gardées sont mises à jour (`kept = true, rating`) et les entrées jetées sont **supprimées définitivement** de la base. La `WeeklyReview` est upsert avec `id = weeklyReview_<weekStart>` et conserve les IDs jetés en historique. Voir l'ADR `Revue hebdomadaire et invariants kept discarded rating`.
 - **Export/import local** : `src/lib/db/localData.ts` exporte et restaure un snapshot JSON complet avec validation minimale.
 - **Réglages** : la page `/settings` édite `UserSettings('local')` (rappels, premier jour de semaine), gère le CRUD des presets (renommer/archiver/supprimer) et propose une réinitialisation locale gardée par une modale qui exige de taper `RESET` puis renvoie vers `/onboarding`. Voir l'ADR `Gestion des réglages locaux et CRUD presets via la page Réglages`.
 - **Insights** : courbes SVG 7/30 jours et métriques locales calculées depuis les entrées gardées (`dailyScore = sum(rating)`), avec les entrées jetées exclues.
+- **Calendrier** : la page `/calendar` empile des `MonthGrid` du mois courant vers le passé via un scroll infini (`IntersectionObserver`). Chaque case est colorisée selon `totalScore = sum(rating)` des entrées **gardées** du jour (seuils `[1, 4, 8, 12]` pour 5 niveaux d'intensité). Cliquer sur une case avec entrées ouvre `/calendar/:date` qui détaille la journée. Voir l'ADR `Calendrier mensuel local kept entries intensite et route detail jour`.
 - **Design system minimal** : composants UI maison Tailwind dans `src/components/ui/`, partagés par les pages pour garder une identité cohérente.
-- **Backup R2** : snapshot JSON manuel prévu après le coeur local-first, sans logique métier dans le Worker.
+- **Backup serverless** : snapshot JSON manuel exposé via la Netlify Function `netlify/functions/backup.ts` à l'URL `/api/backup`. Verrou par header `X-Backup-Key` comparé à la variable d'environnement Netlify `BACKUP_KEY` en attendant l'auth Google. Lit/écrit dans le store Netlify Blobs `user-backups` à la clé `users/local/backup.json`. Pas de logique métier côté serveur. Voir l'ADR `Backup et fonctions serverless via Netlify Functions et Netlify Blobs`.
 - **Recherche sémantique** : option post-MVP explicitement exclue du MVP. Voir l'ADR `Reporter embeddings et LLM après validation produit`.
 
 ## Conventions structurantes
@@ -153,7 +156,7 @@ Les dossiers `presets` et `lib/dates` restent à enrichir pour les tickets suiva
 - **Couvertures locales** : ne pas charger la couverture pendant la requête utilisateur ; `entryStorage` déclenche `resolveAndStoreCoverImage` en arrière-plan après création, et Dexie `liveQuery` rafraîchit la card quand le `Blob` est stocké ; exclure le champ `coverImage` de l'export JSON dans `localData.ts`.
 - **Custom vers preset** : transformer une entrée libre via `createPresetFromCustomEntry`; éviter les doublons par `normalizePresetLabel` et réactiver un preset archivé équivalent plutôt que créer un doublon.
 - **Réglages** : mutations directes sur `UserSettings('local')` via `src/features/settings/settingsStorage.ts` (jamais en dehors). Renommage d'un preset via `renamePreset` qui réutilise `normalizePresetLabel` pour bloquer les doublons. Réinitialisation = `resetLocalData` qui vide les quatre tables Dexie ; le retour à l'onboarding est piloté par l'absence de `UserSettings('local')`, ne pas réintroduire de flag dédié.
-- **Timeline Today** : la page rend `TIMELINE_DAYS_VISIBLE = 7` sections de jour via `useTimelineData`, du plus ancien en haut au jour courant en bas. Toujours créer les nouvelles entrées via `entryStorage.ts` (date = jour réel via `getTodayDateKey()`) ; ne pas backfiller depuis l'UI sans nouvelle décision produit. Le hook `useActiveDay` détecte le jour visible via `data-day-section` et un offset `120px`.
+- **Timeline Today** : la page charge `INITIAL_TIMELINE_DAYS_VISIBLE = 7` jours via `useTimelineData(timelineDaysCount)`, augmente la fenêtre par paliers `TIMELINE_DAYS_LOAD_STEP = 14` au scroll-up, et plafonne l'historique à `TIMELINE_MAX_MONTHS_VISIBLE = 6` mois. Toujours créer les nouvelles entrées via `entryStorage.ts` (date = jour réel via `getTodayDateKey()`) ; ne pas backfiller depuis l'UI sans nouvelle décision produit. Le hook `useActiveDay` détecte le jour visible via `data-day-section` et un offset `160px`.
 - **Navigation** : les routes MVP sont centralisées dans `src/app/router.tsx` et la navigation principale dans `src/app/navigation.ts`; `BottomNav` est le drawer partagé.
 - **Layout** : `AppShell` porte le fond, la zone scrollable pleine largeur, le padding bas pour le drawer et la navigation ; ne pas réintroduire de `max-width` global qui déplacerait la scrollbar vers l'intérieur.
 - **UI partagée** : privilégier les composants de `src/components/ui/` avant d'ajouter des classes Tailwind longues directement dans une page.

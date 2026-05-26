@@ -2,6 +2,7 @@ import {
   type ChangeEvent,
   type FormEvent,
   type SyntheticEvent,
+  useCallback,
   useEffect,
   useId,
   useLayoutEffect,
@@ -51,7 +52,12 @@ import { useTimelineData, type TimelineDay } from "./useTimelineData";
 import { useActiveDay } from "./useActiveDay";
 import type { LearningEntry, LearningPreset } from "../../lib/db";
 
-const TIMELINE_DAYS_VISIBLE = 7;
+const INITIAL_TIMELINE_DAYS_VISIBLE = 7;
+const TIMELINE_DAYS_LOAD_STEP = 14;
+const TIMELINE_MAX_MONTHS_VISIBLE = 6;
+const TIMELINE_SCROLL_TOP_LOAD_THRESHOLD_PX = 80;
+const TIMELINE_MS_PER_DAY = 24 * 60 * 60 * 1000;
+const TIMELINE_INCLUSIVE_DAY_COUNT_OFFSET = 1;
 const TIMELINE_VIEWBOX_WIDTH = 140;
 const TIMELINE_VIEWBOX_HEIGHT = 1200;
 const TIMELINE_PATH =
@@ -89,6 +95,23 @@ const RIVER_TREE_GROUP_CLUSTER_OFFSET_WIDE = 28;
 const RIVER_TREE_GROUP_CLUSTER_SCALE_SMALL = 0.82;
 const RIVER_TREE_GROUP_CLUSTER_SCALE_MEDIUM = 0.9;
 const RIVER_TREE_GROUP_CLUSTER_SCALE_FULL = 1;
+
+function getTimelineMaxDaysCount(today = new Date()) {
+  const todayMidnight = new Date(today);
+  todayMidnight.setHours(0, 0, 0, 0);
+
+  const oldestVisibleDate = new Date(todayMidnight);
+  oldestVisibleDate.setMonth(
+    oldestVisibleDate.getMonth() - TIMELINE_MAX_MONTHS_VISIBLE,
+  );
+
+  return (
+    Math.floor(
+      (todayMidnight.getTime() - oldestVisibleDate.getTime()) /
+        TIMELINE_MS_PER_DAY,
+    ) + TIMELINE_INCLUSIVE_DAY_COUNT_OFFSET
+  );
+}
 
 type RiverAtlasSpriteId =
   | "blossomTree"
@@ -1138,7 +1161,16 @@ function DaySection({
 }
 
 export function TodayPage() {
-  const { days, presets, todayKey } = useTimelineData(TIMELINE_DAYS_VISIBLE);
+  const timelineMaxDaysCount = useMemo(() => getTimelineMaxDaysCount(), []);
+  const [timelineDaysCount, setTimelineDaysCount] = useState(
+    INITIAL_TIMELINE_DAYS_VISIBLE,
+  );
+  const olderTimelineLoadPendingRef = useRef(false);
+  const scrollRestoreRef = useRef<{
+    scrollHeight: number;
+    scrollTop: number;
+  } | null>(null);
+  const { days, presets, todayKey } = useTimelineData(timelineDaysCount);
   const renderedDays = useMemo(
     () =>
       days.filter(
@@ -1187,6 +1219,33 @@ export function TodayPage() {
   const [coverUpdatingEntryId, setCoverUpdatingEntryId] = useState<
     string | null
   >(null);
+  const hasOlderTimelineDays = timelineDaysCount < timelineMaxDaysCount;
+
+  const loadOlderTimelineDays = useCallback(() => {
+    if (olderTimelineLoadPendingRef.current) {
+      return;
+    }
+
+    setTimelineDaysCount((currentDaysCount) => {
+      if (currentDaysCount >= timelineMaxDaysCount) {
+        return currentDaysCount;
+      }
+
+      const scrollContainer = document.querySelector("main");
+      scrollRestoreRef.current = scrollContainer
+        ? {
+            scrollHeight: scrollContainer.scrollHeight,
+            scrollTop: scrollContainer.scrollTop,
+          }
+        : null;
+      olderTimelineLoadPendingRef.current = true;
+
+      return Math.min(
+        currentDaysCount + TIMELINE_DAYS_LOAD_STEP,
+        timelineMaxDaysCount,
+      );
+    });
+  }, [timelineMaxDaysCount]);
 
   const visiblePresets = useMemo(
     () => presets.filter((preset) => !isEmptyPreset(preset)),
@@ -1218,6 +1277,100 @@ export function TodayPage() {
       boxShadow: `0 0 0 1px ${pill.ring}`,
     };
   }, [activeDayEntry, dayThemesByDateKey]);
+
+  useLayoutEffect(() => {
+    if (!olderTimelineLoadPendingRef.current) {
+      return;
+    }
+
+    const snapshot = scrollRestoreRef.current;
+    const scrollContainer = document.querySelector("main");
+
+    if (snapshot && scrollContainer) {
+      const scrollHeightDelta = scrollContainer.scrollHeight - snapshot.scrollHeight;
+      scrollContainer.scrollTop = snapshot.scrollTop + scrollHeightDelta;
+    }
+
+    scrollRestoreRef.current = null;
+    olderTimelineLoadPendingRef.current = false;
+  }, [renderedDays]);
+
+  useEffect(() => {
+    if (!hasOlderTimelineDays) {
+      return;
+    }
+
+    const scrollContainer = document.querySelector("main");
+    if (!scrollContainer) {
+      return;
+    }
+    const timelineScrollContainer = scrollContainer;
+
+    let previousScrollTop = timelineScrollContainer.scrollTop;
+    let touchStartY: number | null = null;
+
+    function loadWhenNearTop() {
+      if (
+        timelineScrollContainer.scrollTop <= TIMELINE_SCROLL_TOP_LOAD_THRESHOLD_PX
+      ) {
+        loadOlderTimelineDays();
+      }
+    }
+
+    function handleScroll() {
+      const nextScrollTop = timelineScrollContainer.scrollTop;
+      const isScrollingUp = nextScrollTop < previousScrollTop;
+      previousScrollTop = nextScrollTop;
+
+      if (isScrollingUp) {
+        loadWhenNearTop();
+      }
+    }
+
+    function handleWheel(event: WheelEvent) {
+      if (event.deltaY < 0) {
+        loadWhenNearTop();
+      }
+    }
+
+    function handleTouchStart(event: TouchEvent) {
+      touchStartY = event.touches[0]?.clientY ?? null;
+    }
+
+    function handleTouchMove(event: TouchEvent) {
+      const currentY = event.touches[0]?.clientY ?? null;
+      if (touchStartY === null || currentY === null) {
+        return;
+      }
+
+      const isPullingTowardOlderDays = currentY > touchStartY;
+      touchStartY = currentY;
+
+      if (isPullingTowardOlderDays) {
+        loadWhenNearTop();
+      }
+    }
+
+    timelineScrollContainer.addEventListener("scroll", handleScroll, {
+      passive: true,
+    });
+    timelineScrollContainer.addEventListener("wheel", handleWheel, {
+      passive: true,
+    });
+    timelineScrollContainer.addEventListener("touchstart", handleTouchStart, {
+      passive: true,
+    });
+    timelineScrollContainer.addEventListener("touchmove", handleTouchMove, {
+      passive: true,
+    });
+
+    return () => {
+      timelineScrollContainer.removeEventListener("scroll", handleScroll);
+      timelineScrollContainer.removeEventListener("wheel", handleWheel);
+      timelineScrollContainer.removeEventListener("touchstart", handleTouchStart);
+      timelineScrollContainer.removeEventListener("touchmove", handleTouchMove);
+    };
+  }, [hasOlderTimelineDays, loadOlderTimelineDays]);
 
   useLayoutEffect(() => {
     if (typeof window === "undefined") {

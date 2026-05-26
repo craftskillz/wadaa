@@ -1,8 +1,8 @@
 ---
 **date:** 2026-05-14
 **status:** Accepted
-**description:** Le MVP utilise le navigateur et IndexedDB comme source principale de vérité, avec un backend limité au backup/restore de snapshot JSON.
-**tags:** adr, local-first, indexeddb, dexie, mvp, backup, r2, cout-faible, architecture
+**description:** Le MVP utilise le navigateur et IndexedDB comme source principale de vérité, avec un backend serverless limité au backup/restore de snapshot JSON.
+**tags:** adr, local-first, indexeddb, dexie, mvp, backup, serverless, cout-faible, architecture
 ---
 
 # MVP local-first avec IndexedDB comme source principale
@@ -19,13 +19,13 @@ Pendant le MVP, le navigateur est la source principale de vérité.
 
 Les données applicatives sont stockées localement dans IndexedDB, via Dexie lors de l'implémentation du stockage. Le backend n'est pas requis pour utiliser le coeur produit.
 
-Le backend Cloudflare Worker et Cloudflare R2 sont réservés à une capacité de backup/restore manuelle ultérieure :
+Le backend serverless est réservé à une capacité de backup/restore manuelle ultérieure :
 
 ```text
-Browser -> IndexedDB -> export JSON -> Worker -> R2
+Browser -> IndexedDB -> export JSON -> Netlify Function -> Netlify Blobs
 ```
 
-Le Worker ne porte pas la logique métier. Il stocke et restitue un snapshot JSON complet par utilisateur.
+La Function ne porte pas la logique métier. Elle stocke et restitue un snapshot JSON complet par utilisateur. Le choix exact de provider serverless (Netlify Functions + Netlify Blobs) est documenté dans l'ADR `Backup et fonctions serverless via Netlify Functions et Netlify Blobs`.
 
 ## Conséquences
 
@@ -47,3 +47,4 @@ Le Worker ne porte pas la logique métier. Il stocke et restitue un snapshot JSO
 - `PRODUCT / Vision produit et MVP`
 - `TECHNICAL / Modèle de données MVP`
 - `ROADMAP / Tickets MVP`
+- ADR `Backup et fonctions serverless via Netlify Functions et Netlify Blobs`

@@ -1,8 +1,8 @@
 ---
 **date:** 2026-05-14
 **status:** Accepted
-**description:** La stack frontend MVP combine React, TypeScript, Vite, Tailwind CSS, Dexie et des composants/SVG React maison pour livrer une app locale moderne et légère.
-**tags:** adr, react, typescript, vite, tailwind, dexie, svg-chart, frontend, mvp
+**description:** La stack frontend MVP combine React, TypeScript, Vite, Tailwind CSS, Dexie et des composants/SVG React maison pour livrer une app locale moderne et légère, déployée sur Netlify.
+**tags:** adr, react, typescript, vite, tailwind, dexie, svg-chart, frontend, mvp, netlify
 ---
 
 # Stack frontend cible React TypeScript Vite Tailwind Dexie
@@ -15,6 +15,8 @@ Le premier ticket doit créer une base frontend typée et prête à évoluer, sa
 
 Au moment du Ticket 11, la cible Recharts initialement envisagée pour les courbes d'apprentissage a été révisée : la dépendance n'est pas installée dans `package.json`, et les courbes MVP sont assez simples pour être rendues en SVG React maison sans alourdir la stack.
 
+Au moment du Ticket 14 (avant implémentation), la cible serverless initialement envisagée (Cloudflare Workers + R2) a été remplacée par Netlify Functions + Netlify Blobs pour rester alignée avec l'hébergement Netlify déjà en place et éviter d'opérer deux providers. Voir l'ADR `Backup et fonctions serverless via Netlify Functions et Netlify Blobs`.
+
 ## Décision
 
 La stack frontend cible du MVP est :
@@ -26,7 +28,7 @@ La stack frontend cible du MVP est :
 - composants maison inspirés shadcn/ui plutôt qu'une dépendance UI lourde imposée dès le départ ;
 - SVG React maison pour les courbes d'apprentissage MVP ;
 - Dexie pour IndexedDB ;
-- Cloudflare Pages ou Workers avec assets statiques pour le déploiement cible.
+- déploiement sur Netlify : site statique servi depuis `dist/` et Netlify Functions pour les futurs endpoints backup et notifications.
 
 Cette décision devient concrète lors du Ticket 01. Tant que le code n'est pas créé, `PROJECT-STACK.md` doit distinguer la stack cible de la stack réellement installée.
 
@@ -41,6 +43,7 @@ Le choix SVG pour les courbes est documenté plus précisément par l'ADR `Courb
 - Dexie réduit la complexité d'IndexedDB sans imposer de serveur.
 - Tailwind et des composants maison permettent une identité visuelle rapide sans bloquer sur un design system lourd.
 - Les courbes MVP n'ajoutent pas de dépendance supplémentaire ni de poids de bundle dédié.
+- Le déploiement Netlify unifie statique + Functions dans un seul `git push`.
 
 ### CONS
 
@@ -55,3 +58,4 @@ Le choix SVG pour les courbes est documenté plus précisément par l'ADR `Courb
 - `PRODUCT / Parcours et écrans MVP`
 - `ROADMAP / Tickets MVP`
 - ADR `Courbe Insights locale en SVG sans dépendance chart`
+- ADR `Backup et fonctions serverless via Netlify Functions et Netlify Blobs`

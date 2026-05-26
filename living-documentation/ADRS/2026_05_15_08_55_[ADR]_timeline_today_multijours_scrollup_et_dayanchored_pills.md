@@ -1,12 +1,16 @@
 ---
 **date:** 2026-05-15
-**status:** Accepted
-**description:** L'écran Aujourd'hui s'étend sur les 7 derniers jours, ne rend que les jours non vides plus aujourd'hui, observe le scroll sur le vrai container, se ré-ancre sur Aujourd'hui au chargement et affiche le bouton d'ajout en bas à droite uniquement quand Aujourd'hui est actif.
-**tags:** adr, today-page, timeline, scroll, multi-day, scroll-container, intersection, today-anchor, ux, svg-path, scroll-restoration
+**status:** Partially SuperSeeded
+**description:** L'écran Aujourd'hui s'étendait sur les 7 derniers jours avec ancrage sur Aujourd'hui ; la fenêtre fixe de 7 jours est remplacée par une fenêtre de six mois chargée progressivement.
+**tags:** adr, today-page, timeline, scroll, multi-day, scroll-container, intersection, today-anchor, ux, svg-path, scroll-restoration, superseded-by-six-months
 
 ---
 
 # Timeline Today multi-jours scroll-up et day-anchored pills
+
+## Supersession partielle
+
+La décision de fenêtre fixe `TIMELINE_DAYS_VISIBLE = 7` est remplacée par l'ADR `Timeline Today six mois en chargement progressif`. Les autres invariants restent valides : ancrage initial sur Aujourd'hui, jours passés vides masqués, nouvelles entrées toujours datées du jour réel, pastilles de jour actif et bouton `Revenir à aujourd'hui`.
 
 ## Contexte
 
@@ -85,6 +89,7 @@ Le `TIMELINE_PATH` est rendu une fois par section dans une SVG en `preserveAspec
 
 ## Documents liés
 
+- ADR `Timeline Today six mois en chargement progressif` — remplace la fenêtre fixe de 7 jours
 - ADR `Timeline visuelle Today et navigation drawer` (Ticket 07) — partiellement complété par la présente décision
 - ADR `Création des entrées du jour local-first`
 - ADR `Miniatures locales et résolution des couvertures d'entrée` — explique l'origine des shifts de layout asynchrones

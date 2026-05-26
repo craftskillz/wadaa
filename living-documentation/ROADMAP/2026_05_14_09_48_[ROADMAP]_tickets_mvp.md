@@ -21,13 +21,15 @@
 10. [x] ~~Ticket 10 - Correctifs divers~~
 11. [x] ~~Ticket 11 - Courbe d'apprentissage~~
 12. [x] ~~Ticket 12 - Réglages~~
-13. [ ] Ticket 13 - Calendrier d'apprentissage
-14. [ ] Ticket 14 - Worker R2
+13. [x] ~~Ticket 13 - Calendrier d'apprentissage~~
+14. [x] ~~Ticket 14 - Netlify Function de backup avec Netlify Blobs~~
 15. [ ] Ticket 15 - Backup/restore
 16. [ ] Ticket 16 - Auth Google
 17. [ ] Ticket 17 - Reminders UI
 18. [ ] Ticket 18 - Web Push notifications
 19. [ ] Ticket 19 - Polish UI moderne
+
+> Note : la cible serverless initiale (Cloudflare Workers + R2) a été remplacée par **Netlify Functions + Netlify Blobs** pour rester alignée avec l'hébergement Netlify du frontend et éviter d'opérer deux providers. Voir l'ADR `Backup et fonctions serverless via Netlify Functions et Netlify Blobs`. Les Tickets 14, 15 et 18 ci-dessous ont été reformulés en conséquence.
 
 ## Ticket 01 - Initialiser le projet frontend
 
@@ -291,9 +293,9 @@ Critères d'acceptation :
 - on peut consulter une journée passée ;
 - le design reste simple et lisible.
 
-## Ticket 14 - Cloudflare Worker pour backup R2
+## Ticket 14 - Netlify Function de backup avec Netlify Blobs
 
-Objectif : ajouter un backup cloud minimal.
+Objectif : ajouter un backup cloud minimal aligné sur le déploiement Netlify.
 
 API attendue :
 
@@ -302,39 +304,42 @@ GET /api/backup
 PUT /api/backup
 ```
 
-Stockage R2 :
+Stockage Netlify Blobs :
 
 ```text
-users/{userId}/backup.json
+store: user-backups
+key:   users/{userId}/backup.json
 ```
 
 Tâches :
 
-- créer un Worker ;
-- configurer un binding R2 ;
-- implémenter `PUT /api/backup` ;
-- implémenter `GET /api/backup` ;
-- ajouter validation JSON minimale ;
-- ajouter gestion d'erreurs.
+- créer une Netlify Function (`netlify/functions/backup.ts` ou équivalent) ;
+- configurer le store Netlify Blobs `user-backups` et le SDK `@netlify/blobs` ;
+- implémenter `PUT /api/backup` (lit le body JSON, valide via `parseLocalDataExport`, écrit dans Blobs) ;
+- implémenter `GET /api/backup` (lit depuis Blobs ou 404) ;
+- ajouter validation JSON minimale (réutiliser le validateur partagé du frontend) ;
+- ajouter gestion d'erreurs (400 / 404 / 500 avec messages courts) ;
+- ajouter les redirects ou la configuration `netlify.toml` pour exposer `/api/backup` ;
+- prévoir un placeholder `userId = "local"` tant que l'auth Google n'est pas livrée.
 
 Critères d'acceptation :
 
 - l'app peut envoyer un backup complet ;
-- l'app peut restaurer depuis R2 ;
-- le Worker ne connaît pas la logique métier ;
-- R2 ne stocke qu'un snapshot JSON.
+- l'app peut restaurer depuis Netlify Blobs ;
+- la Function ne contient aucune logique métier ;
+- Netlify Blobs ne stocke qu'un snapshot JSON par utilisateur.
 
 ## Ticket 15 - Boutons backup / restore dans l'app
 
-Objectif : connecter l'app au backup R2.
+Objectif : connecter l'app à la Netlify Function de backup.
 
 Tâches :
 
 - ajouter `Sauvegarder maintenant` dans Settings ;
 - ajouter `Restaurer depuis le cloud` dans Settings ;
 - afficher `Dernière sauvegarde : ...` ;
-- implémenter export local vers `PUT Worker` ;
-- implémenter `GET Worker` vers import local ;
+- implémenter export local vers `PUT /api/backup` ;
+- implémenter `GET /api/backup` vers import local ;
 - demander confirmation avant restauration.
 
 Critères d'acceptation :
@@ -348,7 +353,7 @@ Critères d'acceptation :
 
 Objectif : identifier proprement l'utilisateur.
 
-Décision MVP : utiliser Google OAuth uniquement pour identifier l'utilisateur et isoler son backup R2.
+Décision MVP : utiliser Google OAuth uniquement pour identifier l'utilisateur et isoler son backup dans Netlify Blobs.
 
 Données utilisées :
 
@@ -387,10 +392,10 @@ Tâches :
 
 - ajouter un service worker ;
 - demander la permission de notification ;
-- stocker la subscription ;
-- créer un endpoint Worker pour enregistrer la subscription ;
-- envoyer une notification test ;
-- prévoir des VAPID keys.
+- stocker la subscription localement ;
+- créer une Netlify Function pour enregistrer la subscription dans Netlify Blobs (`users/{userId}/push-subscription.json`) ;
+- envoyer une notification test (Netlify Scheduled Function ou trigger manuel) ;
+- prévoir des VAPID keys (stockées en variables d'environnement Netlify).
 
 Critères d'acceptation :
 

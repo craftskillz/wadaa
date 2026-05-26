@@ -1,8 +1,8 @@
 ---
-**date:** 2026-05-23
+**date:** 2026-05-26
 **status:** Idle
-**description:** Point de reprise après livraison du Ticket 12 — page Réglages complète (rappels, semaine, CRUD presets, réinitialisation locale).
-**tags:** worklog, handoff, progression, ticket-12, settings, presets, reset
+**description:** Point de reprise après extension de la timeline Today à six mois en chargement progressif au scroll-up.
+**tags:** worklog, handoff, progression, today-page, timeline, infinite-scroll, six-months
 ---
 
 # Current task
@@ -11,47 +11,41 @@ Ce document est le point de reprise entre assistants IA. Tout agent doit le lire
 
 ## Statut courant
 
-Idle — Ticket 12 livré et lint + build OK. En attente de validation visuelle utilisateur.
+Idle — Timeline Today étendue à six mois avec chargement progressif. Lint + build OK.
 
 ## Tâche courante
 
-Aucune tâche d'implémentation en cours.
+Aucune implémentation en cours.
 
 ## Dernière action réalisée
 
-Ticket 12 — Réglages (2026-05-23) :
+Extension de la page principale Aujourd'hui (2026-05-26) :
 
-- Édition des heures de rappel et du premier jour de semaine directement sur `UserSettings('local')` via `src/features/settings/settingsStorage.ts` et le hook `useUserSettings`.
-- CRUD presets (renommer/archiver/supprimer) via `presetsManagement.ts` et `usePresets`, avec contrôle d'unicité par `normalizePresetLabel`.
-- Réinitialisation des données locales via une modale `ConfirmResetModal` exigeant de taper `RESET` ; après reset, l'utilisateur est redirigé vers `/onboarding` grâce à l'invariant existant `useOnboardingStatus`.
-- Refactor de `SettingsPage.tsx` en orchestrateur de sections empilées : `RemindersSection`, `WeekStartSection`, `PresetsSection`, `LocalDataSection`.
-- `Input` du design system accepte désormais une prop `ref` (React 19) pour le focus auto dans la modale RESET.
-- ADR `Gestion des reglages locaux et CRUD presets via la page Reglages` créée et liée aux fichiers source.
-- WORKLOG `Ticket 12 — Réglages` créé et lié aux fichiers source.
-- ROADMAP `Tickets MVP` : Ticket 12 coché.
-- `npm run lint` : OK.
-- `npm run build` : OK.
+- `TodayPage.tsx` charge maintenant 7 jours au montage (`INITIAL_TIMELINE_DAYS_VISIBLE = 7`).
+- Le scroll-up près du haut du `<main>` augmente la fenêtre par paliers de 14 jours (`TIMELINE_DAYS_LOAD_STEP = 14`).
+- La profondeur maximale est de six mois calendaires (`TIMELINE_MAX_MONTHS_VISIBLE = 6`), calculée depuis la date locale courante.
+- Les jours passés sans entrée restent masqués ; Aujourd'hui reste toujours rendu.
+- Lorsqu'une tranche plus ancienne ajoute du contenu au-dessus du viewport, la page compense le delta de `scrollHeight` pour conserver la position visuelle.
+- L'ancien ADR `Timeline Today multi-jours scroll-up et day-anchored pills` est marqué `Partially SuperSeeded` sur la fenêtre fixe de 7 jours.
+- Nouvel ADR créé : `Timeline Today six mois en chargement progressif`, lié à `src/features/entries/TodayPage.tsx` et `src/features/entries/useTimelineData.ts`.
+- `PROJECT-STACK.md` mis à jour pour remplacer la règle obsolète des 7 derniers jours.
 
 ## Prochaine action recommandée
 
-Démarrer le **Ticket 13 — Calendrier d'apprentissage** : vue mensuelle simple, indication des jours actifs, intensité selon le nombre d'entrées ou les étoiles, ouverture du détail d'une journée passée.
+Continuer avec le **Ticket 15 — Boutons backup / restore dans l'app** quand l'utilisateur le demande.
+
+Avant de coder ce ticket, valider avec l'utilisateur :
+
+1. **Stockage de la clé `BACKUP_KEY` côté frontend** : ajouter un champ `cloudBackupKey?: string` dans `UserSettings`, exposé depuis la page Réglages (section « Sauvegarde cloud »), pour que le frontend l'envoie via le header `x-backup-key`. La clé ne doit pas être exportée dans le JSON de backup.
+2. **UX** : « Sauvegarder maintenant » (PUT) + « Restaurer depuis le cloud » (GET puis import local après confirmation) + « Dernière sauvegarde : ... ».
+3. **Tests préalables de l'endpoint** : `netlify link` + définir `BACKUP_KEY` + lancer `npm run dev:netlify` et tester un PUT/GET manuel.
 
 ## Fichiers ou zones concernés
 
-- `src/features/settings/SettingsPage.tsx`
-- `src/features/settings/settingsStorage.ts`
-- `src/features/settings/presetsManagement.ts`
-- `src/features/settings/useUserSettings.ts`
-- `src/features/settings/usePresets.ts`
-- `src/features/settings/RemindersSection.tsx`
-- `src/features/settings/WeekStartSection.tsx`
-- `src/features/settings/PresetsSection.tsx`
-- `src/features/settings/LocalDataSection.tsx`
-- `src/features/settings/ConfirmResetModal.tsx`
-- `src/components/ui/Input.tsx`
-- `living-documentation/ADRS/2026_05_23_13_52_[ADR]_gestion_des_reglages_locaux_et_crud_presets_via_la_page_reglages.md`
-- `living-documentation/WORKLOG/2026_05_23_13_52_[WORKLOG]_ticket_12_reglages.md`
-- `living-documentation/ROADMAP/2026_05_14_09_48_[ROADMAP]_tickets_mvp.md`
+- `src/features/entries/TodayPage.tsx`
+- `src/features/entries/useTimelineData.ts`
+- `living-documentation/ADRS/2026_05_15_08_55_[ADR]_timeline_today_multijours_scrollup_et_dayanchored_pills.md`
+- `living-documentation/ADRS/2026_05_26_13_35_[ADR]_timeline_today_six_mois_en_chargement_progressif.md`
 - `living-documentation/AI/PROJECT-STACK.md`
 - `living-documentation/WORKLOG/current-task.md`
 - `living-documentation/.metadata.json`
@@ -60,16 +54,14 @@ Démarrer le **Ticket 13 — Calendrier d'apprentissage** : vue mensuelle simple
 
 - `npm run lint` : OK.
 - `npm run build` : OK.
-- MCP Living Documentation disponible ; ADR et worklog Ticket 12 liés aux fichiers source.
+- MCP Living Documentation disponible ; nouvel ADR créé et lié aux fichiers source.
 
 ## Vérifications restantes
 
-- Validation visuelle par l'utilisateur, conformément à sa préférence.
+- Vérification navigateur manuelle recommandée avec des données historiques réelles : depuis Today, remonter jusqu'au haut de la timeline et vérifier que les anciennes entrées apparaissent progressivement jusqu'à six mois.
 
 ## Notes de reprise
 
-- La page Réglages est désormais auto-suffisante : l'utilisateur peut tout réinitialiser et revenir à l'onboarding sans dev tools.
-- Le filtre `!preset.archived` dans `useTimelineData` retire automatiquement les presets archivés des choix rapides de Today ; aucun nouveau filtre à propager.
-- La suppression d'un preset ne cascade pas vers les entries : le `presetId` orphelin est toléré, `entry.content` reste affichable.
-- Le toast (`useStatusToast`) est partagé par toutes les sections via les callbacks `onError`/`onSuccess` passés en props.
-- Ne pas lancer de navigateur local pour une simple vérification de fonctionnement si l'utilisateur préfère s'en charger ; ne le faire que si une appréciation visuelle de rendu est réellement nécessaire.
+- Le chargement progressif ne requête pas les six mois au montage : `useTimelineData` ne reçoit que le nombre de jours actuellement ouverts.
+- Les jours vides étant masqués, une tranche chargée sans entrée peut ne pas produire de changement visuel immédiat.
+- Si la densité d'entrées devient très élevée sur six mois, envisager une virtualisation DOM ou une requête paginée par dates non vides.
