@@ -1,8 +1,8 @@
 ---
 **date:** 2026-05-15
 **status:** To be validated
-**description:** Le chemin Today est rendu comme un fleuve SVG continu par section, avec berges diffuses, corps en dégradé, surface texturée et sprites PNG végétaux placés par règles de distance au fleuve, sans changer la sémantique de timeline ni la création des entrées.
-**tags:** adr, today-page, timeline, svg, river, fleuve, surface-texture, png-sprites, atlas, aspect-ratio, placement-rules, visual-design, useId, mobile-first
+**description:** Le chemin Today est rendu comme un fleuve SVG continu par section, avec berges diffuses, corps en dégradé, surface texturée et au plus 6 clusters PNG végétaux réordonnés par section, sans changer la sémantique de timeline ni la création des entrées.
+**tags:** adr, today-page, timeline, svg, river, fleuve, surface-texture, png-sprites, atlas, aspect-ratio, placement-rules, deterministic-shuffle, clusters, visual-design, useId, mobile-first
 ---
 
 # Chemin Today rendu comme fleuve SVG
@@ -37,18 +37,20 @@ Les couches principales du fleuve (berge, rive claire, corps d'eau) utilisent `s
 
 Les anciens dashs animés sur le tracé principal ont été supprimés. `RiverSurfaceTexture` rend une série déterministe de petits reflets définis par `RIVER_SURFACE_RIPPLES`. Chaque reflet est une courbe courte placée dans le corps du fleuve avec une rotation légère, plutôt qu'une bande longitudinale. Le résultat doit évoquer des remous/reflets localisés, pas une voie de circulation.
 
-Les sprites utilisés sont des crops PNG manuels placés dans `src/assets/river-sprites/` : `blossom-tree.png`, `dense-shrub.png`, `double-palms.png`, `gentle-tree.png`, `leaf-plant.png` et `round-bush.png`. Les sprites rochers `rock-plant.png` et `tree-cluster.png` ont été retirés définitivement parce qu'ils donnaient un aspect trop jeu ; ils ne sont pas remplacés par d'autres images, afin de conserver la densité générale moins chargée demandée.
+Les sprites utilisés sont des crops PNG manuels placés dans `src/assets/river-sprites/` : `blossom-tree.png`, `dense-shrub.png`, `double-palms.png`, `gentle-tree.png`, `leaf-plant.png`, `palm-tree.png`, `red-tree.png`, `round-bush.png` et `rounder-leaf-tree.png`. Les sprites rochers `rock-plant.png` et `tree-cluster.png` ont été retirés définitivement parce qu'ils donnaient un aspect trop jeu.
 
-`RiverAtlasSprites` importe uniquement ces crops et les rend en `<img>` HTML dans un overlay absolu au-dessus du SVG. Les coordonnées verticales restent dérivées du référentiel du fleuve, mais les dimensions sont appliquées en pixels CSS égaux en largeur/hauteur. Cela préserve le ratio carré des sprites et garantit qu'ils apparaissent au-dessus du fleuve.
+`RiverAtlasSprites` importe uniquement ces crops et les rend en `<img>` HTML dans un overlay absolu au-dessus du SVG. Les coordonnées verticales restent dérivées du référentiel du fleuve, mais les dimensions sont appliquées en pixels CSS égaux en largeur/hauteur. Cela préserve le ratio carré des sprites et garantit qu'ils apparaissent au-dessus du fleuve. Les ratios de taille sont portés par `RIVER_ATLAS_SPRITES`, afin qu'un sprite garde son échelle propre même quand il est réordonné sur un autre emplacement compatible.
+
+Chaque section rend au maximum 6 emplacements parmi les 9 de `RIVER_ATLAS_PLACEMENTS`, afin de limiter la densité tout en gardant une présence sur toute la hauteur du fleuve. Les emplacements sont regroupés en 6 zones verticales via `RIVER_ATLAS_PLACEMENT_GROUPS`; une zone ne peut produire qu'un emplacement. `TimelinePath` reçoit un `spriteSeed` dérivé de la date de section (`dateKey`), puis `getRiverAtlasPlacements(seed)` choisit les emplacements de zone et réordonne de façon pseudo-aléatoire déterministe les sprites disponibles par affinité (`waterPlant`, `treeGroup`). Une même date garde donc le même décor entre deux rendus, mais deux sections peuvent afficher les mêmes zones avec un ordre de sprites différent.
 
 Les placements ne sont plus des `x` arbitraires. Chaque sprite déclare une `affinity` (`waterPlant` ou `treeGroup`) et un `side` (`left`, `right`). `getRiverCenterXAtY(y)` calcule la position horizontale de la courbe du fleuve à la hauteur du sprite via la même logique de Bézier que le `TIMELINE_PATH`. La distance horizontale est ensuite déterminée par l'affinité :
 
 - `waterPlant` : plantes d'eau collées au fleuve (`double-palms.png`, `leaf-plant.png`) ;
-- `treeGroup` : arbres/buissons plus éloignés, groupés ou alignés (`blossom-tree.png`, `round-bush.png`, `gentle-tree.png`, `dense-shrub.png`).
+- `treeGroup` : arbres/buissons plus éloignés, groupés ou alignés (`blossom-tree.png`, `round-bush.png`, `gentle-tree.png`, `dense-shrub.png`, `palm-tree.png`, `red-tree.png`, `rounder-leaf-tree.png`).
 
 Les placements `waterPlant` peuvent rester seuls, mais privilégient des paires via `RIVER_WATER_PLANT_CLUSTER_PATTERNS`. Le motif `sideBySide` place deux plantes rapprochées sur la même berge ; `oppositeDiagonal` place deux plantes en regard diagonal sur les deux bords opposés du fleuve. Les items du motif peuvent inverser le côté de placement avec un multiplicateur de berge, sans dupliquer de coordonnées absolues.
 
-Les placements `treeGroup` ne rendent jamais un sprite isolé. Chaque emplacement choisit un motif déterministe `three`, `four` ou `five`, défini dans `RIVER_TREE_GROUP_CLUSTER_PATTERNS`, avec des offsets serrés et de légères variations d'échelle. Les arbres et buissons apparaissent donc en bosquets compacts de 3, 4 ou 5 éléments.
+Les placements `treeGroup` ne rendent jamais un sprite isolé. Chaque emplacement déclare un motif `three`, `four` ou `five`, défini dans `RIVER_TREE_GROUP_CLUSTER_PATTERNS`, avec des offsets serrés et de légères variations d'échelle. Les arbres et buissons apparaissent donc en bosquets compacts de 3, 4 ou 5 éléments.
 
 Les identifiants SVG (`linearGradient`, `filter`) sont générés avec `useId()` puis nettoyés des `:` pour éviter les collisions entre les multiples instances de `TimelinePath` rendues sur les différentes sections de jour.
 
@@ -63,6 +65,9 @@ Les dimensions, positions et paramètres visuels porteurs de sens sont nommés p
 - Les raccords entre sections ne produisent plus de caps arrondis visibles sur les couches principales.
 - La surface ne comporte plus de bandes longitudinales animées qui évoquent une route.
 - Les sprites PNG végétaux donnent des artefacts de berge plus riches que les SVG maison initiaux.
+- Les groupes de placement couvrent toute la hauteur du fleuve tout en plafonnant le rendu à 6 emplacements par section.
+- Le seed par date donne une variation stable de l'ordre des sprites entre les sections sans provoquer de changement visuel à chaque re-render React.
+- Les ratios de taille d'origine sont conservés par sprite même après réordonnancement.
 - Les sprites restent carrés et ne sont plus déformés par le SVG `preserveAspectRatio="none"`.
 - Les sprites apparaissent au-dessus du fleuve, pas derrière.
 - Les règles d'affinité rendent les placements plus cohérents avec la nature des images.
@@ -76,7 +81,7 @@ Les dimensions, positions et paramètres visuels porteurs de sens sont nommés p
 ### CONS
 
 - Le rendu devient plus dépendant de la qualité visuelle réelle dans le navigateur ; l'utilisateur doit valider l'esthétique finale.
-- Les sprites sont répétés sur chaque section de jour ; si cela devient trop régulier, il faudra varier la configuration selon l'index du jour.
+- Les sprites restent rendus en clusters : les 6 emplacements maximum peuvent produire davantage d'éléments `<img>` réels quand un placement utilise un motif `three`, `four` ou `five`.
 - Les crops PNG ajoutent du poids au build, même si c'est nettement moins que la planche complète.
 - Les dimensions de sprite sont codées dans `TodayPage.tsx` ; si un crop est remplacé par une image de taille différente, il faut ajuster la configuration.
 
@@ -84,7 +89,7 @@ Les dimensions, positions et paramètres visuels porteurs de sens sont nommés p
 
 - `npm run lint` : OK.
 - `npm run build` : OK.
-- Vérification navigateur non réalisée par l'agent à la demande utilisateur ; validation visuelle laissée à l'utilisateur.
+- Vérification navigateur sur `http://localhost:5173/` : la section Today rend 6 clusters/emplacements et conserve les clusters, pour 20 images réelles dans l'overlay de fleuve.
 
 ## Documents liés
 

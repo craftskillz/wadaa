@@ -1,8 +1,8 @@
 ---
 **date:** 2026-05-26
 **status:** Idle
-**description:** Point de reprise après correction du fallback de miniature dans la confirmation destructive de revue hebdomadaire.
-**tags:** worklog, handoff, progression, weekly-review, confirmation-modal, thumbnails, cover-image, fallback
+**description:** Point de reprise après plafonnement des sprites du fleuve Today à 6 clusters avec ratios de taille restaurés.
+**tags:** worklog, handoff, progression, today-page, river, sprites, clusters, deterministic-shuffle
 ---
 
 # Current task
@@ -11,7 +11,7 @@ Ce document est le point de reprise entre assistants IA. Tout agent doit le lire
 
 ## Statut courant
 
-Idle — La popup de confirmation des éléments jetés ne doit plus afficher d'image cassée : elle utilise le blob valide, puis une miniature YouTube si possible, puis un placeholder. Lint + build OK.
+Idle — `TodayPage.tsx` rend au maximum 6 clusters du fleuve par section, conserve les clusters et restaure les ratios de taille par sprite. Lint + build OK.
 
 ## Tâche courante
 
@@ -19,12 +19,15 @@ Aucune implémentation en cours.
 
 ## Dernière action réalisée
 
-Correction miniature dans la confirmation destructive (2026-05-26) :
+Réglage des sprites du fleuve Today (2026-05-26) :
 
-- `useEntryCoverThumbnail.ts` vérifie maintenant que `coverImage` est bien un `Blob` non vide avant de créer une Object URL.
-- `getYouTubeThumbnailUrl` a été extrait dans le hook partagé pour servir de fallback commun.
-- `DiscardedEntryPreview` dans `WeekPage.tsx` gère `onError` sur l'image : si le blob échoue, fallback YouTube ; si aucun fallback n'existe, placeholder rose.
-- Les métadonnées des ADR revue hebdomadaire et calendrier ont été rafraîchies.
+- `RiverAtlasSprites` sélectionne au maximum 6 emplacements par section via `RIVER_ATLAS_PLACEMENT_GROUPS`.
+- Les groupes de placement répartissent les sprites sur toute la hauteur du fleuve, avec au plus un emplacement par zone.
+- Les motifs de clusters `waterPlant` et `treeGroup` sont conservés (`sideBySide`, `oppositeDiagonal`, `three`, `four`, `five`).
+- `TimelinePath` transmet toujours `dateKey` comme seed ; `getRiverAtlasPlacements(seed)` mélange les sprites par affinité pour varier l'ordre entre sections sans instabilité au re-render.
+- Les ratios de taille sont portés par `RIVER_ATLAS_SPRITES`, donc un sprite garde son échelle propre après réordonnancement.
+- Les nouveaux sprites `palm-tree.png`, `red-tree.png` et `rounder-leaf-tree.png` sont intégrés à l'atlas.
+- L'ADR fleuve Today a été mis à jour manuellement car le MCP Living Documentation ne répondait pas.
 
 ## Prochaine action recommandée
 
@@ -38,22 +41,27 @@ Avant de coder ce ticket, valider avec l'utilisateur :
 
 ## Fichiers ou zones concernés
 
-- `src/features/entries/useEntryCoverThumbnail.ts`
-- `src/features/reviews/WeekPage.tsx`
+- `src/features/entries/TodayPage.tsx`
+- `src/assets/river-sprites/palm-tree.png`
+- `src/assets/river-sprites/red-tree.png`
+- `src/assets/river-sprites/rounder-leaf-tree.png`
+- `living-documentation/ADRS/2026_05_15_19_01_[ADR]_chemin_today_rendu_comme_fleuve_svg.md`
 - `living-documentation/WORKLOG/current-task.md`
-- `living-documentation/.metadata.json`
 
 ## Vérifications réalisées
 
 - `npm run lint` : OK.
 - `npm run build` : OK.
-- MCP Living Documentation disponible ; métadonnées ADR rafraîchies.
+- Vérification navigateur sur `http://localhost:5173/` : la section Today rend 6 clusters/emplacements, soit 20 images réelles.
+- ADR fleuve Today mise à jour manuellement.
 
 ## Vérifications restantes
 
-- Vérification visuelle avec les données utilisateur : ouvrir la popup de confirmation et confirmer que l'entrée “J'ai fait du stretching” n'affiche plus l'icône d'image cassée.
+- Validation visuelle fine par l'utilisateur sur la densité finale des clusters.
+- MCP Living Documentation : relancer le serveur et rafraîchir les métadonnées de l'ADR fleuve Today, car `http://localhost:4321/mcp` ne répondait pas.
 
 ## Notes de reprise
 
-- La popup ne tente plus d'afficher un objet non-Blob comme image.
-- Si le blob est présent mais invalide et que l'URL n'est pas une URL YouTube, le placeholder rose est attendu.
+- Le rendu DOM contient volontairement plus d'images que le nombre de placements parce que les clusters sont conservés.
+- La limite demandée concerne les emplacements/clusters visuels, pas le nombre brut d'éléments `<img>` produits par les motifs de cluster.
+- Le mélange est limité par affinité : les plantes d'eau restent dans les placements proches du fleuve et les arbres/buissons restent sur les placements plus éloignés.

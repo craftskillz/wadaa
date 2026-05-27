@@ -22,6 +22,9 @@ import {
 } from "lucide-react";
 
 import blossomTreeUrl from "../../assets/river-sprites/blossom-tree.png";
+import palmTreeUrl from "../../assets/river-sprites/palm-tree.png";
+import redTreeUrl from "../../assets/river-sprites/red-tree.png";
+import rounderLeafTreeUrl from "../../assets/river-sprites/rounder-leaf-tree.png";
 import denseShrubUrl from "../../assets/river-sprites/dense-shrub.png";
 import doublePalmsUrl from "../../assets/river-sprites/double-palms.png";
 import gentleTreeUrl from "../../assets/river-sprites/gentle-tree.png";
@@ -95,6 +98,17 @@ const RIVER_TREE_GROUP_CLUSTER_OFFSET_WIDE = 28;
 const RIVER_TREE_GROUP_CLUSTER_SCALE_SMALL = 0.82;
 const RIVER_TREE_GROUP_CLUSTER_SCALE_MEDIUM = 0.9;
 const RIVER_TREE_GROUP_CLUSTER_SCALE_FULL = 1;
+const RIVER_ATLAS_HASH_OFFSET_BASIS = 2_166_136_261;
+const RIVER_ATLAS_HASH_PRIME = 16_777_619;
+const RIVER_ATLAS_HASH_MODULO = 2 ** 32;
+const RIVER_ATLAS_MAX_PLACEMENTS_PER_SECTION = 6;
+const RIVER_TREE_GROUP_CROWDING_GAP_PX = 520;
+const RIVER_TREE_NEAR_SPRITE_GAP_PX = 520;
+const RIVER_TREE_BOTTOM_SHIFT_PADDING_PX = 60;
+const RIVER_CARD_OVERLAP_HALF_HEIGHT_PX = 320;
+const RIVER_TODAY_FIRST_CARD_CENTER_Y = 560;
+const RIVER_STANDARD_FIRST_CARD_CENTER_Y = 240;
+const RIVER_ENTRY_CARD_CENTER_STEP_Y = 260;
 
 function getTimelineMaxDaysCount(today = new Date()) {
   const todayMidnight = new Date(today);
@@ -114,6 +128,9 @@ function getTimelineMaxDaysCount(today = new Date()) {
 }
 
 type RiverAtlasSpriteId =
+  | "palmTree"
+  | "redTree"
+  | "rounderLeafTree"
   | "blossomTree"
   | "denseShrub"
   | "doublePalms"
@@ -145,6 +162,7 @@ type RiverAtlasSprite = {
   url: string;
   width: number;
   height: number;
+  scale: number;
 };
 
 type RiverAtlasSpritePlacement = {
@@ -155,6 +173,15 @@ type RiverAtlasSpritePlacement = {
   scale: number;
   opacity?: number;
   clusterPattern?: RiverSpriteClusterPatternId;
+};
+
+type RiverAtlasResolvedPlacement = {
+  index: number;
+  placement: RiverAtlasSpritePlacement;
+};
+
+type RiverCardOverlapZone = {
+  y: number;
 };
 
 type RiverSpriteClusterItem = {
@@ -302,36 +329,76 @@ const RIVER_SURFACE_RIPPLES: RiverSurfaceRipple[] = [
 ];
 
 const RIVER_ATLAS_SPRITES: Record<RiverAtlasSpriteId, RiverAtlasSprite> = {
+  palmTree: {
+    url: palmTreeUrl,
+    width: 265,
+    height: 265,
+    scale: 0.35,
+  },
+  redTree: {
+    url: redTreeUrl,
+    width: 265,
+    height: 265,
+    scale: 0.23,
+  },
+  rounderLeafTree: {
+    url: rounderLeafTreeUrl,
+    width: 265,
+    height: 265,
+    scale: 0.16,
+  },
   blossomTree: {
     url: blossomTreeUrl,
     width: 265,
     height: 265,
+    scale: 0.21,
   },
   denseShrub: {
     url: denseShrubUrl,
     width: 265,
     height: 265,
+    scale: 0.13,
   },
   doublePalms: {
     url: doublePalmsUrl,
     width: 265,
     height: 265,
+    scale: 0.12,
   },
   gentleTree: {
     url: gentleTreeUrl,
     width: 265,
     height: 265,
+    scale: 0.18,
   },
   leafPlant: {
     url: leafPlantUrl,
     width: 265,
     height: 265,
+    scale: 0.12,
   },
   roundBush: {
     url: roundBushUrl,
     width: 265,
     height: 265,
+    scale: 0.24,
   },
+};
+
+const RIVER_ATLAS_SPRITE_IDS_BY_AFFINITY: Record<
+  RiverSpriteAffinity,
+  RiverAtlasSpriteId[]
+> = {
+  waterPlant: ["doublePalms", "leafPlant"],
+  treeGroup: [
+    "roundBush",
+    "gentleTree",
+    "palmTree",
+    "denseShrub",
+    "blossomTree",
+    "rounderLeafTree",
+    "redTree",
+  ],
 };
 
 const RIVER_ATLAS_PLACEMENTS: RiverAtlasSpritePlacement[] = [
@@ -345,28 +412,46 @@ const RIVER_ATLAS_PLACEMENTS: RiverAtlasSpritePlacement[] = [
     clusterPattern: "sideBySide",
   },
   {
+    affinity: "treeGroup",
+    side: "right",
+    spriteId: "roundBush",
+    y: 185,
+    scale: 0.12,
+    opacity: 0.82,
+    clusterPattern: "three",
+  },
+  {
     affinity: "waterPlant",
     side: "left",
     spriteId: "leafPlant",
-    y: 398,
+    y: 360,
     scale: 0.12,
     opacity: 0.88,
     clusterPattern: "oppositeDiagonal",
   },
   {
     affinity: "treeGroup",
-    side: "right",
-    spriteId: "roundBush",
-    y: 542,
+    side: "left",
+    spriteId: "redTree",
+    y: 520,
     scale: 0.12,
     opacity: 0.84,
     clusterPattern: "four",
   },
   {
     affinity: "treeGroup",
+    side: "right",
+    spriteId: "gentleTree",
+    y: 650,
+    scale: 0.12,
+    opacity: 0.84,
+    clusterPattern: "three",
+  },
+  {
+    affinity: "treeGroup",
     side: "left",
     spriteId: "denseShrub",
-    y: 705,
+    y: 785,
     scale: 0.12,
     opacity: 0.84,
     clusterPattern: "five",
@@ -374,21 +459,39 @@ const RIVER_ATLAS_PLACEMENTS: RiverAtlasSpritePlacement[] = [
   {
     affinity: "treeGroup",
     side: "right",
-    spriteId: "gentleTree",
-    y: 840,
+    spriteId: "palmTree",
+    y: 905,
     scale: 0.12,
     opacity: 0.84,
     clusterPattern: "three",
   },
   {
     affinity: "treeGroup",
+    side: "left",
+    spriteId: "rounderLeafTree",
+    y: 1030,
+    scale: 0.12,
+    opacity: 0.82,
+    clusterPattern: "four",
+  },
+  {
+    affinity: "treeGroup",
     side: "right",
     spriteId: "blossomTree",
-    y: 1110,
+    y: 1140,
     scale: 0.11,
     opacity: 0.82,
     clusterPattern: "four",
   },
+];
+
+const RIVER_ATLAS_PLACEMENT_GROUPS: number[][] = [
+  [0, 1],
+  [2],
+  [3, 4],
+  [5],
+  [6, 7],
+  [8],
 ];
 
 type DayTheme = {
@@ -718,10 +821,7 @@ function getCubicBezierX(progress: number, controlX: number) {
     remainingProgress *
     progress;
   const secondControlWeight =
-    CUBIC_BEZIER_CONTROL_WEIGHT *
-    remainingProgress *
-    progress *
-    progress;
+    CUBIC_BEZIER_CONTROL_WEIGHT * remainingProgress * progress * progress;
   const endpointWeight =
     remainingProgress * remainingProgress * remainingProgress +
     progress * progress * progress;
@@ -749,7 +849,206 @@ function getRiverCenterXAtY(y: number) {
   return getCubicBezierX(segmentProgress, controlX);
 }
 
+function getRiverPlacementHash(seed: string) {
+  let hash = RIVER_ATLAS_HASH_OFFSET_BASIS;
+
+  for (const character of seed) {
+    hash ^= character.charCodeAt(0);
+    hash = Math.imul(hash, RIVER_ATLAS_HASH_PRIME) >>> 0;
+  }
+
+  return hash;
+}
+
+function getRiverPlacementScore(seed: string, placementIndex: number) {
+  return (
+    getRiverPlacementHash(`${seed}:${placementIndex}`) / RIVER_ATLAS_HASH_MODULO
+  );
+}
+
+function getShuffledRiverSpriteIds(
+  seed: string,
+  affinity: RiverSpriteAffinity,
+) {
+  return RIVER_ATLAS_SPRITE_IDS_BY_AFFINITY[affinity]
+    .map((spriteId, index) => ({
+      spriteId,
+      score: getRiverPlacementScore(`${seed}:${affinity}`, index),
+    }))
+    .sort((left, right) => left.score - right.score)
+    .map((item) => item.spriteId);
+}
+
+function removeCrowdedRiverTreePlacements(selectedPlacementIndexes: number[]) {
+  const indexesToRemove = new Set<number>();
+
+  (["left", "right"] satisfies RiverSpriteSide[]).forEach((side) => {
+    const treePlacements = selectedPlacementIndexes
+      .map((index) => ({
+        index,
+        placement: RIVER_ATLAS_PLACEMENTS[index],
+      }))
+      .filter(
+        (item): item is { index: number; placement: RiverAtlasSpritePlacement } =>
+          item.placement?.affinity === "treeGroup" &&
+          item.placement.side === side,
+      )
+      .sort((left, right) => left.placement.y - right.placement.y);
+    let previousKeptPlacement: RiverAtlasSpritePlacement | undefined;
+
+    treePlacements.forEach((item, itemIndex) => {
+      if (
+        previousKeptPlacement &&
+        item.placement.y - previousKeptPlacement.y <=
+          RIVER_TREE_GROUP_CROWDING_GAP_PX
+      ) {
+        indexesToRemove.add(item.index);
+        return;
+      }
+
+      previousKeptPlacement = item.placement;
+
+      const previous = treePlacements[itemIndex - 1];
+      const next = treePlacements[itemIndex + 1];
+
+      if (!previous || !next) {
+        return;
+      }
+
+      const previousGap = item.placement.y - previous.placement.y;
+      const nextGap = next.placement.y - item.placement.y;
+
+      if (
+        previousGap <= RIVER_TREE_GROUP_CROWDING_GAP_PX &&
+        nextGap <= RIVER_TREE_GROUP_CROWDING_GAP_PX
+      ) {
+        indexesToRemove.add(item.index);
+      }
+    });
+  });
+
+  return selectedPlacementIndexes.filter((index) => !indexesToRemove.has(index));
+}
+
+function pushRiverTreesAwayFromNearbySprites(
+  placements: RiverAtlasResolvedPlacement[],
+) {
+  const shiftedPlacements: RiverAtlasResolvedPlacement[] = [];
+
+  placements.forEach((item) => {
+    const previousPlacement =
+      shiftedPlacements[shiftedPlacements.length - 1]?.placement;
+    const shouldPushTreeDown =
+      item.placement.affinity === "treeGroup" &&
+      previousPlacement &&
+      item.placement.y - previousPlacement.y < RIVER_TREE_NEAR_SPRITE_GAP_PX;
+    const nextPlacement = shouldPushTreeDown
+      ? {
+          ...item.placement,
+          y: Math.min(
+            previousPlacement.y + RIVER_TREE_NEAR_SPRITE_GAP_PX,
+            TIMELINE_VIEWBOX_HEIGHT - RIVER_TREE_BOTTOM_SHIFT_PADDING_PX,
+          ),
+        }
+      : item.placement;
+
+    shiftedPlacements.push({
+      ...item,
+      placement: nextPlacement,
+    });
+  });
+
+  return shiftedPlacements;
+}
+
+function removeCardCoveredNearbyRiverTrees(
+  placements: RiverAtlasResolvedPlacement[],
+  cardOverlapZones: RiverCardOverlapZone[],
+) {
+  if (cardOverlapZones.length === 0) {
+    return placements;
+  }
+
+  return placements.filter((item) => {
+    if (item.placement.affinity !== "treeGroup") {
+      return true;
+    }
+
+    return !cardOverlapZones.some(
+      (zone) =>
+        Math.abs(item.placement.y - zone.y) <= RIVER_CARD_OVERLAP_HALF_HEIGHT_PX,
+    );
+  });
+}
+
+function getRiverAtlasPlacements(
+  seed: string,
+  cardOverlapZones: RiverCardOverlapZone[],
+) {
+  const shuffledSpriteIdsByAffinity: Record<
+    RiverSpriteAffinity,
+    RiverAtlasSpriteId[]
+  > = {
+    waterPlant: getShuffledRiverSpriteIds(seed, "waterPlant"),
+    treeGroup: getShuffledRiverSpriteIds(seed, "treeGroup"),
+  };
+  const usageCountByAffinity: Record<RiverSpriteAffinity, number> = {
+    waterPlant: 0,
+    treeGroup: 0,
+  };
+  const selectedPlacementIndexes = removeCrowdedRiverTreePlacements(
+    RIVER_ATLAS_PLACEMENT_GROUPS.map((placementGroup, groupIndex) => {
+      const selectedGroupIndex = Math.floor(
+        getRiverPlacementScore(seed, groupIndex) * placementGroup.length,
+      );
+
+      return placementGroup[selectedGroupIndex] ?? placementGroup[0];
+    }).slice(0, RIVER_ATLAS_MAX_PLACEMENTS_PER_SECTION),
+  );
+
+  const resolvedPlacements = selectedPlacementIndexes
+    .map((placementIndex): RiverAtlasResolvedPlacement | undefined => {
+      const placement = RIVER_ATLAS_PLACEMENTS[placementIndex];
+
+      if (!placement) {
+        return undefined;
+      }
+
+      const shuffledSpriteIds = shuffledSpriteIdsByAffinity[placement.affinity];
+      const usageIndex = usageCountByAffinity[placement.affinity];
+      usageCountByAffinity[placement.affinity] += 1;
+
+      return {
+        index: placementIndex,
+        placement: {
+          ...placement,
+          spriteId:
+            shuffledSpriteIds[usageIndex % shuffledSpriteIds.length] ??
+            placement.spriteId,
+        },
+      };
+    })
+    .filter((item): item is RiverAtlasResolvedPlacement => Boolean(item));
+
+  return removeCardCoveredNearbyRiverTrees(
+    pushRiverTreesAwayFromNearbySprites(resolvedPlacements),
+    cardOverlapZones,
+  );
+}
+
 function getRiverSpriteClusterItems(placement: RiverAtlasSpritePlacement) {
+  if (placement.spriteId === "palmTree") {
+    return RIVER_SINGLE_SPRITE_CLUSTER;
+  }
+
+  if (placement.spriteId === "doublePalms") {
+    return RIVER_WATER_PLANT_CLUSTER_PATTERNS.sideBySide;
+  }
+
+  if (placement.spriteId === "leafPlant") {
+    return RIVER_WATER_PLANT_CLUSTER_PATTERNS.oppositeDiagonal;
+  }
+
   if (placement.affinity === "waterPlant") {
     switch (placement.clusterPattern) {
       case "single":
@@ -775,11 +1074,20 @@ function getRiverSpriteClusterItems(placement: RiverAtlasSpritePlacement) {
   return RIVER_SINGLE_SPRITE_CLUSTER;
 }
 
-function RiverAtlasSprites() {
+function RiverAtlasSprites({
+  cardOverlapZones,
+  seed,
+}: {
+  cardOverlapZones: RiverCardOverlapZone[];
+  seed: string;
+}) {
+  const riverPlacements = getRiverAtlasPlacements(seed, cardOverlapZones);
+
   return (
     <div className="absolute inset-0 z-10 overflow-visible">
-      {RIVER_ATLAS_PLACEMENTS.flatMap((placement, placementIndex) => {
+      {riverPlacements.flatMap(({ placement, index: placementIndex }) => {
         const sprite = RIVER_ATLAS_SPRITES[placement.spriteId];
+        const spriteScale = sprite.scale || placement.scale;
         const riverCenterX = getRiverCenterXAtY(placement.y);
         const distanceFromRiver =
           RIVER_SPRITE_DISTANCE_BY_AFFINITY[placement.affinity];
@@ -790,12 +1098,12 @@ function RiverAtlasSprites() {
           (clusterItem, clusterIndex) => {
             const width =
               sprite.width *
-              placement.scale *
+              spriteScale *
               clusterItem.scale *
               RIVER_SPRITE_SCALE_MULTIPLIER;
             const height =
               sprite.height *
-              placement.scale *
+              spriteScale *
               clusterItem.scale *
               RIVER_SPRITE_SCALE_MULTIPLIER;
             const clusterSideOffset =
@@ -861,7 +1169,13 @@ function RiverSurfaceTexture() {
   );
 }
 
-function TimelinePath() {
+function TimelinePath({
+  cardOverlapZones,
+  spriteSeed,
+}: {
+  cardOverlapZones: RiverCardOverlapZone[];
+  spriteSeed: string;
+}) {
   const rawId = useId().replace(/:/g, "");
   const riverGradientId = `river-gradient-${rawId}`;
   const bankGradientId = `river-bank-${rawId}`;
@@ -939,7 +1253,10 @@ function TimelinePath() {
         />
         <RiverSurfaceTexture />
       </svg>
-      <RiverAtlasSprites />
+      <RiverAtlasSprites
+        cardOverlapZones={cardOverlapZones}
+        seed={spriteSeed}
+      />
     </div>
   );
 }
@@ -1079,7 +1396,6 @@ function EntryArticle({
           </div>
         </Card>
       </div>
-
     </article>
   );
 }
@@ -1115,6 +1431,13 @@ function DaySection({
 }: DaySectionProps) {
   const { dateKey, entries } = day;
   const isToday = dateKey === todayKey;
+  const cardOverlapZones = entries.map((_, index) => ({
+    y:
+      (isToday
+        ? RIVER_TODAY_FIRST_CARD_CENTER_Y
+        : RIVER_STANDARD_FIRST_CARD_CENTER_Y) +
+      index * RIVER_ENTRY_CARD_CENTER_STEP_Y,
+  }));
 
   return (
     <section
@@ -1134,7 +1457,7 @@ function DaySection({
           WebkitMaskImage: DAY_BACKGROUND_FADE_MASK,
         }}
       />
-      <TimelinePath />
+      <TimelinePath cardOverlapZones={cardOverlapZones} spriteSeed={dateKey} />
 
       {isToday ? (
         <header className="relative z-10 mx-auto mb-16 max-w-2xl pt-8 text-center">
@@ -1178,9 +1501,7 @@ export function TodayPage() {
   const { days, presets, todayKey } = useTimelineData(timelineDaysCount);
   const renderedDays = useMemo(
     () =>
-      days.filter(
-        (day) => day.dateKey === todayKey || day.entries.length > 0,
-      ),
+      days.filter((day) => day.dateKey === todayKey || day.entries.length > 0),
     [days, todayKey],
   );
   const dayStartIndices = useMemo(
@@ -1216,8 +1537,11 @@ export function TodayPage() {
   const [customContent, setCustomContent] = useState("");
   const [description, setDescription] = useState("");
   const [entryUrl, setEntryUrl] = useState("");
-  const [selectedPresetId, setSelectedPresetId] = useState<string | undefined>();
-  const { statusToast, isStatusToastVisible, showStatusToast } = useStatusToast();
+  const [selectedPresetId, setSelectedPresetId] = useState<
+    string | undefined
+  >();
+  const { statusToast, isStatusToastVisible, showStatusToast } =
+    useStatusToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isComposerOpen, setIsComposerOpen] = useState(false);
   const [isTodayActionVisible, setIsTodayActionVisible] = useState(true);
@@ -1292,7 +1616,8 @@ export function TodayPage() {
     const scrollContainer = document.querySelector("main");
 
     if (snapshot && scrollContainer) {
-      const scrollHeightDelta = scrollContainer.scrollHeight - snapshot.scrollHeight;
+      const scrollHeightDelta =
+        scrollContainer.scrollHeight - snapshot.scrollHeight;
       scrollContainer.scrollTop = snapshot.scrollTop + scrollHeightDelta;
     }
 
@@ -1316,7 +1641,8 @@ export function TodayPage() {
 
     function loadWhenNearTop() {
       if (
-        timelineScrollContainer.scrollTop <= TIMELINE_SCROLL_TOP_LOAD_THRESHOLD_PX
+        timelineScrollContainer.scrollTop <=
+        TIMELINE_SCROLL_TOP_LOAD_THRESHOLD_PX
       ) {
         loadOlderTimelineDays();
       }
@@ -1372,7 +1698,10 @@ export function TodayPage() {
     return () => {
       timelineScrollContainer.removeEventListener("scroll", handleScroll);
       timelineScrollContainer.removeEventListener("wheel", handleWheel);
-      timelineScrollContainer.removeEventListener("touchstart", handleTouchStart);
+      timelineScrollContainer.removeEventListener(
+        "touchstart",
+        handleTouchStart,
+      );
       timelineScrollContainer.removeEventListener("touchmove", handleTouchMove);
     };
   }, [hasOlderTimelineDays, loadOlderTimelineDays]);
@@ -1441,8 +1770,7 @@ export function TodayPage() {
     }
 
     const scrollContainer = document.querySelector("main");
-    const interactionTarget: HTMLElement | Window =
-      scrollContainer ?? window;
+    const interactionTarget: HTMLElement | Window = scrollContainer ?? window;
 
     interactionTarget.addEventListener("wheel", markUserInteraction, {
       once: true,
@@ -1528,7 +1856,8 @@ export function TodayPage() {
 
       if (
         selectedPreset &&
-        normalizePresetLabel(selectedPreset.label) === normalizePresetLabel(value)
+        normalizePresetLabel(selectedPreset.label) ===
+          normalizePresetLabel(value)
       ) {
         return currentPresetId;
       }
@@ -1671,10 +2000,7 @@ export function TodayPage() {
 
   return (
     <section className="relative -mx-4 sm:-mx-6 lg:-mx-8">
-      <StatusToastBanner
-        isVisible={isStatusToastVisible}
-        toast={statusToast}
-      />
+      <StatusToastBanner isVisible={isStatusToastVisible} toast={statusToast} />
 
       <div className="fixed left-1/2 top-4 z-30 w-[min(92vw,34rem)] -translate-x-1/2 text-center">
         <div className="flex items-center justify-center gap-2">
@@ -1693,9 +2019,7 @@ export function TodayPage() {
           <div className="mt-2 flex justify-center">
             <Button
               className="min-h-9 px-3 py-1.5 text-xs"
-              icon={
-                <ArrowDownToLine aria-hidden="true" className="size-4" />
-              }
+              icon={<ArrowDownToLine aria-hidden="true" className="size-4" />}
               onClick={scrollToToday}
               variant="secondary"
             >
@@ -1753,7 +2077,9 @@ export function TodayPage() {
             <form onSubmit={handleCustomSubmit}>
               <Textarea
                 label="Idée"
-                onChange={(event) => handleCustomContentChange(event.target.value)}
+                onChange={(event) =>
+                  handleCustomContentChange(event.target.value)
+                }
                 placeholder="Résume ton apprentissage..."
                 value={customContent}
               />
