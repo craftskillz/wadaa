@@ -103,12 +103,13 @@ const RIVER_ATLAS_HASH_PRIME = 16_777_619;
 const RIVER_ATLAS_HASH_MODULO = 2 ** 32;
 const RIVER_ATLAS_MAX_PLACEMENTS_PER_SECTION = 6;
 const RIVER_TREE_GROUP_CROWDING_GAP_PX = 520;
-const RIVER_TREE_NEAR_SPRITE_GAP_PX = 520;
-const RIVER_TREE_BOTTOM_SHIFT_PADDING_PX = 60;
-const RIVER_CARD_OVERLAP_HALF_HEIGHT_PX = 320;
-const RIVER_TODAY_FIRST_CARD_CENTER_Y = 560;
-const RIVER_STANDARD_FIRST_CARD_CENTER_Y = 240;
-const RIVER_ENTRY_CARD_CENTER_STEP_Y = 260;
+const RIVER_ATLAS_MIN_PLACEMENTS_PER_SECTION = 5;
+const RIVER_PROTECTED_ZONE_PADDING_PX = 80;
+const RIVER_PROTECTED_ZONE_BOTTOM_CLAMP_PX = 60;
+const RIVER_TREE_OVERLAP_RATIO = 0.78;
+const RIVER_TREE_SAME_SIDE_MIN_GAP_PX = 360;
+const RIVER_PALM_TREE_COMPANION_GAP_PX = 620;
+const RIVER_LARGE_TREE_MIN_GAP_PX = 620;
 
 function getTimelineMaxDaysCount(today = new Date()) {
   const todayMidnight = new Date(today);
@@ -181,6 +182,8 @@ type RiverAtlasResolvedPlacement = {
 };
 
 type RiverCardOverlapZone = {
+  halfHeight: number;
+  side: RiverSpriteSide;
   y: number;
 };
 
@@ -391,13 +394,13 @@ const RIVER_ATLAS_SPRITE_IDS_BY_AFFINITY: Record<
 > = {
   waterPlant: ["doublePalms", "leafPlant"],
   treeGroup: [
+    "redTree",
     "roundBush",
     "gentleTree",
     "palmTree",
     "denseShrub",
     "blossomTree",
     "rounderLeafTree",
-    "redTree",
   ],
 };
 
@@ -486,11 +489,11 @@ const RIVER_ATLAS_PLACEMENTS: RiverAtlasSpritePlacement[] = [
 ];
 
 const RIVER_ATLAS_PLACEMENT_GROUPS: number[][] = [
-  [0, 1],
+  [0],
+  [1],
   [2],
-  [3, 4],
-  [5],
-  [6, 7],
+  [4],
+  [5, 7],
   [8],
 ];
 
@@ -870,12 +873,22 @@ function getShuffledRiverSpriteIds(
   seed: string,
   affinity: RiverSpriteAffinity,
 ) {
+  const seenSpriteIds = new Set<RiverAtlasSpriteId>();
+
   return RIVER_ATLAS_SPRITE_IDS_BY_AFFINITY[affinity]
     .map((spriteId, index) => ({
       spriteId,
       score: getRiverPlacementScore(`${seed}:${affinity}`, index),
     }))
     .sort((left, right) => left.score - right.score)
+    .filter((item) => {
+      if (seenSpriteIds.has(item.spriteId)) {
+        return false;
+      }
+
+      seenSpriteIds.add(item.spriteId);
+      return true;
+    })
     .map((item) => item.spriteId);
 }
 
@@ -894,20 +907,7 @@ function removeCrowdedRiverTreePlacements(selectedPlacementIndexes: number[]) {
           item.placement.side === side,
       )
       .sort((left, right) => left.placement.y - right.placement.y);
-    let previousKeptPlacement: RiverAtlasSpritePlacement | undefined;
-
     treePlacements.forEach((item, itemIndex) => {
-      if (
-        previousKeptPlacement &&
-        item.placement.y - previousKeptPlacement.y <=
-          RIVER_TREE_GROUP_CROWDING_GAP_PX
-      ) {
-        indexesToRemove.add(item.index);
-        return;
-      }
-
-      previousKeptPlacement = item.placement;
-
       const previous = treePlacements[itemIndex - 1];
       const next = treePlacements[itemIndex + 1];
 
@@ -927,41 +927,151 @@ function removeCrowdedRiverTreePlacements(selectedPlacementIndexes: number[]) {
     });
   });
 
-  return selectedPlacementIndexes.filter((index) => !indexesToRemove.has(index));
+  const filteredPlacementIndexes = selectedPlacementIndexes.filter(
+    (index) => !indexesToRemove.has(index),
+  );
+
+  return filteredPlacementIndexes.length >= RIVER_ATLAS_MIN_PLACEMENTS_PER_SECTION
+    ? filteredPlacementIndexes
+    : selectedPlacementIndexes;
 }
 
-function pushRiverTreesAwayFromNearbySprites(
+function getRiverTreePriority(spriteId: RiverAtlasSpriteId) {
+  if (spriteId === "redTree") {
+    return 3;
+  }
+
+  if (spriteId === "palmTree") {
+    return 2;
+  }
+
+  return 1;
+}
+
+function getRiverTreeVisualRadius(placement: RiverAtlasSpritePlacement) {
+  const sprite = RIVER_ATLAS_SPRITES[placement.spriteId];
+
+  return (sprite.height * sprite.scale * RIVER_SPRITE_SCALE_MULTIPLIER) / 2;
+}
+
+function isLargeRiverTree(spriteId: RiverAtlasSpriteId) {
+  return (
+    spriteId === "redTree" ||
+    spriteId === "roundBush" ||
+    spriteId === "blossomTree"
+  );
+}
+
+function removeCloseSameSideRiverTrees(
   placements: RiverAtlasResolvedPlacement[],
 ) {
-  const shiftedPlacements: RiverAtlasResolvedPlacement[] = [];
+  const selectedPlacements: RiverAtlasResolvedPlacement[] = [];
 
   placements.forEach((item) => {
-    const previousPlacement =
-      shiftedPlacements[shiftedPlacements.length - 1]?.placement;
-    const shouldPushTreeDown =
-      item.placement.affinity === "treeGroup" &&
-      previousPlacement &&
-      item.placement.y - previousPlacement.y < RIVER_TREE_NEAR_SPRITE_GAP_PX;
-    const nextPlacement = shouldPushTreeDown
-      ? {
-          ...item.placement,
-          y: Math.min(
-            previousPlacement.y + RIVER_TREE_NEAR_SPRITE_GAP_PX,
-            TIMELINE_VIEWBOX_HEIGHT - RIVER_TREE_BOTTOM_SHIFT_PADDING_PX,
-          ),
-        }
-      : item.placement;
+    if (item.placement.affinity !== "treeGroup") {
+      selectedPlacements.push(item);
+      return;
+    }
 
-    shiftedPlacements.push({
-      ...item,
-      placement: nextPlacement,
-    });
+    const closeTreeIndex = selectedPlacements.findIndex(
+      (selectedItem) => {
+        if (selectedItem.placement.affinity !== "treeGroup") {
+          return false;
+        }
+
+        const involvesPalmTree =
+          selectedItem.placement.spriteId === "palmTree" ||
+          item.placement.spriteId === "palmTree";
+        const involvesTwoLargeTrees =
+          isLargeRiverTree(selectedItem.placement.spriteId) &&
+          isLargeRiverTree(item.placement.spriteId);
+        const shouldCompareAcrossSides = involvesPalmTree || involvesTwoLargeTrees;
+
+        if (
+          !shouldCompareAcrossSides &&
+          selectedItem.placement.side !== item.placement.side
+        ) {
+          return false;
+        }
+
+        const baseVisualGap = Math.max(
+          (getRiverTreeVisualRadius(selectedItem.placement) +
+            getRiverTreeVisualRadius(item.placement)) *
+            RIVER_TREE_OVERLAP_RATIO,
+          RIVER_TREE_SAME_SIDE_MIN_GAP_PX,
+        );
+        const visualGap = Math.max(
+          baseVisualGap,
+          involvesPalmTree ? RIVER_PALM_TREE_COMPANION_GAP_PX : 0,
+          involvesTwoLargeTrees ? RIVER_LARGE_TREE_MIN_GAP_PX : 0,
+        );
+
+        return Math.abs(selectedItem.placement.y - item.placement.y) < visualGap;
+      },
+    );
+
+    if (closeTreeIndex === -1) {
+      selectedPlacements.push(item);
+      return;
+    }
+
+    const closeTree = selectedPlacements[closeTreeIndex];
+    const currentPriority = getRiverTreePriority(item.placement.spriteId);
+    const closeTreePriority = getRiverTreePriority(closeTree.placement.spriteId);
+
+    if (currentPriority > closeTreePriority) {
+      selectedPlacements[closeTreeIndex] = item;
+    }
   });
 
-  return shiftedPlacements;
+  return selectedPlacements;
 }
 
-function removeCardCoveredNearbyRiverTrees(
+function getNextRiverTreeSpriteId(
+  currentSpriteId: RiverAtlasSpriteId,
+  previousSpriteId: RiverAtlasSpriteId,
+) {
+  const treeSpriteIds = RIVER_ATLAS_SPRITE_IDS_BY_AFFINITY.treeGroup.filter(
+    (spriteId) =>
+      spriteId !== currentSpriteId && spriteId !== previousSpriteId,
+  );
+
+  return treeSpriteIds[0] ?? currentSpriteId;
+}
+
+function replaceConsecutiveDuplicateRiverTrees(
+  placements: RiverAtlasResolvedPlacement[],
+  previousSectionTreeSpriteId?: RiverAtlasSpriteId,
+) {
+  let previousTreeSpriteId = previousSectionTreeSpriteId;
+
+  return placements.map((item) => {
+    if (item.placement.affinity !== "treeGroup") {
+      return item;
+    }
+
+    if (item.placement.spriteId !== previousTreeSpriteId) {
+      previousTreeSpriteId = item.placement.spriteId;
+      return item;
+    }
+
+    const nextSpriteId = getNextRiverTreeSpriteId(
+      item.placement.spriteId,
+      previousTreeSpriteId,
+    );
+    previousTreeSpriteId = nextSpriteId;
+
+    return {
+      ...item,
+      placement: {
+        ...item.placement,
+        spriteId: nextSpriteId,
+      },
+    };
+  });
+}
+
+function pushRiverSpritesAwayFromProtectedZones(
   placements: RiverAtlasResolvedPlacement[],
   cardOverlapZones: RiverCardOverlapZone[],
 ) {
@@ -969,21 +1079,48 @@ function removeCardCoveredNearbyRiverTrees(
     return placements;
   }
 
-  return placements.filter((item) => {
-    if (item.placement.affinity !== "treeGroup") {
-      return true;
-    }
+  return placements.map((item) => {
+    const visualRadius = getRiverTreeVisualRadius(item.placement);
+    const shiftedY = cardOverlapZones
+      .filter((zone) => zone.side === item.placement.side)
+      .reduce((nextY, zone) => {
+        const zoneTop =
+          zone.y -
+          zone.halfHeight -
+          RIVER_PROTECTED_ZONE_PADDING_PX -
+          visualRadius;
+        const zoneBottom =
+          zone.y +
+          zone.halfHeight +
+          RIVER_PROTECTED_ZONE_PADDING_PX +
+          visualRadius;
 
-    return !cardOverlapZones.some(
-      (zone) =>
-        Math.abs(item.placement.y - zone.y) <= RIVER_CARD_OVERLAP_HALF_HEIGHT_PX,
-    );
+        if (nextY < zoneTop || nextY > zoneBottom) {
+          return nextY;
+        }
+
+        return Math.min(
+          zoneBottom,
+          TIMELINE_VIEWBOX_HEIGHT -
+            RIVER_PROTECTED_ZONE_BOTTOM_CLAMP_PX -
+            visualRadius,
+        );
+      }, item.placement.y);
+
+    return {
+      ...item,
+      placement: {
+        ...item.placement,
+        y: shiftedY,
+      },
+    };
   });
 }
 
 function getRiverAtlasPlacements(
   seed: string,
   cardOverlapZones: RiverCardOverlapZone[],
+  previousSectionTreeSpriteId?: RiverAtlasSpriteId,
 ) {
   const shuffledSpriteIdsByAffinity: Record<
     RiverSpriteAffinity,
@@ -1030,10 +1167,29 @@ function getRiverAtlasPlacements(
     })
     .filter((item): item is RiverAtlasResolvedPlacement => Boolean(item));
 
-  return removeCardCoveredNearbyRiverTrees(
-    pushRiverTreesAwayFromNearbySprites(resolvedPlacements),
+  const dedupedPlacements = replaceConsecutiveDuplicateRiverTrees(
+    resolvedPlacements,
+    previousSectionTreeSpriteId,
+  );
+  const protectedZonePlacements = pushRiverSpritesAwayFromProtectedZones(
+    dedupedPlacements,
     cardOverlapZones,
   );
+  const spacedPlacements = removeCloseSameSideRiverTrees(protectedZonePlacements);
+
+  return spacedPlacements;
+}
+
+function getLastRiverTreeSpriteId(placements: RiverAtlasResolvedPlacement[]) {
+  for (let index = placements.length - 1; index >= 0; index -= 1) {
+    const item = placements[index];
+
+    if (item?.placement.affinity === "treeGroup") {
+      return item.placement.spriteId;
+    }
+  }
+
+  return undefined;
 }
 
 function getRiverSpriteClusterItems(placement: RiverAtlasSpritePlacement) {
@@ -1076,12 +1232,18 @@ function getRiverSpriteClusterItems(placement: RiverAtlasSpritePlacement) {
 
 function RiverAtlasSprites({
   cardOverlapZones,
+  previousSectionTreeSpriteId,
   seed,
 }: {
   cardOverlapZones: RiverCardOverlapZone[];
+  previousSectionTreeSpriteId?: RiverAtlasSpriteId;
   seed: string;
 }) {
-  const riverPlacements = getRiverAtlasPlacements(seed, cardOverlapZones);
+  const riverPlacements = getRiverAtlasPlacements(
+    seed,
+    cardOverlapZones,
+    previousSectionTreeSpriteId,
+  );
 
   return (
     <div className="absolute inset-0 z-10 overflow-visible">
@@ -1171,9 +1333,11 @@ function RiverSurfaceTexture() {
 
 function TimelinePath({
   cardOverlapZones,
+  previousSectionTreeSpriteId,
   spriteSeed,
 }: {
   cardOverlapZones: RiverCardOverlapZone[];
+  previousSectionTreeSpriteId?: RiverAtlasSpriteId;
   spriteSeed: string;
 }) {
   const rawId = useId().replace(/:/g, "");
@@ -1255,6 +1419,7 @@ function TimelinePath({
       </svg>
       <RiverAtlasSprites
         cardOverlapZones={cardOverlapZones}
+        previousSectionTreeSpriteId={previousSectionTreeSpriteId}
         seed={spriteSeed}
       />
     </div>
@@ -1310,6 +1475,7 @@ function EntryArticle({
           "relative z-10 col-span-3 px-6 sm:col-span-1 sm:px-0",
           isLeft ? "sm:col-start-1 sm:pr-4" : "sm:col-start-3 sm:pl-4",
         )}
+        data-river-protected-zone
       >
         <Card className="relative p-3 shadow-xl sm:p-4" tone="solid">
           <input
@@ -1404,6 +1570,7 @@ type DaySectionProps = {
   day: TimelineDay;
   todayKey: string;
   presets: LearningPreset[];
+  previousSectionTreeSpriteId?: RiverAtlasSpriteId;
   isSubmitting: boolean;
   coverUpdatingEntryId: string | null;
   todayRef: React.RefObject<HTMLElement | null>;
@@ -1419,6 +1586,7 @@ function DaySection({
   day,
   todayKey,
   presets,
+  previousSectionTreeSpriteId,
   isSubmitting,
   coverUpdatingEntryId,
   todayRef,
@@ -1431,13 +1599,84 @@ function DaySection({
 }: DaySectionProps) {
   const { dateKey, entries } = day;
   const isToday = dateKey === todayKey;
-  const cardOverlapZones = entries.map((_, index) => ({
-    y:
-      (isToday
-        ? RIVER_TODAY_FIRST_CARD_CENTER_Y
-        : RIVER_STANDARD_FIRST_CARD_CENTER_Y) +
-      index * RIVER_ENTRY_CARD_CENTER_STEP_Y,
-  }));
+  const sectionRef = useRef<HTMLElement | null>(null);
+  const [cardOverlapZones, setCardOverlapZones] = useState<
+    RiverCardOverlapZone[]
+  >([]);
+  const setSectionRefs = useCallback(
+    (node: HTMLElement | null) => {
+      sectionRef.current = node;
+
+      if (isToday) {
+        todayRef.current = node;
+      }
+    },
+    [isToday, todayRef],
+  );
+
+  useLayoutEffect(() => {
+    const section = sectionRef.current;
+
+    if (!section) {
+      setCardOverlapZones([]);
+      return;
+    }
+
+    const measuredSection = section;
+
+    function measureProtectedZones() {
+      const sectionRect = measuredSection.getBoundingClientRect();
+
+      if (!sectionRect.height) {
+        setCardOverlapZones([]);
+        return;
+      }
+
+      const sectionCenterX = sectionRect.left + sectionRect.width / 2;
+      const measuredZones = [
+        ...measuredSection.querySelectorAll<HTMLElement>(
+          "[data-river-protected-zone]",
+        ),
+      ].flatMap((element) => {
+        const rect = element.getBoundingClientRect();
+        const y =
+          ((rect.top + rect.height / 2 - sectionRect.top) /
+            sectionRect.height) *
+          TIMELINE_VIEWBOX_HEIGHT;
+        const halfHeight =
+          (rect.height / sectionRect.height) *
+          TIMELINE_VIEWBOX_HEIGHT /
+          2;
+        const sides: RiverSpriteSide[] = [];
+
+        if (rect.left < sectionCenterX) {
+          sides.push("left");
+        }
+
+        if (rect.right > sectionCenterX) {
+          sides.push("right");
+        }
+
+        return sides.map((side) => ({ halfHeight, side, y }));
+      });
+
+      setCardOverlapZones(measuredZones);
+    }
+
+    measureProtectedZones();
+
+    const resizeObserver = new ResizeObserver(measureProtectedZones);
+    resizeObserver.observe(measuredSection);
+    measuredSection
+      .querySelectorAll<HTMLElement>("[data-river-protected-zone]")
+      .forEach((element) => resizeObserver.observe(element));
+    window.addEventListener("resize", measureProtectedZones);
+
+    return () => {
+      resizeObserver.disconnect();
+      window.removeEventListener("resize", measureProtectedZones);
+    };
+  }, [dateKey, entries.length]);
 
   return (
     <section
@@ -1446,7 +1685,7 @@ function DaySection({
         isLastDay ? "min-h-[calc(100vh+12rem)] pb-32" : "min-h-[80vh] pb-10",
       )}
       data-day-section={dateKey}
-      ref={isToday ? todayRef : undefined}
+      ref={setSectionRefs}
     >
       <div
         aria-hidden="true"
@@ -1457,10 +1696,17 @@ function DaySection({
           WebkitMaskImage: DAY_BACKGROUND_FADE_MASK,
         }}
       />
-      <TimelinePath cardOverlapZones={cardOverlapZones} spriteSeed={dateKey} />
+      <TimelinePath
+        cardOverlapZones={cardOverlapZones}
+        previousSectionTreeSpriteId={previousSectionTreeSpriteId}
+        spriteSeed={dateKey}
+      />
 
       {isToday ? (
-        <header className="relative z-10 mx-auto mb-16 max-w-2xl pt-8 text-center">
+        <header
+          className="relative z-10 mx-auto mb-16 max-w-2xl pt-8 text-center"
+          data-river-protected-zone
+        >
           <h1 className="text-4xl font-black leading-tight text-slate-950 sm:text-6xl">
             Qu'as-tu appris aujourd'hui&nbsp;?
           </h1>
@@ -1523,6 +1769,20 @@ export function TodayPage() {
         DAY_THEMES.length;
       result[day.dateKey] = DAY_THEMES[themeIndex];
     });
+    return result;
+  }, [renderedDays]);
+  const previousRiverTreeSpriteByDateKey = useMemo(() => {
+    const result: Record<string, RiverAtlasSpriteId | undefined> = {};
+    let previousTreeSpriteId: RiverAtlasSpriteId | undefined;
+
+    renderedDays.forEach((day) => {
+      result[day.dateKey] = previousTreeSpriteId;
+      previousTreeSpriteId =
+        getLastRiverTreeSpriteId(
+          getRiverAtlasPlacements(day.dateKey, [], previousTreeSpriteId),
+        ) ?? previousTreeSpriteId;
+    });
+
     return result;
   }, [renderedDays]);
   const dayKeys = useMemo(
@@ -2143,6 +2403,9 @@ export function TodayPage() {
               onCreatePreset={handleCreatePreset}
               onDelete={handleDelete}
               onUpdateCoverImage={handleUpdateCoverImage}
+              previousSectionTreeSpriteId={
+                previousRiverTreeSpriteByDateKey[day.dateKey]
+              }
               presets={presets}
               startIndex={dayStartIndices[index] ?? 0}
               todayKey={todayKey}

@@ -1,7 +1,7 @@
 ---
 **date:** 2026-05-26
 **status:** Idle
-**description:** Point de reprise après plafonnement des sprites du fleuve Today à 6 clusters avec ratios de taille restaurés.
+**description:** Point de reprise après interdiction des arbres consécutifs identiques et durcissement des conflits palmier/gros arbres Today.
 **tags:** worklog, handoff, progression, today-page, river, sprites, clusters, deterministic-shuffle
 ---
 
@@ -11,7 +11,7 @@ Ce document est le point de reprise entre assistants IA. Tout agent doit le lire
 
 ## Statut courant
 
-Idle — `TodayPage.tsx` rend au maximum 6 clusters du fleuve par section, conserve les clusters et restaure les ratios de taille par sprite. Lint + build OK.
+Idle — `TodayPage.tsx` rend les clusters du fleuve avec alternance gauche/droite, fréquence normale de `redTree`, arbres consécutifs identiques remplacés, conflits palmier/végétation supprimés, gros arbres proches dédupliqués et zones header/cards mesurées dans le DOM. Lint + build OK.
 
 ## Tâche courante
 
@@ -22,6 +22,12 @@ Aucune implémentation en cours.
 Réglage des sprites du fleuve Today (2026-05-26) :
 
 - `RiverAtlasSprites` sélectionne au maximum 6 emplacements par section via `RIVER_ATLAS_PLACEMENT_GROUPS`.
+- Les règles de suppression ne peuvent plus faire descendre une section sous 5 emplacements (`RIVER_ATLAS_MIN_PLACEMENTS_PER_SECTION`), afin d'éviter qu'aujourd'hui perde toute végétation quand il y a beaucoup de cards.
+- `redTree` n'est plus pondéré : il apparaît une seule fois dans le pool `treeGroup`, comme les autres sprites.
+- `replaceConsecutiveDuplicateRiverTrees` remplace un arbre par une autre espèce quand il serait identique à l'arbre précédent, y compris à la jonction avec la section précédente.
+- `RIVER_ATLAS_PLACEMENT_GROUPS` suit une alternance gauche/droite fixe pour fluidifier la distribution verticale et réduire les grands trous.
+- Une passe `removeCloseSameSideRiverTrees` supprime tout arbre trop proche d'un autre arbre du même côté, et traite aussi les conflits palmier/végétation ou deux gros arbres proches même s'ils ne sont pas strictement du même côté. Les seuils palmier/gros arbres sont durcis à 620 px. Cette règle peut descendre sous 5 clusters si nécessaire pour éviter une pile visuelle.
+- Les zones protégées (`data-river-protected-zone`) sont mesurées avec `getBoundingClientRect`, converties dans le référentiel SVG du fleuve, puis les sprites sont poussés hors de ces zones en tenant compte de leur empreinte visuelle complète.
 - Les groupes de placement répartissent les sprites sur toute la hauteur du fleuve, avec au plus un emplacement par zone.
 - Les motifs de clusters `waterPlant` et `treeGroup` sont conservés (`sideBySide`, `oppositeDiagonal`, `three`, `four`, `five`).
 - `TimelinePath` transmet toujours `dateKey` comme seed ; `getRiverAtlasPlacements(seed)` mélange les sprites par affinité pour varier l'ordre entre sections sans instabilité au re-render.
@@ -52,7 +58,7 @@ Avant de coder ce ticket, valider avec l'utilisateur :
 
 - `npm run lint` : OK.
 - `npm run build` : OK.
-- Vérification navigateur sur `http://localhost:5173/` : la section Today rend 6 clusters/emplacements, soit 20 images réelles.
+- Vérification navigateur sur `http://localhost:5173/` : la section Today rend 4 clusters/emplacements dans la session de test, avec un seul `redTree` et aucun cluster `palmTree` en conflit.
 - ADR fleuve Today mise à jour manuellement.
 
 ## Vérifications restantes
